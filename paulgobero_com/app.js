@@ -3,6 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var nunjucks = require('nunjucks');
+
+//configure nunjucks view engine
+nunjucks.configure('views', {
+	autoescape: true,
+	express: app
+});
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
