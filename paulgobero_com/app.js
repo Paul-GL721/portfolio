@@ -17,7 +17,7 @@ nunjucks.configure('views', {
 var mongoDB = "mongodb://127.0.0.1/paulgobero_com";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 //get the connection
-var db = monogoose.connection;
+var db = mongoose.connection;
 //get notification on connection errors
 db.on("error", console.error.bind(console, "MongoDB connection error"));
 
