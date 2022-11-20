@@ -14,7 +14,7 @@ const BlogSchema = new Schema({
     body: { type: String },
     conclusion: { type: String },
     bstatus: { type: String, required: true, enum: ["Inprocess", "Completed"], default: "Inprocess" } 
-}, timestamps: true );
+}, {timestamps: true} );
 
 //url virtual property
 BlogSchema.virtual("url").get(function () {

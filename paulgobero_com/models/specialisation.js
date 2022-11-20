@@ -8,7 +8,7 @@ const SpecialisationSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String }
 
-}, timestamps: true );
+}, {timestamps: true} );
 
 //export model
 module.exports = mongoose.model("Specialisation", SpecialisationSchema);
