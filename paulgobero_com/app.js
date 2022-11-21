@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var nunjucks = require('nunjucks');
-var mongoose = require("mongoose");
+var db = require('./configs/loadb');
 
 //configure nunjucks view engine
 nunjucks.configure('views', {
@@ -12,14 +12,6 @@ nunjucks.configure('views', {
 	express: app
 });
 
-//####### connect to mongodb ########
-//set up the mongoose connection
-var mongoDB = "mongodb://127.0.0.1/paulgobero_com";
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
-//get the connection
-var db = mongoose.connection;
-//get notification on connection errors
-db.on("error", console.error.bind(console, "MongoDB connection error"));
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
