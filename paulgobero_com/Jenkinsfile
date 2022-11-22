@@ -33,7 +33,7 @@ pipeline {
 					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-					sh '''./${BASE_DIRECTORY}/jenkins-script/build-step.sh '''+VERSION+''' '''
+					sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
