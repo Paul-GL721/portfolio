@@ -6,7 +6,10 @@ docker version
 echo Building the docker container
 
 #  With 'sed commad' replace the jversion variable with the jenkins build number
-#sed  -i -e 's/JVERSION/$VERSION/g' ./portfolio/paulgobero_com/docker-compose.yml
+sed  -i -e 's/JVERSION/$VERSION/g' ./$BASE_DIRECTORY/docker-compose.yml
 
 ## With docker-compose build a taged image
-#docker-compose build
+docker-compose -f ./$BASE_DIRECTORY/docker-compose.yml build
+
+#sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
+#sh '''docker-compose -f ./${BASE_DIRECTORY}/docker-compose.yml build'''
