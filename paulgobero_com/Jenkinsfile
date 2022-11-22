@@ -19,14 +19,14 @@ pipeline {
 			}
 		}
 
-		stage('Build and push the image') {
+		stage('Build a taged image') {
 			//build the docker image and push to dockerhub
 			agent {
 				//build on build agent
 				label 'buildnode'
 			}
 			steps {
-				echo 'Build and push to dockerhub'
+				echo 'Creating a taged image'
 
 				//make the build script executable
 					sh 'chmod +x ./jenkins-scripts/build-step.sh'
@@ -36,19 +36,29 @@ pipeline {
 			}
 		}
 
+		stage('Push to dockerhub') {
+			//push the taged imaged to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				echo 'Push image to dockerhub'
+
+				script {
+					//push to dockerhub
+					sh '''docker image push paulgl721/nodejs-portfolio:$VERSION'''
+				}
+			}
+		}
+
 		stage('Deploy on an EC2 instance') {
-			//Using ansible deploy on an EC2 instance
+			//Using ansible to deploy on an EC2 instance
 			agent {
 				label 'deploynode'
 			}
 			steps {
 				echo 'Deploy with ansible'
-
-				script{
-                    //run ansible-playbook
-
-                    sh "ansible-playbook ./ansible/staging-playbook.yml -i ./ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-                }
 			}
 		}
 	}
