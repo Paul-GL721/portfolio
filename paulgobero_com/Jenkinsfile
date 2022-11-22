@@ -34,6 +34,9 @@ pipeline {
 
 				//build the image
 					sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+
+					sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
+					docker-compose build
 			}
 		}
 
