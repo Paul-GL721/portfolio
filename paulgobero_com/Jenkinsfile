@@ -1,0 +1,55 @@
+pipeline {
+	//run on different agents
+	agent none
+
+	//define env variables
+	environment {
+		VERSION="0.0.${BUILD_NUMBER}"
+	}
+
+	stages {
+		stage('Testing') {
+			//execute the code on the testing machine
+			agent {
+				label 'testnode'
+			}
+			steps {
+				//test code
+				echo "Testing the code in the git repository"
+			}
+		}
+
+		stage('Build and push the image') {
+			//build the docker image and push to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				echo 'Build and push to dockerhub'
+
+				//make the build script executable
+					sh 'chmod +x ./jenkins-scripts/build-step.sh'
+
+				//build the image
+					sh '''./jenkins-script/build-step.sh'''+VERSION+''' '''
+			}
+		}
+
+		stage('Deploy on an EC2 instance') {
+			//Using ansible deploy on an EC2 instance
+			agent {
+				label 'deploynode'
+			}
+			steps {
+				echo 'Deploy with ansible'
+
+				script{
+                    //run ansible-playbook
+
+                    sh "ansible-playbook ./ansible/staging-playbook.yml -i ./ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+                }
+			}
+		}
+	}
+}
