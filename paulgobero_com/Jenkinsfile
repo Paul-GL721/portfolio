@@ -5,6 +5,7 @@ pipeline {
 	//define env variables
 	environment {
 		VERSION="0.0.${BUILD_NUMBER}"
+		BASE_DIRECTORY='paulgobero_com'
 	}
 
 	stages {
@@ -29,10 +30,10 @@ pipeline {
 				echo 'Creating a taged image'
 
 				//make the build script executable
-					sh 'chmod +x ./jenkins-scripts/build-step.sh'
+					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-					sh '''./jenkins-script/build-step.sh'''+VERSION+''' '''
+					sh '''./${BASE_DIRECTORY}/jenkins-script/build-step.sh'''+VERSION+''' '''
 			}
 		}
 
