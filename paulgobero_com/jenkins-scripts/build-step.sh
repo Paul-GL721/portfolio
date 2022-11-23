@@ -10,10 +10,11 @@ sed  -i -e 's/JVERSION/$VERSION/g' ./$BASE_DIRECTORY/docker-compose.yml
 
 ## With docker-compose build a taged image
 docker-compose -f ./$BASE_DIRECTORY/docker-compose.yml build
+whoami
+echo usr=$USER
 
 # Switch user and login and push image to docker hub 
-sudo su
-su ubuntu <<HERE
+sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
 
