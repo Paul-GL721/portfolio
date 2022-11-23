@@ -30,7 +30,7 @@
         owner: "{{ REMOTE_USER }}"
         group: "{{ REMOTE_USER }}"
 
-    - name: Clone the staging_code branch of the repository
+    - name: Clone the master branch of the repository
       ansible.builtin.git:
         repo: "{{ GIT_REPO }}"
         dest: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}

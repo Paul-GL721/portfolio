@@ -52,7 +52,7 @@ pipeline {
 				script{
                     //run ansible-playbook
 
-                    sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+                    sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
                 }
 			}
 		}
