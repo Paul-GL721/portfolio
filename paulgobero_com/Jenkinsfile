@@ -6,7 +6,11 @@ pipeline {
 	environment {
 		VERSION="0.0.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
-		//DOCKERHUB_CREDENTIALS=credentials('jenkins-to-dockerhub')
+		REMOTE_USER='deployuser1'
+	    REMOTE_DIR='PORTFOLIO'
+	    REMOTE_FOLDER='paulgobero_com'
+	    STACKNAME='portfolio'    
+	    GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 	}
 
 	stages {
@@ -44,7 +48,12 @@ pipeline {
 				label 'deploynode'
 			}
 			steps {
-				echo 'Deploy with ansible'
+				echo '..................Deploying with ansible................'
+				script{
+                    //run ansible-playbook
+
+                    sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+                }
 			}
 		}
 	}
