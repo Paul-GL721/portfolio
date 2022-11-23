@@ -13,7 +13,6 @@ docker-compose -f ./$BASE_DIRECTORY/docker-compose.yml build
 
 # Switch user and login and push image to docker hub 
 sudo su
-apt-get update
 su ubuntu <<HERE
 whoami
 echo usr=$USER
