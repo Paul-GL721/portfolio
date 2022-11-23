@@ -49,10 +49,10 @@ pipeline {
 
 				script {
 					//dockerhub login 
-						sh '''echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'''
+						//sh '''echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'''
 						
 					//push to dockerhub
-						sh '''docker push paulgl721/nodejs-portfolio:$VERSION'''
+						//sh '''docker push paulgl721/nodejs-portfolio:$VERSION'''
 				}
 			}
 		}
