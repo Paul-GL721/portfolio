@@ -14,14 +14,15 @@ whoami
 echo usr=$USER
 
 # Switch user and login and push image to docker hub 
+#(credentials are in the pass credsStore) 
 sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
-
-echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
 
 docker push paulgl721/nodejs-portfolio:$VERSION
 HERE
 
 #sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
 #sh '''docker-compose -f ./${BASE_DIRECTORY}/docker-compose.yml build'''
+
+# echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
