@@ -1,0 +1,60 @@
+pipeline {
+	//run on different agents
+	agent none
+
+	//define env variables
+	environment {
+		VERSION="0.0.${BUILD_NUMBER}"
+		BASE_DIRECTORY='paulgobero_com'
+		REMOTE_USER='deployuser1'
+	    REMOTE_DIR='PORTFOLIO'
+	    REMOTE_FOLDER='paulgobero_com'
+	    STACKNAME='portfolio'    
+	    GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
+	}
+
+	stages {
+		stage('Testing') {
+			//execute the code on the testing machine
+			agent {
+				label 'testnode'
+			}
+			steps {
+				//test code
+				echo "Testing the code in the git repository"
+			}
+		}
+
+		stage('Build and taged image') {
+			//build the docker image and push to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				echo 'Creating a taged image'
+
+				//make the build script executable
+					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
+
+				//build the image
+					sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+			}
+		}
+
+		stage('Deploy on an EC2 instance') {
+			//Using ansible to deploy on an EC2 instance
+			agent {
+				label 'deploynode'
+			}
+			steps {
+				echo '..................Deploying with ansible................'
+				script{
+                    //run ansible-playbook
+
+                    sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+                }
+			}
+		}
+	}
+}

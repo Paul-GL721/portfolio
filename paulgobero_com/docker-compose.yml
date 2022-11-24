@@ -1,41 +1,108 @@
 version: '3.8'
 
 services:
-  #application service
-  app:
-    image: paulgl721/nodejs-portfolio
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-        #networks:
-        #- dbapp-newtork
-    depends_on:
-      - database
+    app:
+        image: paulgl721/nodejs-portfolio:JVERSION
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        depends_on:
+            - mongo
+        networks: #networks to db and reverse proxy
+            - dbapp-network
+            - traefik_proxy-network 
+        deploy: #using swarm to scale the service
+            mode: replicated
+            replicas: 2
+            placement:
+                constraints:
+                    - node.role==manager
+            labels: #generate configurations for the reverse proxy
+                - "traefik.enable=true" # Enable the service
+                - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
+                - "traefik.http.services.app-service.loadbalancer.server.port=3000"
+                - "traefik.http.routers.app.entrypoints=web,websecure"
+                - "traefik.http.routers.app.tls=true" #enable tls
+                - "traefik.http.routers.app.tls.certresolver=production" #certificate
+            restart_policy: #how to restart containers when they exit
+                condition: any
+                delay: 7s
+                max_attempts: 10
+                window: 120s
+            update_config: #how the service should be updated
+                parallelism: 2
+                delay: 10s
+                failure_action: rollback
+                order: start-first
+            rollback_config: #how the service should be rolled back in case an update fails
+                parallelism: 2
+                delay: 10s  
 
-  #mongodb database service
-  database:
-    image: mongo:6
-    restart: always
-    env_file:
-      - ./configs/.env.prod
-    ports:
-      - 27017:27017
-    volumes:
-      - /mnt/portfolio/paulgobero/database:/data/db
-        #networks:
-        #- dbapp-network
+    #mongodb database service
+    mongo:
+        image: mongo:6
+        env_file:
+            - /mnt/portfolio/paulgobero/configs/.env.prod
+        ports:
+            - "27017:27017"
+        volumes:
+            - /mnt/portfolio/paulgobero/database:/data/db
+        networks: #networks to application and admin
+            - dbapp-network
+            - dbadmin-network
+        deploy: #deploy the db on the manager node
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
+            restart_policy: #how to restart containers when they exit
+                condition: any
+                delay: 7s
+                max_attempts: 10
+                window: 120s
 
-  #web-based mongoDB admin interface
-  dbAdmin:
-    image: mongo-express:latest
-    restart: always
-    ports:
-      - 8081:8081
-    env_file:
-      - ./configs/.env.prod
+    #web-based mongoDB admin interface
+    mongodbadmin:
+        image: mongo-express:latest
+        ports:
+            - "8081:8081"
+        env_file:
+            - /mnt/portfolio/paulgobero/configs/.env.prod
+        depends_on:
+            - mongo
+        networks: 
+            - traefik_proxy-network #links to traefik proxy
+            - dbadmin-network #link to database
+        deploy: #deploy on the manager node
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
+            labels: #generate configurations for the reverse proxy
+                - "traefik.enable=true" # Enable the service
+                - "traefik.http.routers.mongodbadmin.rule=Host(`mongodbadmin.paulgobero.com`)"
+                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
+                - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
+                - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
+                - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
+            restart_policy: #how to restart containers when they exit
+                condition: any
+                delay: 7s
+                max_attempts: 10
+                window: 120s
 
-        #networks:
-        #dbapp-network:
-        #:driver: bridge
+#create the communication networks between the containers
+networks:
+    dbapp-network: #link db and webapp
+        driver: overlay
+        attachable: true
+    dbadmin-network:
+        driver: overlay
+        attachable: true
+    traefik_proxy-network:
+        external: true
+
