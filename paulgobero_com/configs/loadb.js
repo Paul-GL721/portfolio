@@ -3,7 +3,6 @@
 var database_connection = function () {
    //import required modules and variables
    const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = require('./config');
-   console.log(DB_NAME)
    const mongoose = require('mongoose');
 
    //set mongoose connection
