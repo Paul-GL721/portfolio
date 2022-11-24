@@ -1,41 +1,41 @@
 version: '3.8'
 
 services:
-    #application service
-    app:
-        image: paulgl721/nodejs-portfolio
-        build:
-            context: .
-            dockerfile: Dockerfile
-        ports:
-            - "3000:3000"
-        networks:
-            - dbapp-newtork
-        depends_on:
-            - database
+  #application service
+  app:
+    image: paulgl721/nodejs-portfolio
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+        #networks:
+        #- dbapp-newtork
+    depends_on:
+      - database
 
-    #mongodb database service
-    database:
-        image: mongo:6
-        restart: always
-        env_file:
-            - ./configs/.env.prod
-        ports:
-            - "27017:27017"
-        volumes:
-            - /mnt/portfolio/paulgobero/database:/data/db
-        networks:
-            - dbapp-network
+  #mongodb database service
+  database:
+    image: mongo:6
+    restart: always
+    env_file:
+      - ./configs/.env.prod
+    ports:
+      - 27017:27017
+    volumes:
+      - /mnt/portfolio/paulgobero/database:/data/db
+        #networks:
+        #- dbapp-network
 
-    #web-based mongoDB admin interface
-    dbAdmin:
-        image: mongo-express:latest
-        restart: always
-        ports:
-            - "8081:8081"
-        env_file:
-            - ./configs/.env.prod
+  #web-based mongoDB admin interface
+  dbAdmin:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - ./configs/.env.prod
 
-networks:
-    dbapp-network:
-        driver: bridge
+        #networks:
+        #dbapp-network:
+        #:driver: bridge

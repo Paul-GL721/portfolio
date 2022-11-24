@@ -5,7 +5,7 @@ FROM node:18.12.0-bullseye
 WORKDIR /nodeApp
 
 #3. Copy the depency information into the directory
-copy package.js package-lock.js ./
+copy package.json package-lock.json ./
 
 #4. Install all the depencies
 RUN npm install
