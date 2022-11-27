@@ -17,7 +17,7 @@ systemLog:
 
 # network interfaces
 net:
-  port: 27018
+  port: 27017
   bindIp: 0.0.0.0
 
 
