@@ -29,6 +29,8 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
+				echo '..................Merging if anyfiles have changed................'
+				
 				//with github credentials stored in jenkins
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
