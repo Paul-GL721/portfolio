@@ -19,7 +19,7 @@ pipeline {
 	}
 
 	stages {
-		stage(Merge development and staging branches) {
+		stage('Merge development and staging branches') {
 			//Execute if its the develpment branch
 			when {
 				branch 'development'
