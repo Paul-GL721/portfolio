@@ -89,6 +89,7 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
+				echo '..............Building and Publishing Docker Images................'
 				echo 'Creating a taged image'
 
 				//make the build script executable
