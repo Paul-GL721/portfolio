@@ -4,7 +4,8 @@ services:
     app:
         image: paulgl721/nodejs-portfolio
         volumes:
-            - ".:/nodeApp"     
+            - ".:/nodeApp"    
+            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage:/nodeApp/stageconfigs/.env.stage 
         build:
             context: .
             dockerfile: testdockerfile
@@ -20,9 +21,9 @@ services:
             context: ./mongodb
             dockerfile: Dockerfile
         env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.stage
+            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
         ports:
-            - "27018:27018"
+            - "27018:27017"
         volumes:
             - /mnt/portfolio/paulgobero/stagedatabase:/data/db
     
@@ -30,9 +31,9 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8082:8082"
+            - "8082:8081"
         env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.stage
+            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
         depends_on:
             - mongo
       
