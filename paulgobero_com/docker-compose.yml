@@ -105,3 +105,4 @@ networks:
         attachable: true
     traefik_proxy-network:
         external: true
+
