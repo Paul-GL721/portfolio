@@ -92,6 +92,10 @@ pipeline {
 		}
 
 		stage('Deploy on an EC2 instance') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
 			//Using ansible to deploy on an EC2 instance
 			agent {
 				label 'deploynode'
