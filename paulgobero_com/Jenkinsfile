@@ -1,20 +1,63 @@
+
+//define variables
+def staged_files
+def testResult
+
 pipeline {
 	//run on different agents
 	agent none
 
 	//define env variables
 	environment {
-		VERSION="0.0.${BUILD_NUMBER}"
+		VERSION="0.1.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
-	    REMOTE_DIR='PORTFOLIO'
-	    REMOTE_FOLDER='paulgobero_com'
-	    STACKNAME='portfolio'    
-	    GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
+		REMOTE_DIR='PORTFOLIO'
+		REMOTE_FOLDER='paulgobero_com'
+		STACKNAME='portfolio'
+		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 	}
 
 	stages {
+		stage(Merge development and staging branches) {
+			//Execute if its the develpment branch
+			when {
+				branch 'development'
+			}
+			//where to execute
+			agent {
+				label 'buildnode'
+			}
+			steps {
+				//with github credentials stored in jenkins
+				sshagent (credentials: ['']) {
+					//make the build script executable
+					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
+					
+					//build the image
+					sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
+
+					//Find the number of staged files
+					staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
+
+					//if they are (staged_files) more than zero, commit the files and push to remote repo
+					if(staged_files > 0) {
+						echo "They are ${staged_files} staged files"
+						sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
+						sh('git push ${GIT_REPO}')
+					}
+					else {
+						echo "There no commits to make"
+					}
+				}
+			}
+		}
+
 		stage('Testing') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
 			//execute the code on the testing machine
 			agent {
 				label 'testnode'
@@ -26,6 +69,10 @@ pipeline {
 		}
 
 		stage('Build and taged image') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
 			//build the docker image and push to dockerhub
 			agent {
 				//build on build agent
@@ -35,10 +82,10 @@ pipeline {
 				echo 'Creating a taged image'
 
 				//make the build script executable
-					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
+				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-					sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
@@ -50,10 +97,9 @@ pipeline {
 			steps {
 				echo '..................Deploying with ansible................'
 				script{
-                    //run ansible-playbook
-
-                    sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-                }
+					//run ansible-playbook
+					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+				}
 			}
 		}
 	}
