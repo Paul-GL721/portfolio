@@ -19,7 +19,7 @@ pipeline {
 	}
 
 	stages {
-		stage(Merge development and staging branches) {
+		stage('Merge development and staging branches') {
 			//Execute if its the develpment branch
 			when {
 				branch 'development'
@@ -29,25 +29,29 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
+				echo '..................Merging if anyfiles have changed................'
+				
 				//with github credentials stored in jenkins
-				sshagent (credentials: ['']) {
-					//make the build script executable
-					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
-					
-					//build the image
-					sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						//make the build script executable
+						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
 
-					//Find the number of staged files
-					staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
+						//build the image
+						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
 
-					//if they are (staged_files) more than zero, commit the files and push to remote repo
-					if(staged_files > 0) {
-						echo "They are ${staged_files} staged files"
-						sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
-						sh('git push ${GIT_REPO}')
-					}
-					else {
-						echo "There no commits to make"
+						//Find the number of staged files
+						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
+
+						//if they are (staged_files) more than zero, commit the files and push to remote repo
+						if(staged_files > 0) {
+							echo "They are ${staged_files} staged files"
+							sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
+							sh('git push ${GIT_REPO}')
+						}
+						else {
+							echo "There no commits to make"
+						}
 					}
 				}
 			}
@@ -90,6 +94,10 @@ pipeline {
 		}
 
 		stage('Deploy on an EC2 instance') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
 			//Using ansible to deploy on an EC2 instance
 			agent {
 				label 'deploynode'
