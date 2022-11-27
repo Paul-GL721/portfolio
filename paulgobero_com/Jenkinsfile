@@ -67,6 +67,7 @@ pipeline {
 				label 'testnode'
 			}
 			steps {
+				echo '..................Runing Tests................'
 				//test code
 				echo "Testing the code in the git repository"
 			}
