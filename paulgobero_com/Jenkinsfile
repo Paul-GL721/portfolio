@@ -30,7 +30,7 @@ pipeline {
 			}
 			steps {
 				//with github credentials stored in jenkins
-				sshagent (credentials: ['']) {
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					//make the build script executable
 					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
 					
