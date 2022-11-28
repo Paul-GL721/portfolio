@@ -118,4 +118,21 @@ pipeline {
 			}
 		}
 	}
+	post {
+		success {
+			node {
+				docker {
+					image 'paulgl721/githubcli:2.0'
+					label 'buildnode'
+				}
+			}
+			withCredentials([usernamePassword(credentialsId: 'jenkins-post-pr-portfolio', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {
+				sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					sh(label: 'gh auth login', script: "echo \${GH_TOKEN}|gh auth login --with-token")
+					sh(label: 'gh pr', script: ' gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production')
+					sh(label: 'gh logout', script: 'gh auth logout')
+				}
+			}
+		}
+	}
 }
