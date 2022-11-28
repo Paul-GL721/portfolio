@@ -126,12 +126,12 @@ pipeline {
 			}
 			//Use a docker image with gitcli installed
 			agent {
-				docker {  
-					image 'maniator/gh:v2.20.2'
+				docker { 
+					image 'paulgl721/githubcli:2.0.5'
 					label 'buildnode'
-					args '-v ${HOME}:/root'
-					args '-v /$(pwd):/githubcli'
-					args '-e GITHUB_TOKEN=$GH_TOKENCRED_PSW'
+					//args '-v ${HOME}:/root'
+					//args '-v $(pwd):/githubcli'
+					//args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
 					//args '-e GH_TOKEN=$GH_TOKENCRED_PSW'
 				}
 			}
