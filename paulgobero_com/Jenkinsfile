@@ -127,10 +127,10 @@ pipeline {
 			//Use a docker image with gitcli installed
 			agent {
 				docker { 
-					image 'paulgl721/githubcli:2.0.3'
+					image 'paulgl721/githubcli:2.0.4'
 					label 'buildnode'
-					//args '-v ${HOME}:/root'
-					//args '-v $(pwd):/gh'
+					args '-v ${HOME}:/root'
+					args '-v $(pwd):/githubcli'
 					//args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
 					//args '-e GH_TOKEN=$GH_TOKENCRED_PSW'
 				}
