@@ -127,7 +127,7 @@ pipeline {
 			//Use a docker image with gitcli installed
 			agent {
 				docker { 
-					image 'paulgl721/githubcli:2.0'
+					image 'paulgl721/githubcli:2.0.1'
 					label 'buildnode'
 					//args '-v ${HOME}:/root'
 					//args '-v $(pwd):/gh'
@@ -139,16 +139,16 @@ pipeline {
 				echo '..............Creating pull request on production branch..........'
 
 				//make the build script executable
-				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
+				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
 
 				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
+				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
 
-				/*sh 'gh --version'					
+				sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
 				sh 'gh auth status'
 				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-				sh 'gh auth logout'*/
+				sh 'gh auth logout'
 			}
 		}
 	}
