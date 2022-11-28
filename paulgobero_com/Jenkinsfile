@@ -129,16 +129,16 @@ pipeline {
 				docker { 
 					image 'maniator/gh:v2.20.2'
 					label 'buildnode'
-					args '-v ${HOME}:/root'
-					args '-v $(pwd):/gh'
-					args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
+					//args '-v ${HOME}:/root'
+					//args '-v $(pwd):/gh'
+					//args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
 				}
 			}
 			steps {
 				echo '..............Creating pull request on production branch..........'
 					sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 						script {
-							sh 'echo \${GH_TOKEN}|gh auth login --with-token'
+							sh 'gh auth login --with-token'
 							sh 'gh auth status'
 							sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
 							sh 'gh auth logout'
