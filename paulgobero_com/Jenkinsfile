@@ -16,7 +16,7 @@ pipeline {
 		REMOTE_FOLDER='paulgobero_com'
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
-		GITHUB_CLI=credentials('jenkins-post-pr-portfolio')
+		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
 	}
 
 	stages {
@@ -132,12 +132,14 @@ pipeline {
 					//args '-v ${HOME}:/root'
 					//args '-v $(pwd):/gh'
 					//args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
+					//args '-e GH_TOKEN=$GH_TOKENCRED_PSW'
 				}
 			}
 			steps {
 				echo '..............Creating pull request on production branch..........'
-					
-				sh 'gh auth login'
+
+				sh 'gh --version'					
+				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
 				sh 'gh auth status'
 				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
 				sh 'gh auth logout'
