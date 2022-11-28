@@ -16,6 +16,7 @@ pipeline {
 		REMOTE_FOLDER='paulgobero_com'
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
+		GITHUB_CLI=credentials('jenkins-post-pr-portfolio')
 	}
 
 	stages {
@@ -125,24 +126,25 @@ pipeline {
 			}
 			//Use a docker images with gitcli installed
 			agent {
-				docker {
-					image 'paulgl721/githubcli:2.0'
+				docker { 
+					image 'maniator/gh:v2.20.2'
 					label 'buildnode'
+					args '-v ${HOME}:/root'
+					args '-v $(pwd):/gh'
+					args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
 				}
 			}
 			steps {
 				echo '..............Creating pull request on production branch..........'
-				withCredentials([usernamePassword(credentialsId: 'jenkins-post-pr-portfolio', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {
 					sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 						script {
-							sh 'export GITHUB_TOKEN='
 							sh 'echo \${GH_TOKEN}|gh auth login --with-token'
 							sh 'gh auth status'
 							sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
 							sh 'gh auth logout'
 						}
 					}
-				}
+				
 			}
 		}
 	}
