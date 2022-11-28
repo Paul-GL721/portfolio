@@ -138,11 +138,17 @@ pipeline {
 			steps {
 				echo '..............Creating pull request on production branch..........'
 
-				sh 'gh --version'					
+				//make the build script executable
+				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
+
+				//build the image
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''+GH_TOKENCRED_PSW+''' '''
+
+				/*sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
 				sh 'gh auth status'
 				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-				sh 'gh auth logout'
+				sh 'gh auth logout'*/
 			}
 		}
 	}
