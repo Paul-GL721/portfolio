@@ -1,14 +1,14 @@
 #!/bin/bash
 
 gh --version
-whoami
-echo usr=$USER
+#whoami
+#echo usr=$USER
 
 # Switch user and login and push image to docker hub 
 #(credentials are in the pass credsStore) 
 sudo su root <<HERE
-whoami
-echo usr=$USER
+#whoami
+#echo usr=$USER
 					
 echo \$GH_TOKENCRED_PSW|gh auth login --with-token
 gh auth status
