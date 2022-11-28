@@ -142,7 +142,7 @@ pipeline {
 				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
 
 				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''+GH_TOKENCRED_PSW+''' '''
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
 
 				/*sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
