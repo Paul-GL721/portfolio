@@ -120,6 +120,24 @@ pipeline {
 			}
 		}
 
+		stage('Create temporary pr branches') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
+			//Using git to create branches
+			agent {
+				label 'buildnode'
+			}
+			steps {
+				echo '..................Creating Temporary Branches................'
+				sh 'git branch --all'
+				sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
+				sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
+				sh 'git push --set-uprstream tmpstagingv$VERSION '				
+			}
+		}
+
 		stage('Create pull request') {
 			//Execute if its the staging branch
 			when {
@@ -145,8 +163,6 @@ pipeline {
 
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
-				sh 'git branch --all'
-				sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
 				sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 				sh 'gh auth status'
