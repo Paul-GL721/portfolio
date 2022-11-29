@@ -61,7 +61,7 @@ pipeline {
 						}
 
 						sh ('git branch tmpstage$VERSION staging')
-						sh ('git push ${GIT_REPO}')
+						sh ('git push --set-upstream orign/tmpstage$VERSION')
 					}
 				}
 			}
