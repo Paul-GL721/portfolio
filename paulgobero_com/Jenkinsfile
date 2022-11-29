@@ -18,6 +18,7 @@ pipeline {
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
+		EMAIL_TO='team@paulgobero.com'
 	}
 
 	stages {
@@ -155,21 +156,12 @@ pipeline {
 		}
 	}
 
-	/* post {
+	post {
 		success {
-			node {
-				docker.image('paulgl721/githubcli:2.0').inside {
-					withCredentials([usernamePassword(credentialsId: 'jenkins-post-pr-portfolio', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {
-						sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-							script {
-								sh 'echo \${GH_TOKEN}|gh auth login --with-token'
-								sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-								sh 'gh auth logout'
-							}
-						}
-					}
-				}
-			}			
+			echo '...........JOB EXECUTED SUCCESSFULLY...........'
+			emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}',
+			subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER', 
+            to: "${EMAIL_TO}" 
 		}
-	} */
+	} 
 }
