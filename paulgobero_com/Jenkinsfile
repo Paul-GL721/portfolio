@@ -148,8 +148,8 @@ pipeline {
 				sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 				sh 'gh auth status'
-				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production --head staging'
-				sh 'gh auth logout'
+				sh 'gh pr create --title "Staging branch v${env.VERSION} was successful" --body "Staging branch version${env.VERSION} was successfully tested and deployed needs to be merged into production" --base production --head staging'
+				sh 'gh auth logout --hostname github.com'
 
 				/*withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
 					script {
