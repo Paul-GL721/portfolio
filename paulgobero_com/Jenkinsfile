@@ -60,8 +60,8 @@ pipeline {
 							echo "There no commits to make"
 						}
 
-						sh 'git branch tmpstage$VERSION'
-						sh 'git push ${GIT_REPO}'
+						sh ('git branch tmpstage$VERSION staging')
+						sh ('git push ${GIT_REPO}')
 					}
 				}
 			}
