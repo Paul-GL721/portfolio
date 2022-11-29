@@ -145,8 +145,13 @@ pipeline {
 
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
+				sh 'gh --version'					
+				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+				sh 'gh auth status'
+				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
+				sh 'gh auth logout'
 
-				withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
+				/*withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
 					script {
 						sh 'gh --version'
 						sh 'export GITHUB_TOKEN='
@@ -159,7 +164,7 @@ pipeline {
 						sh 'gh auth logout'
 					}
 					
-				}
+				}*/
 
 				/*sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
