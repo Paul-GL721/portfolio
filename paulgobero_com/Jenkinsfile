@@ -138,7 +138,7 @@ pipeline {
 				}*/
 			}
 			steps {
-				echo '..............Creating pull request on production branch..........'
+				echo '.............Creating pull request on production branch..........'
 
 				//make the build script executable
 				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
