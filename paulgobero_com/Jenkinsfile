@@ -143,12 +143,18 @@ pipeline {
 
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
+
+				sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						sh 'gh --version'					
+						sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
+						sh 'gh auth status'
+						sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
+						sh 'gh auth logout'
+					}
+				}
 				
-				sh 'gh --version'					
-				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
-				sh 'gh auth status'
-				sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-				sh 'gh auth logout'
+				
 			}
 		}
 	}
