@@ -16,7 +16,8 @@ pipeline {
 		REMOTE_FOLDER='paulgobero_com'
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
-		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
+		//GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
+		GH_TOKENCRED=credentials('755f872e-4fbe-4127-93cd-8d917ac48242')
 	}
 
 	stages {
@@ -144,17 +145,16 @@ pipeline {
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
 
-				withCredentials([usernamePassword(credentialsId: 'jenkins-post-pr-portfolio', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {
-					sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-						script {
-							sh 'gh --version'
-							sh 'echo \$GH_TOKEN|gh auth login --with-token'
-							sh 'gh auth status'
-							sh 'gh pr create'
-							//sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-							sh 'gh auth logout'
-						}
+				withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
+					script {
+						sh 'gh --version'
+						sh 'echo \$GH_TOKEN|gh auth login --with-token'
+						sh 'gh auth status'
+						sh 'gh pr create'
+						//sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
+						sh 'gh auth logout'
 					}
+					
 				}
 
 				/*sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
