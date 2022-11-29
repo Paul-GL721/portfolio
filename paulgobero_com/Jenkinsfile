@@ -43,9 +43,9 @@ pipeline {
 						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
 
 						//Uncomment if they are changes made and commited to the staging branch directly
-						//sh('git stash')
-						//sh('git pull')
-						//sh('git push ${GIT_REPO}')
+						/*sh('git stash')
+						sh('git pull')
+						sh('git push ${GIT_REPO}')*/
 
 						//Find the number of staged files
 						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
@@ -55,6 +55,12 @@ pipeline {
 							echo "They are ${staged_files} staged files"
 							sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
 							sh('git push ${GIT_REPO}')
+							sh 'git branch --all'
+							sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
+							sh 'git branch --all'
+							sh 'git add .'
+							sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
+							sh 'git push --set-upstream tmpstagingv$VERSION '
 						}
 						else {
 							echo "There no commits to make"
@@ -120,7 +126,7 @@ pipeline {
 			}
 		}
 
-		stage('Create temporary pr branches') {
+		/*stage('Create temporary pr branches') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -142,7 +148,7 @@ pipeline {
 					}
 				}								
 			}
-		}
+		}*/
 
 		stage('Create pull request') {
 			//Execute if its the staging branch
