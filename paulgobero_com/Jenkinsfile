@@ -143,6 +143,7 @@ pipeline {
 
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
+				
 				sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --with-token'
 				sh 'gh auth status'
