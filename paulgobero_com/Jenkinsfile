@@ -148,6 +148,9 @@ pipeline {
 				withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
 					script {
 						sh 'gh --version'
+						sh 'export GITHUB_TOKEN='
+						sh "git config --global credential.https://github.com.helper ''"
+						sh "git config --global 'credential.https://github.com' '!gh auth git-credential' "
 						sh 'echo \$GH_TOKEN|gh auth login --with-token'
 						sh 'gh auth status'
 						sh 'gh pr create'
