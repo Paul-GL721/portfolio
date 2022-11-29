@@ -163,62 +163,66 @@ pipeline {
 				}*/
 			}
 			steps {
-				echo '.............Creating pull request on production branch..........'
-
-				//make the build script executable
-				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
-
-				//build the image
-				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
-
-				sh 'gh --version'					
-				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-				sh 'gh auth status'
-
-				//How many prs exist in github
-				no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
-
-				//if the prs are less than 1, Raise a new pull request on the production branch, 
-				//else a new commit will be automatically tracked by the existing pr
-				if(no_of_prs < 1) {
-					echo "They are ${no_of_prs} pull requests from staging to production"
+				script {
 					echo '.............Creating pull request on production branch..........'
-					sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
-				}
-				else {
-					echo "They are ${no_of_prs} pull requests from staging to production, commit will be automatically tracked"
-				}
-				//sh "gh pr view staging --json number --jq '. | length' "
-				//sh 'gh pr list'
-				//sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
-				sh 'gh auth logout --hostname github.com'
 
-				/*withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
-					script {
-						sh 'gh --version'
-						sh 'export GITHUB_TOKEN='
-						sh "git config --global credential.https://github.com.helper ''"
-						sh "git config --global 'credential.https://github.com' '!gh auth git-credential' "
-						sh 'echo \$GH_TOKEN|gh auth login --with-token'
-						sh 'gh auth status'
-						sh 'gh pr create'
-						//sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-						sh 'gh auth logout'
+					//make the build script executable
+					//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
+
+					//build the image
+					//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
+
+					sh 'gh --version'					
+					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					sh 'gh auth status'
+
+					//How many prs exist in github
+					no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
+
+					//if the prs are less than 1, Raise a new pull request on the production branch, 
+					//else a new commit will be automatically tracked by the existing pr
+					if(no_of_prs < 1) {
+						echo "They are ${no_of_prs} pull requests from staging to production"
+						echo '.............Creating pull request on production branch..........'
+						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
 					}
+					else {
+						echo "They are ${no_of_prs} pull requests from staging to production, commit will be automatically tracked"
+					}
+
+					//sh "gh pr view staging --json number --jq '. | length' "
+					//sh 'gh pr list'
+					//sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
 					
-				}*/
+					sh 'gh auth logout --hostname github.com'
 
-				/*sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						sh 'gh --version'					
-						sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-						sh 'gh auth status'
-						sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-						sh 'gh auth logout'
-					}
-				}*/
-				
-				
+					/*withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
+						script {
+							sh 'gh --version'
+							sh 'export GITHUB_TOKEN='
+							sh "git config --global credential.https://github.com.helper ''"
+							sh "git config --global 'credential.https://github.com' '!gh auth git-credential' "
+							sh 'echo \$GH_TOKEN|gh auth login --with-token'
+							sh 'gh auth status'
+							sh 'gh pr create'
+							//sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
+							sh 'gh auth logout'
+						}
+						
+					}*/
+
+					/*sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+						script {
+							sh 'gh --version'					
+							sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+							sh 'gh auth status'
+							sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
+							sh 'gh auth logout'
+						}
+					}*/
+
+
+				}				
 			}
 		}
 	}
