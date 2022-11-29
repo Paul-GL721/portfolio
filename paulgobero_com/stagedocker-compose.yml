@@ -5,9 +5,12 @@ services:
         image: paulgl721/nodejs-portfolio:JVERSION
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: stagedockerfile
+        volumes:
+            - ".:/nodeApp"    
+            - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/stageconfigs/.env.stage
         ports:
-            - "3000:3000"
+            - "3001:3001"
         depends_on:
             - mongo
         networks: #networks to db and reverse proxy
@@ -44,11 +47,11 @@ services:
     mongo:
         image: mongo:6
         env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.prod
+            - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27017:27017"
+            - "27018:27017"
         volumes:
-            - /mnt/portfolio/paulgobero/database:/data/db
+            - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
             - dbapp-network
             - dbadmin-network
@@ -68,9 +71,9 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8081:8081"
+            - "8082:8081"
         env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.prod
+            - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
             - mongo
         networks: 
