@@ -18,7 +18,6 @@ pipeline {
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
-		//GH_TOKENCRED=credentials('755f872e-4fbe-4127-93cd-8d917ac48242')
 	}
 
 	stages {
@@ -121,30 +120,6 @@ pipeline {
 			}
 		}
 
-		/*stage('Create temporary pr branches') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//Using git to create branches
-			agent {
-				label 'buildnode'
-			}
-			steps {
-				echo '..................Creating Temporary Branches................'
-				sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						sh 'git branch --all'
-						sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
-						sh 'git branch --all'
-						//sh 'git add .'
-						//sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
-						sh 'git push --set-upstream tmpstagingv$VERSION '
-					}
-				}								
-			}
-		}*/
-
 		stage('Create pull request') {
 			//Execute if its the staging branch
 			when {
@@ -153,25 +128,10 @@ pipeline {
 			//Use a docker image with gitcli installed
 			agent {
 				label 'buildnode'
-				/*docker { 
-					image 'paulgl721/githubcli:2.0.8'
-					label 'buildnode'
-					//args '-v ${HOME}:/root'
-					//args '-v $(pwd):/githubcli'
-					//args '-e GITHUB_TOKEN=$GITHUB_CLI_PSW'
-					//args '-e GH_TOKEN=$GH_TOKENCRED_PSW'
-				}*/
 			}
 			steps {
 				script {
 					echo '.............Creating pull request on production branch..........'
-
-					//make the build script executable
-					//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh'
-
-					//build the image
-					//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
-
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
@@ -187,41 +147,9 @@ pipeline {
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
 					}
 					else {
-						echo "They are ${no_of_prs} pull requests from staging to production, commit will be automatically tracked"
+						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
 					}
-
-					//sh "gh pr view staging --json number --jq '. | length' "
-					//sh 'gh pr list'
-					//sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
-					
 					sh 'gh auth logout --hostname github.com'
-
-					/*withCredentials([usernamePassword(credentialsId: '755f872e-4fbe-4127-93cd-8d917ac48242', passwordVariable: 'GH_TOKEN', usernameVariable: 'GH_USERNAME')]) {					
-						script {
-							sh 'gh --version'
-							sh 'export GITHUB_TOKEN='
-							sh "git config --global credential.https://github.com.helper ''"
-							sh "git config --global 'credential.https://github.com' '!gh auth git-credential' "
-							sh 'echo \$GH_TOKEN|gh auth login --with-token'
-							sh 'gh auth status'
-							sh 'gh pr create'
-							//sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-							sh 'gh auth logout'
-						}
-						
-					}*/
-
-					/*sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-						script {
-							sh 'gh --version'					
-							sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-							sh 'gh auth status'
-							sh 'gh pr create --title "Staging branch successful" --body "Staging branch version1.0 needs to be merged into production" --base production'
-							sh 'gh auth logout'
-						}
-					}*/
-
-
 				}				
 			}
 		}
