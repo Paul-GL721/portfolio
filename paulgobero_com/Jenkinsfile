@@ -135,6 +135,7 @@ pipeline {
 					script {
 						sh 'git branch --all'
 						sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
+						sh 'git branch --all'
 						//sh 'git add .'
 						//sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
 						sh 'git push --set-upstream tmpstagingv$VERSION '
