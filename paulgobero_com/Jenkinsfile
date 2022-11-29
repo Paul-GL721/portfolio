@@ -146,7 +146,7 @@ pipeline {
 				//build the image
 				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/pull-request-step.sh '''
 				sh 'git branch --all'
-				sh 'git checkout -b tmpstagingv$VERSION staging'
+				sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
 				sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
 				sh 'gh --version'					
 				sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
