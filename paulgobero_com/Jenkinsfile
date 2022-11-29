@@ -96,10 +96,10 @@ pipeline {
 				echo 'Creating a taged image'
 
 				//make the build script executable
-				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
+				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
@@ -114,10 +114,10 @@ pipeline {
 			}
 			steps {
 				echo '..................Deploying with ansible................'
-				/*script{
+				script{
 					//run ansible-playbook
 					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}*/
+				}
 			}
 		}
 
@@ -159,7 +159,14 @@ pipeline {
 	post {
 		success {
 			echo '...........JOB EXECUTED SUCCESSFULLY...........'
-			emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}',
+			emailext body: 'Your code successfully executed. Check console output at $BUILD_URL to view the results. ',
+			subject: 'Stable staging build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER', 
+            to: "${EMAIL_TO}" 
+		}
+
+		failure {
+			echo '...........JOB WAS UNSUCCESSFULL................'
+			emailext body: 'The commit you made failed. Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}',
 			subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER', 
             to: "${EMAIL_TO}" 
 		}
