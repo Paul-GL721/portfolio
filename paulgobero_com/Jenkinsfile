@@ -131,10 +131,14 @@ pipeline {
 			}
 			steps {
 				echo '..................Creating Temporary Branches................'
-				sh 'git branch --all'
-				sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
-				sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
-				//sh 'git push --set-uprstream tmpstagingv$VERSION '				
+				sshagent(['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						sh 'git branch --all'
+						sh 'git checkout -b tmpstagingv$VERSION remotes/origin/staging'
+						sh 'git commit -m "Created a temporary pull request branch with name tmpstagingv$VERSION"'
+						sh 'git push --set-uprstream tmpstagingv$VERSION '
+					}
+				}								
 			}
 		}
 
