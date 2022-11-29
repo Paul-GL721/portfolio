@@ -16,8 +16,8 @@ pipeline {
 		REMOTE_FOLDER='paulgobero_com'
 		STACKNAME='portfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
-		//GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
-		GH_TOKENCRED=credentials('755f872e-4fbe-4127-93cd-8d917ac48242')
+		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
+		//GH_TOKENCRED=credentials('755f872e-4fbe-4127-93cd-8d917ac48242')
 	}
 
 	stages {
