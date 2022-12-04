@@ -25,7 +25,7 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
-                - "traefik.http.services.app-service.loadbalancer.server.port=3000"
+                - "traefik.http.services.app-service.loadbalancer.server.port=3001"
                 - "traefik.http.routers.app.entrypoints=web,websecure"
                 - "traefik.http.routers.app.tls=true" #enable tls
                 - "traefik.http.routers.app.tls.certresolver=production" #certificate
@@ -49,7 +49,7 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27018:27017"
+            - "27020:27017"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
@@ -88,7 +88,7 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.mongodbadmin.rule=Host(`mongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
+                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8082"
                 - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
                 - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
