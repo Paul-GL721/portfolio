@@ -48,7 +48,7 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27020:27017"
+            - "27017:27017"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
