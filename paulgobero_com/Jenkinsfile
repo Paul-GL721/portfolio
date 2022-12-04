@@ -145,7 +145,7 @@ pipeline {
 					if(no_of_prs < 1) {
 						echo "They are ${no_of_prs} pull requests from staging to production"
 						echo '.............Creating pull request on production branch..........'
-						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstage$VERSION'
+						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
 					}
 					else {
 						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
