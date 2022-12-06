@@ -157,7 +157,7 @@ pipeline {
 			}
 		}
 
-		stage('Merge development and staging branches') {
+		stage('Testing workflow on production') {
 			//Execute if its the develpment branch
 			when {
 				branch 'production'
