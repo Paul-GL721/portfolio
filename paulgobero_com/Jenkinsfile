@@ -126,7 +126,7 @@ pipeline {
 			when {
 				branch 'staging'
 			}
-			//Use a docker agent with gitcli installed
+			//Use a docker image with gitcli installed
 			agent {
 				label 'buildnode'
 			}
