@@ -19,7 +19,7 @@ pipeline {
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
 		EMAIL_TO='team@paulgobero.com'
-		JOB=${JOB_NAME}
+		JOB="${JOB_NAME}"
 	}
 
 	stages {
