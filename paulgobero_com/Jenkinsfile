@@ -167,8 +167,9 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
+
 				echo '..................Merging if anyfiles have changed................'
-				echo job name is $JOB
+				echo '$JOB_NAME'
 			}
 		}
 	}
