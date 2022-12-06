@@ -128,7 +128,7 @@ pipeline {
 			when {
 				branch 'staging'
 			}
-			//Use a docker agent with gitcli installed
+			//Use a docker image with gitcli installed
 			agent {
 				label 'buildnode'
 			}
@@ -139,19 +139,20 @@ pipeline {
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
 
-					//How many prs exist in github
+					//How many prs exist in github repo
 					no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
+					echo "They are ${no_of_prs}"
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
 					//else a new commit will be automatically tracked by the existing pr
-					if(no_of_prs < 1) {
+					//if(no_of_prs == 0) {
 						echo "They are ${no_of_prs} pull requests from staging to production"
 						echo '.............Creating pull request on production branch..........'
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
-					}
-					else {
+					//}
+					//else {
 						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
-					}
+					//}
 					sh 'gh auth logout --hostname github.com'
 				}				
 			}
