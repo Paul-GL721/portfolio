@@ -136,6 +136,7 @@ pipeline {
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
+					sh "gh pr view staging --json"
 
 					//How many prs exist in github repo
 					no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
@@ -146,7 +147,7 @@ pipeline {
 					//if(no_of_prs == 0) {
 						echo "They are ${no_of_prs} pull requests from staging to production"
 						echo '.............Creating pull request on production branch..........'
-						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
+						//sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
 					//}
 					//else {
 						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
