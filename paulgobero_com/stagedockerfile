@@ -3,6 +3,7 @@ FROM node:18.12.0-bullseye
 
 #2. Create a work directory
 WORKDIR /nodeApp
+RUN mkdir -p /nodeApp/stageconfigs
 
 #3. Copy the depency information into the directory
 copy package.json package-lock.json ./

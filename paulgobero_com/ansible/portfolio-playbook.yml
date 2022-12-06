@@ -41,10 +41,10 @@
 
     - name: Replace JVERSION Placeholders in docker-compose.yml 
       shell: |
-        sed -i -e 's/JVERSION/{{ VERSION }}/g' /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}/docker-compose.yml
+        sed -i -e 's/JVERSION/{{ VERSION }}/g' /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}/stagedocker-compose.yml
 
     - name: change directory, and deploy stack
       ansible.builtin.shell:
       args:
         chdir: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}
-        cmd: docker stack deploy -c docker-compose.yml --with-registry-auth {{ STACKNAME }}
+        cmd: docker stack deploy -c stagedocker-compose.yml --with-registry-auth {{ STACKNAME }}
