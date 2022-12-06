@@ -19,6 +19,7 @@ pipeline {
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
 		EMAIL_TO='team@paulgobero.com'
+		JOB=${JOB_NAME}
 	}
 
 	stages {
@@ -33,6 +34,7 @@ pipeline {
 			}
 			steps {
 				echo '..................Merging if anyfiles have changed................'
+				echo $JOB
 				
 				//with github credentials stored in jenkins
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
