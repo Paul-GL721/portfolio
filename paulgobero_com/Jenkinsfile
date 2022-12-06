@@ -141,7 +141,7 @@ pipeline {
 
 					//How many prs exist in github repo
 					//no_of_prs = sh(script: "gh pr view staging --json number,state ") 
-					no_of_prs = sh(script: "gh pr view staging --json number,state --jq '. | .state' ")
+					no_of_prs = sh(script: "gh pr view staging --json number,state --jq '. | .state' ",    returnStdout: true).trim()
 					echo "Check, number of prs on Githuh: They are ${no_of_prs}"
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
