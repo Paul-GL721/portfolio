@@ -156,6 +156,21 @@ pipeline {
 				}				
 			}
 		}
+
+		stage('Merge development and staging branches') {
+			//Execute if its the develpment branch
+			when {
+				branch 'production'
+			}
+			//where to execute
+			agent {
+				label 'buildnode'
+			}
+			steps {
+				echo '..................Merging if anyfiles have changed................'
+				echo job name is $JOB
+			}
+		}
 	}
 
 	post {
