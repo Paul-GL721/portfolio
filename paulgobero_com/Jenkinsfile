@@ -139,6 +139,7 @@ pipeline {
 
 					//How many prs exist in github repo
 					no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
+					echo "They are ${no_of_prs}"
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
 					//else a new commit will be automatically tracked by the existing pr
