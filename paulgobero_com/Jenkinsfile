@@ -146,7 +146,7 @@ pipeline {
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
 					//else a new commit will be automatically tracked by the existing pr
-					if(no_of_prs != OPEN) {
+					if(no_of_prs != "OPEN") {
 						echo "They are ${no_of_prs} pull requests from staging to production"
 						echo '.............Creating pull request on production branch..........'
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
