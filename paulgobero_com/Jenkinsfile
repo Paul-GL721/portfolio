@@ -136,7 +136,7 @@ pipeline {
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
-					sh "gh pr view staging --json"
+					//sh "gh pr view staging --json"
 					no_of_prs = sh(script: "gh pr view staging --json number,state ") 
 
 					//How many prs exist in github repo
