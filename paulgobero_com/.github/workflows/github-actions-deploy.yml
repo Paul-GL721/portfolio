@@ -16,7 +16,7 @@ jobs:
         uses: mickeygoussetorg/trigger-jenkins-job@v1
         with:
           jenkins-server:  "${{ secrets.JENKINS_SERVER }}" 
-          jenkins-job: "mySampleApp" 
+          jenkins-job: "portfolio_production" 
           jenkins-username: ${{ secrets.JENKINS_USERNAME }} 
           jenkins-pat: ${{ secrets.JENKINS_PAT }} 
           poll-time: 10 

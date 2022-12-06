@@ -169,7 +169,7 @@ pipeline {
 			steps {
 
 				echo '..................Merging if anyfiles have changed................'
-				echo '$JOB'
+				
 			}
 		}
 	}
