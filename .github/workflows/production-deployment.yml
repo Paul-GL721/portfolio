@@ -1,0 +1,23 @@
+name: deploy-nodejsapp-with-githubactions
+run-name: ${{ github.actor }} is deploying a nodejs portfolio app
+on:
+  pull_request:
+    types:
+      - closed
+    branches: [ production ]
+
+jobs:
+  deploy-jenkins-with-githubactions:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - id: triggerjenkinsjob
+        uses: mickeygoussetorg/trigger-jenkins-job@v1
+        with:
+          jenkins-server:  "${{ secrets.JENKINS_SERVER }}" 
+          jenkins-job: "portfolio_production" 
+          jenkins-username: ${{ secrets.JENKINS_USERNAME }} 
+          jenkins-pat: ${{ secrets.JENKINS_PAT }} 
+          poll-time: 10 
+          timeout-value: 600 
+          verbose: true 
