@@ -23,7 +23,7 @@ services:
                     - node.role==manager
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
+                - "traefik.http.routers.app.rule=Host(`stagingwww.paulgobero.com`)"
                 - "traefik.http.services.app-service.loadbalancer.server.port=3001"
                 - "traefik.http.routers.app.entrypoints=web,websecure"
                 - "traefik.http.routers.app.tls=true" #enable tls
@@ -86,7 +86,7 @@ services:
                     - node.role==manager
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.mongodbadmin.rule=Host(`mongodbadmin.paulgobero.com`)"
+                - "traefik.http.routers.mongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
                 - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
                 - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
