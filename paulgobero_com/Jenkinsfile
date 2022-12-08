@@ -148,7 +148,7 @@ pipeline {
 						echo "From staging to production, the pull request status is ${pr_status}, this commit will be automatically tracked!"
 					}
 					else {
-						echo "From staging to production there are no OPEN pull requests"
+						echo "From staging to production, there are no OPEN pull requests"
 						echo '.............Creating pull request on production branch..........'
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
 					}
