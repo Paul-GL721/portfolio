@@ -2,7 +2,7 @@
 //define variables
 def staged_files
 def testResult
-def no_of_prs
+def pr_status
 
 pipeline {
 	//run on different agents
@@ -101,7 +101,7 @@ pipeline {
 				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
@@ -116,10 +116,10 @@ pipeline {
 			}
 			steps {
 				echo '..................Deploying with ansible................'
-				script{
+				/*script{
 					//run ansible-playbook
 					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}
+				}*/
 			}
 		}
 
@@ -128,7 +128,7 @@ pipeline {
 			when {
 				branch 'staging'
 			}
-			//Use a docker agent with gitcli installed
+			//Use a docker image with gitcli installed
 			agent {
 				label 'buildnode'
 			}
@@ -138,19 +138,19 @@ pipeline {
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
-
-					//How many prs exist in github
-					no_of_prs = sh(script: "gh pr view staging --json number --jq '. | length' ", returnStdout: true) as Integer
+					
+					//Status of prs in github repo using githubcli
+					pr_status = sh(script: "gh pr view staging --json number,state --jq '. | .state' ",    returnStdout: true).trim()
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
 					//else a new commit will be automatically tracked by the existing pr
-					if(no_of_prs < 1) {
-						echo "They are ${no_of_prs} pull requests from staging to production"
-						echo '.............Creating pull request on production branch..........'
-						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
+					if(pr_status == "OPEN") {
+						echo "From staging to production, the pull request status is ${pr_status}, this commit will be automatically tracked!"
 					}
 					else {
-						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
+						echo "From staging to production there are no OPEN pull requests"
+						echo '.............Creating pull request on production branch..........'
+						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
 					}
 					sh 'gh auth logout --hostname github.com'
 				}				
