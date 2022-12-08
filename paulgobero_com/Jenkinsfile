@@ -2,7 +2,7 @@
 //define variables
 def staged_files
 def testResult
-def no_of_prs
+def pr_status
 
 pipeline {
 	//run on different agents
@@ -136,23 +136,19 @@ pipeline {
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'
-					//sh "gh pr view staging --json"
-					//no_of_prs = sh(script: "gh pr view staging --json number,state ") 
-
-					//How many prs exist in github repo
-					//no_of_prs = sh(script: "gh pr view staging --json number,state ") 
-					no_of_prs = sh(script: "gh pr view staging --json number,state --jq '. | .state' ",    returnStdout: true).trim()
-					echo "Check, number of prs on Githuh: They are ${no_of_prs}"
+					
+					//Status of prs in github repo 
+					pr_status = sh(script: "gh pr view staging --json number,state --jq '. | .state' ",    returnStdout: true).trim()
 
 					//if the prs are less than 1, Raise a new pull request on the production branch, 
 					//else a new commit will be automatically tracked by the existing pr
-					if(no_of_prs != "OPEN") {
-						echo "They are ${no_of_prs} pull requests from staging to production"
+					if(pr_status != "OPEN") {
+						echo "They are ${pr_status} pull requests from staging to production"
 						echo '.............Creating pull request on production branch..........'
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
 					}
 					else {
-						echo "They are/is ${no_of_prs} pull request(s) from staging to production, commit will be automatically tracked"
+						echo "They are/is ${pr_status} pull request(s) from staging to production, commit will be automatically tracked"
 					}
 					sh 'gh auth logout --hostname github.com'
 				}				
