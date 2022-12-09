@@ -1,7 +1,6 @@
 
 //define variables
 def staged_files
-def testResult
 def pr_status
 
 pipeline {
