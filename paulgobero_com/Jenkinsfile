@@ -10,7 +10,7 @@ pipeline {
 
 	//define env variables
 	environment {
-		VERSION="0.1.${BUILD_NUMBER}"
+		VERSION="0.2.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
 		REMOTE_DIR='PORTFOLIO'
