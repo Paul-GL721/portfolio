@@ -12,9 +12,9 @@ pipeline {
 		VERSION="0.1.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
-		REMOTE_DIR='PORTFOLIO'
+		REMOTE_DIR='STAGE_PORTFOLIO'
 		REMOTE_FOLDER='paulgobero_com'
-		STACKNAME='portfolio'
+		STACKNAME='stagingportfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
 		EMAIL_TO='team@paulgobero.com'
