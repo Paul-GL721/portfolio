@@ -1,7 +1,6 @@
 
 //define variables
 def staged_files
-def testResult
 def pr_status
 
 pipeline {
@@ -13,9 +12,9 @@ pipeline {
 		VERSION="0.1.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
-		REMOTE_DIR='PORTFOLIO'
+		REMOTE_DIR='STAGE_PORTFOLIO'
 		REMOTE_FOLDER='paulgobero_com'
-		STACKNAME='portfolio'
+		STACKNAME='stagingportfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
 		EMAIL_TO='team@paulgobero.com'
@@ -36,7 +35,7 @@ pipeline {
 				echo '..................Merging if anyfiles have changed................'
 				echo $JOB
 				
-				//with github credentials stored in jenkins
+				//with github credentials stored in jenkins server
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
 						//make the build script executable
@@ -45,8 +44,8 @@ pipeline {
 						//build the image
 						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
 
-						//Uncomment if they are changes made and commited to the staging branch directly
-						/*sh('git stash')
+						/*//Uncomment if they are changes made and commited to the staging branch directly
+						sh('git stash')
 						sh('git pull')
 						sh('git push ${GIT_REPO}')*/
 
@@ -101,7 +100,7 @@ pipeline {
 				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
@@ -116,10 +115,10 @@ pipeline {
 			}
 			steps {
 				echo '..................Deploying with ansible................'
-				/*script{
+				script{
 					//run ansible-playbook
 					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}*/
+				}
 			}
 		}
 
