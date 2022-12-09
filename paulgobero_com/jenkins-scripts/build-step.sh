@@ -19,7 +19,7 @@ sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
 
-docker push paulgl721/nodejs-portfolio:stagingV$VERSION
+docker push paulgl721/nodejs-portfolio:$VERSION
 HERE
 
 #sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
