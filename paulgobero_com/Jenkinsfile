@@ -120,6 +120,28 @@ pipeline {
 			}
 		}
 
+		stage('Create temp branch') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
+			//build the docker image and push to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				echo '..............Creating temporary pull request branch................'
+				echo 'Creating temp branch'
+
+				//make the pr-branch executable
+				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
+
+				//build the image
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh '''+VERSION+''' '''
+			}
+		}
+
 		stage('Create pull request') {
 			//Execute if its the staging branch
 			when {
@@ -147,7 +169,7 @@ pipeline {
 					else {
 						echo "From staging to production, there are no OPEN pull requests"
 						echo '.............Creating pull request on production branch..........'
-						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head staging'
+						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed needs to be merged into production" --base production --head tmpstagingV$VERSION'
 					}
 					sh 'gh auth logout --hostname github.com'
 				}				
