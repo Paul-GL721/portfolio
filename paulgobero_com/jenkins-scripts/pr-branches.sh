@@ -7,8 +7,8 @@ git config --global user.name "server2"
 git config --global user.email paul@paulgobero.com
 echo The branches are:
 git branch
-git checkout -b tmpstagingV$VERSION staging
-git checkout -f tmpstagingV$VERSION
+git checkout -b tmpstagingV$VERSION
+#git checkout -f tmpstagingV$VERSION
 
 #If any of these files or folder changes in the development branch
 #merge them into the staging branch
