@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-const { DB_PORT, DB_NAME, NODE_PORT } = require('../configs/config');
+
 var app = require('../app');
 var debug = require('debug')('paulgobero-com:server');
 var http = require('http');
@@ -12,7 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort( NODE_PORT || '3000');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
