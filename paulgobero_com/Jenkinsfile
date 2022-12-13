@@ -1,7 +1,6 @@
 
 //define variables
 def staged_files
-def pr_status
 def prod_staged_files
 
 pipeline {
@@ -22,7 +21,7 @@ pipeline {
 	}
 
 	stages {
-		stage('Merge development and staging branches') {
+		stage('1. Merge development and staging branches') {
 			//Execute if its the develpment branch
 			when {
 				branch 'development'
@@ -65,7 +64,7 @@ pipeline {
 			}
 		}
 
-		stage('Testing') {
+		stage('2. Run unit Tests') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -81,7 +80,7 @@ pipeline {
 			}
 		}
 
-		stage('Build and taged image') {
+		stage('3. Build and taged staging image') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -99,11 +98,11 @@ pipeline {
 				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
 
 				//build the image
-				//sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
 
-		stage('Deploy on an EC2 instance') {
+		stage('4. Deploy to staging EC2 instances') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -114,14 +113,14 @@ pipeline {
 			}
 			steps {
 				echo '..................Deploying with ansible................'
-				/*script{
+				script{
 					//run ansible-playbook
 					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}*/
+				}
 			}
 		}
 
-		stage('Merge staging code into production') {
+		stage('5. Merge staging code into production') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -164,7 +163,7 @@ pipeline {
 			}
 		}
 
-		stage('Create production temporary branch') {
+		stage('6. Create production temporary branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -191,7 +190,7 @@ pipeline {
 			}
 		}
 
-		stage('Create pull request from production to main branch') {
+		stage('7. Create pull request from production to master branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -203,25 +202,59 @@ pipeline {
 			steps {
 				script {
 					echo '.............Creating pull request on production branch..........'
+					//login, check githubcli pr status, create message and logout
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-					sh 'gh auth status'
-					
-					//Status of prs in github repo using githubcli
-					//pr_status = sh(script: "gh pr view production --json number,state --jq '. | .state' ",    returnStdout: true).trim()
-
-					//if the prs are less than 1, Raise a new pull request on the master branch, 
-					//else a new commit will be automatically tracked by the existing pr
-					//if(pr_status == "OPEN") {
-						//echo "From staging to master, the pull request status is ${pr_status}, this commit will be automatically tracked!"
-					//}
-					//else {
-						//echo "From staging to master, there are no OPEN pull requests"
-						echo '.............Creating pull request on master branch..........'
-						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'
-					//}
+					sh 'gh auth status'					
+					echo '.............Creating pull request on master branch..........'
+					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					
 					sh 'gh auth logout --hostname github.com'
 				}				
+			}
+		}
+
+		stage('8. Build, tag, and push to remote storage') {
+			//define env variables
+			environment {
+				REMOTE_DIR='PORTFOLIO'
+				STACKNAME='portfolio'
+			}
+			//Execute if its the production branch
+			when {
+				branch 'master'
+			}
+			//build the docker image and push to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				echo '..............Building and Publishing Docker Images................'
+				echo 'Creating a production taged image'
+
+				//make the build script executable
+				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
+
+				//build the image
+				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
+			}
+		}
+
+		stage('9. Deploy to production EC2 instance') {
+			//Execute if its the staging branch
+			when {
+				branch 'master'
+			}
+			//Using ansible to deploy on an EC2 instance
+			agent {
+				label 'deploynode'
+			}
+			steps {
+				echo '..................Deploying with ansible................'
+				script{
+					//run production ansible-playbook
+					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
+				}
 			}
 		}
 	}
