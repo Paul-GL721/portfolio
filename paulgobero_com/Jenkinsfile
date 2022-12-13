@@ -233,8 +233,8 @@ pipeline {
 			}
 			//Execute if its the production branch
 			when {
-				//branch 'production'
-				changeRequest branch: 'master'
+				branch 'master'
+				//changeRequest branch: 'master'
 			}
 			//build the docker image and push to dockerhub
 			agent {
@@ -257,7 +257,7 @@ pipeline {
 			//Execute if its the staging branch
 			when {
 				branch 'master'
-				changeRequest target: 'master'
+				//changeRequest target: 'master'
 			}
 			//Using ansible to deploy on an EC2 instance
 			agent {
