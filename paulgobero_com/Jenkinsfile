@@ -2,6 +2,7 @@
 //define variables
 def staged_files
 def pr_status
+def prod_staged_files
 
 pipeline {
 	//run on different agents
@@ -120,10 +121,53 @@ pipeline {
 			}
 		}
 
-		stage('Create temp branch') {
+		stage('Merge staging code into production') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
+			}
+			//build the docker image and push to dockerhub
+			agent {
+				//build on build agent
+				label 'buildnode'
+			}
+			steps {
+				//with github credentials stored in jenkins server
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						echo '..............Creating temporary pull request branch................'
+						//make the script executable
+						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
+
+						//build the image
+						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
+
+						/*//Uncomment if they are changes made and commited to the production branch directly
+						sh('git stash')
+						sh('git pull')
+						sh('git push ${GIT_REPO}')*/
+
+						//Find the number of staged files
+						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
+
+						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
+						if(prod_staged_files > 0) {
+							echo "They are ${prod_staged_files} staged files"
+							sh('git commit -m "Merged from staging branch: Build version ${VERSION} " ')
+							sh('git push ${GIT_REPO}')
+						}
+						else {
+							echo "There no commits to make"
+						}
+					}
+				}
+			}
+		}
+
+		stage('Create production temporary branch') {
+			//Execute if its the production branch
+			when {
+				branch 'production'
 			}
 			//build the docker image and push to dockerhub
 			agent {
@@ -148,9 +192,9 @@ pipeline {
 		}
 
 		stage('Create pull request') {
-			//Execute if its the staging branch
+			//Execute if its the production branch
 			when {
-				branch 'staging'
+				branch 'production'
 			}
 			//Use a docker image with gitcli installed
 			agent {
