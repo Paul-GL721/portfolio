@@ -241,6 +241,11 @@ pipeline {
 		}
 
 		stage('9. Deploy to production EC2 instance') {
+			//define env variables
+			environment {
+				REMOTE_DIR='PORTFOLIO'
+				STACKNAME='portfolio'
+			}
 			//Execute if its the staging branch
 			when {
 				branch 'master'
