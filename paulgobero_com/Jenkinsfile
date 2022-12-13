@@ -131,7 +131,7 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
-				//with github credentials stored in jenkins server
+				//Use github credentials stored in jenkins server
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
 						echo '..............Creating temporary pull request branch................'
