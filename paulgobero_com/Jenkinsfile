@@ -151,7 +151,7 @@ pipeline {
 
 						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
 						if(prod_staged_files > 0) {
-							echo "They are ${prod_staged_files} staged files"
+							echo "They are ${prod_staged_files} staged files from staging branch"
 							sh('git commit -m "Merged from staging branch: Build version ${VERSION} " ')
 							sh('git push ${GIT_REPO}')
 						}
