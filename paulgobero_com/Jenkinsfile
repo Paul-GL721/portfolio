@@ -234,7 +234,7 @@ pipeline {
 			//Execute if its the production branch
 			when {
 				//branch 'production'
-				changeRequest target: 'master'
+				changeRequest branch: 'master'
 			}
 			//build the docker image and push to dockerhub
 			agent {
