@@ -120,7 +120,7 @@ pipeline {
 			}
 		}
 
-		stage('5. Merge staging code into production') {
+		stage('5. Merge staging code into production branch') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
