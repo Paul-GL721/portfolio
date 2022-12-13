@@ -3,9 +3,8 @@
 ###Script to merge devlopment code into the staging_code branch###
 
 #set git username and email
-#git config --global user.name "server2"
-#git config --global user.email paul@paulgobero.com
-git clone git@github.com:Paul-GL721/portfolio.git
+git config --global user.name "server2"
+git config --global user.email paul@paulgobero.com
 echo The branches are:
 git branch
 git checkout -b tmpstagingV$VERSION staging

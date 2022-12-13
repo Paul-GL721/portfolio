@@ -131,14 +131,19 @@ pipeline {
 				label 'buildnode'
 			}
 			steps {
-				echo '..............Creating temporary pull request branch................'
-				echo 'Creating temp branch'
+				//with github credentials stored in jenkins server
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						echo '..............Creating temporary pull request branch................'
+						echo 'Creating temp branch'
 
-				//make the pr-branch executable
-				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
+						//make the pr-branch executable
+						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
 
-				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh '''+VERSION+''' '''
+						//build the image
+						sh '''./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh '''+VERSION+''' '''
+					}
+				}
 			}
 		}
 
