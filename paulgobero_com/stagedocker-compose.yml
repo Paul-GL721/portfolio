@@ -13,7 +13,7 @@ services:
         depends_on:
             - mongo
         networks: #networks to db and reverse proxy
-            - dbapp-network
+            - stagedbapp-network
             - traefik_proxy-network 
         deploy: #using swarm to scale the service
             mode: replicated
@@ -48,12 +48,12 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27017:27017"
+            - "27020:27017"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
-            - dbapp-network
-            - dbadmin-network
+            - stagedbapp-network
+            - stagedbadmin-network
         deploy: #deploy the db on the manager node
             mode: replicated
             replicas: 1
@@ -70,14 +70,14 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8081:8081"
+            - "8082:8081"
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
             - mongo
         networks: 
             - traefik_proxy-network #links to traefik proxy
-            - dbadmin-network #link to database
+            - stagedbadmin-network #link to database
         deploy: #deploy on the manager node
             mode: replicated
             replicas: 1
@@ -99,10 +99,10 @@ services:
 
 #create the communication networks between the containers
 networks:
-    dbapp-network: #link db and webapp
+    stagedbapp-network: #link db and webapp
         driver: overlay
         attachable: true
-    dbadmin-network:
+    stagedbadmin-network:
         driver: overlay
         attachable: true
     traefik_proxy-network:
