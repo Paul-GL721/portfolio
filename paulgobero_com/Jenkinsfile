@@ -208,15 +208,15 @@ pipeline {
 					sh 'gh auth status'
 					
 					//Status of prs in github repo using githubcli
-					pr_status = sh(script: "gh pr view production --json number,state --jq '. | .state' ",    returnStdout: true).trim()
+					//pr_status = sh(script: "gh pr view production --json number,state --jq '. | .state' ",    returnStdout: true).trim()
 
 					//if the prs are less than 1, Raise a new pull request on the master branch, 
 					//else a new commit will be automatically tracked by the existing pr
 					//if(pr_status == "OPEN") {
-						echo "From staging to master, the pull request status is ${pr_status}, this commit will be automatically tracked!"
+						//echo "From staging to master, the pull request status is ${pr_status}, this commit will be automatically tracked!"
 					//}
 					//else {
-						echo "From staging to master, there are no OPEN pull requests"
+						//echo "From staging to master, there are no OPEN pull requests"
 						echo '.............Creating pull request on master branch..........'
 						sh 'gh pr create --title "Staging branch v$VERSION was successful" --body "Staging branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'
 					//}
