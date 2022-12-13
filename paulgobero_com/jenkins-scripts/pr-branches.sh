@@ -14,7 +14,7 @@ git checkout -f tmpstagingV$VERSION
 #merge them into the staging branch
 git checkout origin/staging paulgobero_com/bin paulgobero_com/configs paulgobero_com/models paulgobero_com/mongodb/Dockerfile paulgobero_com/public paulgobero_com/routes paulgobero_com/views paulgobero_com/app.js paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json
 
-git branch --set-upstream-to origin tmpstagingV$VERSION
+git push --set-upstream origin tmpstagingV$VERSION
 
 git status
 #git remote -v
