@@ -42,7 +42,7 @@ services:
                 parallelism: 2
                 delay: 10s  
 
-    #mongodb database service
+    #mongodb database staging service
     stagemongo:        
         build: #build staging mongodb
             context: ./mongodb
