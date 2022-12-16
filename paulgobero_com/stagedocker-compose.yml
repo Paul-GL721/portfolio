@@ -43,8 +43,11 @@ services:
                 delay: 10s  
 
     #mongodb database service
-    stagemongo:
-        image: mongo:6
+    stagemongo:        
+        build: #build staging mongodb
+            context: ./mongodb
+            dockerfile: Dockerfile
+        image: paulgl721/stagingmongdb
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
