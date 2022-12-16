@@ -6,7 +6,8 @@ services:
         build: #build from stagedockerfile
             context: .
             dockerfile: stagedockerfile
-        volumes:       
+        volumes:
+            - ".:/nodeApp"       
             - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/stageconfigs/.env.stage
         ports:
             - "3001:3001"
