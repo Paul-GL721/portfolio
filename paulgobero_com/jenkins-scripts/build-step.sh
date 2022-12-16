@@ -18,7 +18,8 @@ echo usr=$USER
 sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
-docker image push -a
+docker push paulgl721/nodejs-portfolio:stagingV$VERSION
+docker push paulgl721/stagingmongdb
 HERE
 #docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 
