@@ -50,7 +50,7 @@ pipeline {
 						//Find the number of staged files
 						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
-						//if they are (staged_files) more than zero, commit the files and push to remote repo
+						//if staged_files are more than zero, commit the files and push to remote repo
 						if(staged_files > 0) {
 							echo "They are ${staged_files} staged files"
 							sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
@@ -120,7 +120,7 @@ pipeline {
 			}
 		}
 
-		stage('5. Merge staging code into production') {
+		stage('5. Merge staging code into production branch') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
