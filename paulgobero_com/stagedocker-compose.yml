@@ -3,7 +3,7 @@ version: '3.8'
 services:
     app:
         image: paulgl721/nodejs-portfolio:stagingVJVERSION
-        build:
+        build: #build from stagedockerfile
             context: .
             dockerfile: stagedockerfile
         volumes:       
