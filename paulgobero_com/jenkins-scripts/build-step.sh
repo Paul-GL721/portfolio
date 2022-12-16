@@ -18,9 +18,9 @@ echo usr=$USER
 sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
-
-docker push paulgl721/nodejs-portfolio:stagingV$VERSION
+docker push 
 HERE
+#docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 
 #sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
 #sh '''docker-compose -f ./${BASE_DIRECTORY}/docker-compose.yml build'''
