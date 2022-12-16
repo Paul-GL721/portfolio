@@ -49,7 +49,7 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27020:27017"
+            - "27017:27017"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
@@ -71,7 +71,7 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8082:8081"
+            - "8081:8081"
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
@@ -88,7 +88,7 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.mongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8082"
+                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
                 - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
                 - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
