@@ -18,7 +18,7 @@ echo usr=$USER
 sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
-docker compose push
+docker-compose push
 HERE
 #docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 
