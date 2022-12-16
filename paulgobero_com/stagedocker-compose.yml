@@ -6,8 +6,7 @@ services:
         build:
             context: .
             dockerfile: stagedockerfile
-        volumes:
-            - ".:/nodeApp"       
+        volumes:       
             - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/stageconfigs/.env.stage
         ports:
             - "3001:3001"
@@ -88,7 +87,7 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.mongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
+                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8082"
                 - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
                 - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
