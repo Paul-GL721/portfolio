@@ -54,6 +54,7 @@ services:
             - "27020:27020"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
+        command: mongod --port 27020
         networks: #networks to application and admin
             - stagedbapp-network
             - stagedbadmin-network
