@@ -47,7 +47,7 @@ services:
         build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
-        image: paulgl721/stagingmongdb
+        image: paulgl721/stagingmongdb:stagingVJVERSION
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:

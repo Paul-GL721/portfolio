@@ -19,7 +19,7 @@ sudo su ubuntu <<HERE
 whoami
 echo usr=$USER
 docker push paulgl721/nodejs-portfolio:stagingV$VERSION
-docker push paulgl721/stagingmongdb
+docker push paulgl721/stagingmongdb:stagingV$VERSION
 HERE
 #docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 
