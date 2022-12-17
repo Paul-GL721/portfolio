@@ -44,7 +44,7 @@ services:
 
     #mongodb staging database service
     stagemongo:        
-        build: #build staging mongodb
+        build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
         image: paulgl721/stagingmongdb
