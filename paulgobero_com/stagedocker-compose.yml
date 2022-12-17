@@ -50,11 +50,13 @@ services:
         image: paulgl721/stagingmongdb:stagingVJVERSION
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
-        ports:
-            - "27020:27020"
+        #ports:
+            #- "27020:27020"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         command: mongod --port 27020
+        expose:
+            - 27020
         networks: #networks to application and admin
             - stagedbapp-network
             - stagedbadmin-network
