@@ -87,7 +87,7 @@ services:
             placement:
                 constraints:
                     - node.role==worker
-            labels: #generate configurations for the reverse proxy
+            labels: #generate reverse proxy configurations
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.mongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
                 - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
