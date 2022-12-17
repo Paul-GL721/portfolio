@@ -51,7 +51,7 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         ports:
-            - "27020:27017"
+            - "27020:27020"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         networks: #networks to application and admin
@@ -73,7 +73,7 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8082:8081"
+            - "8082:8082"
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
