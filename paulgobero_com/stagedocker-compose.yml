@@ -11,7 +11,7 @@ services:
         ports:
             - "3001:3001"
         depends_on:
-            - stagemongo
+            - mongo
         networks: #networks to db and reverse proxy
             - stagedbapp-network
             - traefik_proxy-network 
@@ -43,7 +43,7 @@ services:
                 delay: 10s  
 
     #mongodb staging database service
-    stagemongo:        
+    mongo:        
         build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
@@ -77,7 +77,7 @@ services:
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
-            - stagemongo
+            - mongo
         networks: 
             - traefik_proxy-network #links to traefik proxy
             - stagedbadmin-network #link to database
