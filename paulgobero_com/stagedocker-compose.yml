@@ -100,7 +100,7 @@ services:
                 max_attempts: 10
                 window: 120s
 
-#create the communication networks between the containers
+#Communication networks between the containers
 networks:
     stagedbapp-network: #link db and webapp
         driver: overlay
