@@ -15,7 +15,7 @@ services:
         depends_on:
             - mongo
         networks: #networks to db and reverse proxy
-            - stagedbapp-network
+            #- stagedbapp-network
             - traefik_proxy-network 
         deploy: #using swarm to scale the service
             mode: replicated
@@ -60,7 +60,7 @@ services:
         expose:
             - 27020
         networks: #networks to application and admin
-            - stagedbapp-network
+            #- stagedbapp-network
             - stagedbadmin-network
         deploy: #deploy the db on the manager node
             mode: replicated
@@ -87,7 +87,7 @@ services:
             - mongo
         networks: 
             - traefik_proxy-network #links to traefik proxy
-            - stagedbadmin-network #link to database
+            #- stagedbadmin-network #link to database
         deploy: #deploy on the manager node
             mode: replicated
             replicas: 1
