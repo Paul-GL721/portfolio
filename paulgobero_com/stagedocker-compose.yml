@@ -77,10 +77,10 @@ services:
     #web-based mongoDB admin interface
     mongodbadmin:
         image: mongo-express:latest
-        ports:
-            - "8082:8082"
-        #expose:
-         #   - 8082
+        #ports:
+            #- "8082:8082"
+        expose:
+            - 8082
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
