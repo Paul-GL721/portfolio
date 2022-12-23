@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 const { DB_PORT, DB_NAME, NODE_PORT } = require('../configs/config');
-console.log(NODE_PORT);
 var app = require('../app');
 var debug = require('debug')('paulgobero-com:server');
 var http = require('http');

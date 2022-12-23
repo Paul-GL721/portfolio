@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-    app: #nodejs app
+    stageapp: #nodejs app
         image: paulgl721/nodejs-portfolio:stagingVJVERSION
         build: #build from stagedockerfile
             context: .
@@ -25,11 +25,11 @@ services:
                     - node.role==worker
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.app.rule=Host(`stagingwww.paulgobero.com`)"
-                - "traefik.http.services.app-service.loadbalancer.server.port=3001"
-                - "traefik.http.routers.app.entrypoints=web,websecure"
-                - "traefik.http.routers.app.tls=true" #enable tls
-                - "traefik.http.routers.app.tls.certresolver=production" #certificate
+                - "traefik.http.routers.stageapp.rule=Host(`stagingwww.paulgobero.com`)"
+                - "traefik.http.services.stageapp-service.loadbalancer.server.port=3001"
+                - "traefik.http.routers.stageapp.entrypoints=web,websecure"
+                - "traefik.http.routers.stageapp.tls=true" #enable tls
+                - "traefik.http.routers.stageapp.tls.certresolver=production" #certificate
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 7s
@@ -75,7 +75,7 @@ services:
                 window: 120s
 
     #web-based mongoDB admin interface
-    mongodbadmin:
+    stagemongodbadmin:
         image: mongo-express:latest
         #ports:
             #- "8082:8082"
@@ -96,11 +96,11 @@ services:
                     - node.role==worker
             labels: #generate reverse proxy configurations
                 - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.mongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8082"
-                - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
-                - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
-                - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
+                - "traefik.http.routers.stagemongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
+                - "traefik.http.services.stagemongodbadmin-service.loadbalancer.server.port=8082"
+                - "traefik.http.routers.stagemongodbadmin.entrypoints=web,websecure"
+                - "traefik.http.routers.stagemongodbadmin.tls=true" #enable tls
+                - "traefik.http.routers.stagemongodbadmin.tls.certresolver=production" #certificate
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 7s
