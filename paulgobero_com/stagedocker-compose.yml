@@ -8,10 +8,10 @@ services:
             dockerfile: stagedockerfile
         volumes:       
             - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/stageconfigs/.env.stage
-        #ports:
-            #- "3001:3001"
-        expose:
-            - 3001
+        ports:
+            - "3001:3001"
+        #expose:
+            #- 3001
         depends_on:
             - mongo
         networks: #networks to db and reverse proxy
