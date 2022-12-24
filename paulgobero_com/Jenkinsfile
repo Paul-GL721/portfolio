@@ -120,7 +120,7 @@ pipeline {
 			}
 		}
 
-		stage('Create a pull request or Not') {
+		stage('5. Create a pull request or Not') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -134,7 +134,7 @@ pipeline {
 			}
 		}
 
-		stage('5. Merge staging code into production branch') {
+		stage('6. Merge staging code into production branch') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -177,7 +177,7 @@ pipeline {
 			}
 		}
 
-		stage('6. Create production temporary branch') {
+		stage('7. Create production temporary branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -204,7 +204,7 @@ pipeline {
 			}
 		}
 
-		stage('7. Create pull request from production to master branch') {
+		stage('8. Create pull request from production to master branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -227,7 +227,7 @@ pipeline {
 			}
 		}
 
-		stage('8. Build, tag, and push to remote storage') {
+		stage('9. Build, tag, and push to remote storage') {
 			//define env variables
 			environment {
 				REMOTE_DIR='PORTFOLIO'
@@ -254,7 +254,7 @@ pipeline {
 			}
 		}
 
-		stage('9. Deploy to production EC2 instance') {
+		stage('10. Deploy to production EC2 instance') {
 			//define env variables
 			environment {
 				REMOTE_DIR='PORTFOLIO'
