@@ -160,7 +160,7 @@ pipeline {
 						sh('git pull')
 						sh('git push ${GIT_REPO}')*/
 
-						//Find the number of staged files
+						//Find the number of staged filess
 						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
 						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
