@@ -128,7 +128,7 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-				echo '................Would you like to create a Pull Request?....................'
+				echo '............Would you like to create a Pull Request to Production?..........'
 				input 'would you like to create a pull request?'
 				
 			}
