@@ -120,6 +120,20 @@ pipeline {
 			}
 		}
 
+		stage('Create a pull request or Not') {
+			//Execute if its the staging branch
+			when {
+				branch 'staging'
+			}
+			//build the docker image and push to dockerhub
+			agent any
+			steps {
+				echo '................Would you like to create a Pull Request?....................'
+				input 'would you like to create a pull request?'
+				
+			}
+		}
+
 		stage('5. Merge staging code into production branch') {
 			//Execute if its the staging branch
 			when {
