@@ -139,7 +139,7 @@ pipeline {
 			when {
 				branch 'staging'
 			}
-			//build the docker image and push to dockerhub
+			//build staging docker image and push to dockerhub
 			agent {
 				//build on build agent
 				label 'buildnode'
