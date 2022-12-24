@@ -128,7 +128,7 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-				echo '..........Would you like to create a Pull Request to Production?........'
+				echo '................Would you like to create a Pull Request?....................'
 				input 'would you like to create a pull request?'
 				
 			}
@@ -253,6 +253,7 @@ pipeline {
 				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
 			}
 		}
+
 
 		stage('10. Deploy to production EC2 instance') {
 			//define env variables
