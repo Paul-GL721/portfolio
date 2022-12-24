@@ -120,7 +120,7 @@ pipeline {
 			}
 		}
 
-		stage('Create a pull request or Not') {
+		stage('5. Create a pull request or Not') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -134,12 +134,12 @@ pipeline {
 			}
 		}
 
-		stage('5. Merge staging code into production branch') {
+		stage('6. Merge staging code into production branch') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
 			}
-			//build the docker image and push to dockerhub
+			//build staging docker image and push to dockerhub
 			agent {
 				//build on build agent
 				label 'buildnode'
@@ -155,12 +155,12 @@ pipeline {
 						//build the image
 						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
 
-						/*//Uncomment if they are changes made and commited to the production branch directly
+						//Uncomment if they are changes made and commited to the production branch directly
 						sh('git stash')
 						sh('git pull')
-						sh('git push ${GIT_REPO}')*/
+						sh('git push ${GIT_REPO}')
 
-						//Find the number of staged files
+						/*//Find the number of staged files
 						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
 						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
@@ -171,13 +171,13 @@ pipeline {
 						}
 						else {
 							echo "There no commits to make"
-						}
+						}*/
 					}
 				}
 			}
 		}
 
-		stage('6. Create production temporary branch') {
+		stage('7. Create production temporary branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -204,7 +204,7 @@ pipeline {
 			}
 		}
 
-		stage('7. Create pull request from production to master branch') {
+		stage('8. Create pull request from production to master branch') {
 			//Execute if its the production branch
 			when {
 				branch 'production'
@@ -227,7 +227,7 @@ pipeline {
 			}
 		}
 
-		stage('8. Build, tag, and push to remote storage') {
+		stage('9. Build, tag, and push to remote storage') {
 			//define env variables
 			environment {
 				REMOTE_DIR='PORTFOLIO'
@@ -254,7 +254,8 @@ pipeline {
 			}
 		}
 
-		stage('9. Deploy to production EC2 instance') {
+
+		stage('10. Deploy to production EC2 instance') {
 			//define env variables
 			environment {
 				REMOTE_DIR='PORTFOLIO'
