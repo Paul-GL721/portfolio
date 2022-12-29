@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
     app:
-        image: paulgl721/nodejs-portfolio
+        image: paulgl721/testnodejs-portfolio
         volumes:
-            - ".:/nodeApp"    
+                # - ".:/nodeApp"    
             - /mnt/portfolio/paulgobero/stageconfigs/.env.stage:/nodeApp/stageconfigs/.env.stage 
         build:
             context: .
@@ -16,14 +16,14 @@ services:
 
     #mongodb database service
     mongo:
-        image: paulgl721/mongo-portfolio
+        image: paulgl721/testmongo-portfolio
         build:
             context: ./mongodb
             dockerfile: Dockerfile
         env_file:
             - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
         ports:
-            - "27018:27017"
+            - "27017:27017"
         volumes:
             - /mnt/portfolio/paulgobero/stagedatabase:/data/db
     
@@ -31,7 +31,7 @@ services:
     mongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8082:8081"
+            - "8081:8081"
         env_file:
             - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
         depends_on:
