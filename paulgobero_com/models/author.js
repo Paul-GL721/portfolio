@@ -18,10 +18,10 @@ const AuthorSchema = new Schema({
 	}
     },
     socialmedia: {
-	facebook: { type: String, trim: true },
-	twitter: { type: String, trim: true },
-	github: { type: String, trim: true },
-	linkedin: { type: String, trim: true }
+		facebook: { type: String, trim: true },
+		twitter: { type: String, trim: true },
+		github: { type: String, trim: true },
+		linkedin: { type: String, trim: true }
     },
     email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
     personal_website: { type: String, trim: true }

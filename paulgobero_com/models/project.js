@@ -9,7 +9,7 @@ const ProjectSchema = new Schema({
     ptitle: { type: String, required: true },
     psummary: { type: String, required: true },
     problemStatement: { type: String, required: true },
-    solutin: { type: String },
+    solution: { type: String },
     skill: { type: Schema.Types.ObjectId, ref: "Skill", required: true },
     role: { type: String, required: true },
     githubUrl: { type: String },
