@@ -1,0 +1,98 @@
+
+{% extends "website_base.njk" %}
+
+{% block title %}<title>Home - PaulGobero</title> {% endblock %}
+
+{% block csshead %}    {% endblock %}
+
+{% block navabar %}    {% endblock %}
+
+{% block content %}
+	<section id="about_section" class="showcase" style="padding-top: 80px;">
+	    <div class="row no-gutters">
+	        <div class="col-lg-6 text-white order-lg-2">
+	            <div><img class="rounded-circle img-fluid" src="assets/img/testimonials-2.jpg"></div>
+	        </div>
+	        <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+	            <h2>Fully Responsive Design</h2>
+	            <p class="lead mb-0">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
+	        </div>
+	    </div>
+	</section>
+    <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div class="d-flex features-icons-icon"><i class="icon-screen-desktop m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
+                    <h3>Fully Responsive</h3>
+                    <p class="lead mb-0">This theme will look great on any device, no matter the size!<a href="#projectmodal" data-toggle="modal">Read more</a></p>
+                    <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Modal Title</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <section class="showcase">
+                                        <div class="container-fluid p-0">
+                                            <div class="row">
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;"></video></div>
+                                                <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
+                                                    <h2>Fully Responsive Design</h2>
+                                                    <p class="lead mb-0">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Save</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div class="d-flex features-icons-icon"><i class="icon-layers m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
+                    <h3>Bootstrap 4 Ready</h3>
+                    <p class="lead mb-0">Featuring the latest build of the new Bootstrap 4 framework!</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div class="d-flex features-icons-icon"><i class="icon-check m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
+                    <h3>Easy to Use</h3>
+                    <p class="lead mb-0">Ready to use with your own content, or customize the source files!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="contact_section" style="padding-top: 80px;background: rgb(248,249,250);">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center"><a href="mailto: paul@paulgobero.com">Email me</a><a href="#">&nbsp;or click to Leave a Message</a></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
+                <form id="contactForm" name="sentMessage" novalidate="novalidate">
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls mb-0 pb-2"><input class="form-control" type="text" id="name" required="" placeholder="Names"><small class="form-text text-danger help-block"></small></div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls mb-0 pb-2"><input class="form-control" type="email" id="email" required="" placeholder="Email Address"><small class="form-text text-danger help-block"></small></div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls mb-5 pb-2"><textarea class="form-control" id="message" required="" placeholder="Message" rows="5"></textarea><small class="form-text text-danger help-block"></small></div>
+                    </div>
+                    <div id="success"></div>
+                    <div class="form-group"><button class="btn btn-primary btn-xl" id="sendMessageButton" type="submit">Send</button></div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %} {% endblock %}
+
+{% block jsheader %} {% endblock %}

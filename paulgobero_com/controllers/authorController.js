@@ -4,7 +4,7 @@ const Author = require("../models/author");
 
 //Display home website page
 exports.index = (req, res) => {
-	res.send("NOT IMPLEMENTED: Website Home page");
+	res.render("website_index");
 };
 
 //Display a list of authors
