@@ -64,5 +64,3 @@ typings/
 configs/.env.prod
 stageconfigs/
 
-#boostrapstudio design and assets
-../portfolio_design1/
