@@ -6,13 +6,6 @@ var logger = require('morgan');
 var nunjucks = require('nunjucks');
 var db = require('./configs/loadb');
 
-//configure nunjucks view engine
-nunjucks.configure('views', {
-	autoescape: true,
-	express: app
-});
-
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var websiteRouter = require('./routes/website');
@@ -20,8 +13,15 @@ var websiteRouter = require('./routes/website');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// set default express engine and extension
+app.engine('njk', nunjucks.render);
+app.set('view engine', 'njk');
+
+//configure nunjucks view engine
+nunjucks.configure('views', {
+	autoescape: true,
+	express: app
+});
 
 app.use(logger('dev'));
 app.use(express.json());
