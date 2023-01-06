@@ -10,9 +10,9 @@ const ProjectSchema = new Schema({
     psummary: { type: String, required: true },
     problemStatement: { type: String, required: true },
     solution: { type: String },
-    skill: { type: Schema.Types.ObjectId, ref: "Skill", required: true },
     role: { type: String, required: true },
     githubUrl: { type: String },
+    contributor: { type: String },
     skill: [{ type: Schema.Types.ObjectId, ref: "Skill", required: true }],
     author: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     specialisation: [{ tyepe: Schema.Types.ObjectId, ref: "Specialisation", required: true }]

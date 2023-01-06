@@ -13,8 +13,8 @@ const AuthorSchema = new Schema({
     },
     contact: {
 	phoneNumber: {
-	    work: { type: String, trim: true },
-	    home: { type: String, trim: true }
+	    mobile: { type: String, trim: true },
+	    work: { type: String, trim: true }
 	}
     },
     socialmedia: {
