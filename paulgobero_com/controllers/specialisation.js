@@ -15,8 +15,8 @@ exports.specialisation_detail = (req, res) => {
 }
 
 //Display specialisation create form on Get
-exports.specialisation_create_get = (req, res) => {
-	res.send("NOT IMPLEMENTED: specialisation create get");
+exports.specialisation_create_get = (req, res) => { 
+	res.render("create_specialisation");
 }
 
 //Display specialisation create form on Post
