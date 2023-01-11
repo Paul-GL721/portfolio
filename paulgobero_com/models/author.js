@@ -13,15 +13,15 @@ const AuthorSchema = new Schema({
     },
     contact: {
 	phoneNumber: {
-	    work: { type: String, trim: true },
-	    home: { type: String, trim: true }
+	    mobile: { type: String, trim: true },
+	    work: { type: String, trim: true }
 	}
     },
     socialmedia: {
-	facebook: { type: String, trim: true },
-	twitter: { type: String, trim: true },
-	github: { type: String, trim: true },
-	linkedin: { type: String, trim: true }
+		facebook: { type: String, trim: true },
+		twitter: { type: String, trim: true },
+		github: { type: String, trim: true },
+		linkedin: { type: String, trim: true }
     },
     email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
     personal_website: { type: String, trim: true }

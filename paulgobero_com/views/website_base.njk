@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+{% set Title = "Home" %}
+<head>
+    {% block title %}<title>{{ Title }}</title> {% endblock %}
+    {% block csshead %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">    
+        <meta name="description" content="portfolio for lwanga paul gobero">
+        <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic">
+        <link rel="stylesheet" href="/images/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="/images/fonts/simple-line-icons.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+        <link rel="stylesheet" href="/stylesheets/Navigation-Clean.css">
+    {% endblock %}
+</head>
+
+<body>
+    <div class="container-fluid">
+        {% block navabar %}
+            <div class="row">
+                <div class="col">
+                    <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
+                        <div class="container-fluid"><a class="navbar-brand" href="#">Paul Gobero</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                            <div class="collapse navbar-collapse" id="navcol-1">
+                                <ul class="navbar-nav ml-auto">
+                                    <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block content %} <!--Will contain the main block content -->  {% endblock %}
+
+        {% block footer %}
+            <footer class="bg-light footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 text-center text-lg-left my-auto h-100">
+                            <ul class="list-inline mb-2">
+                                <li class="list-inline-item"><a href="#about_section">About</a></li>
+                                <li class="list-inline-item"><span>⋅</span></li>
+                                <li class="list-inline-item"><a href="#">Contact</a></li>
+                                <li class="list-inline-item"><span>⋅</span></li>
+                                <li class="list-inline-item"><a href="#">Terms of &nbsp;Use</a></li>
+                                <li class="list-inline-item"><span>⋅</span></li>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                            </ul>
+                            <p class="text-muted small mb-4 mb-lg-0">© Brand 2022. All Rights Reserved.</p>
+                        </div>
+                        <div class="col-lg-6 text-center text-lg-right my-auto h-100">
+                            <ul class="list-inline mb-0">
+                                <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
+                                <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
+                                <li class="list-inline-item"><a href="#"><i class="fa fa-linkedin fa-2x fa-fw"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        {% endblock %}
+    </div>
+    {% block jsheader %}
+        <script src="/javascripts/jquery.min.js"></script>
+        <script src="/javascripts/bootstrap.min.js"></script>
+        <script src="/javascripts/bs-init.js"></script>
+    {% endblock %}
+</body>
+
+</html>

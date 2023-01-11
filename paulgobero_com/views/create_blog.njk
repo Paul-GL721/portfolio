@@ -1,0 +1,67 @@
+
+{% set Title = "Portfolio_create_blog" %}
+{% extends "website_base.njk" %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-12 col-sm-12 col-md-8" id="main_div">
+            <div class="page-header">
+                <h1 class="text-center projheading"><em><span style="text-decoration: underline;">Create Blog Article</span></em></h1>
+            </div>
+            <form id="Blogform" name="Blogform" action="http://localhost/glsranchers/Database1/Backend/Entryinfo/entrysubmtvals.php" method="post" enctype="multipart/form-data">
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogtitle"><strong>Title:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="blogtitle" name="blogtitle" placeholder="Enter Blog Title"></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogauthor"><strong>Author:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><select class="form-control" id="blogauthor" name="blogauthor">
+                            <option value="undefined" selected="">Select registered Author</option>
+                            <option value="12">This is item 1</option>
+                        </select></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogkeywords"><strong>Keywords:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogkeywords" name="blogkeywords" placeholder="Blog Keywords" rows="3" cols="10"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogsummary"><strong>Summary:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogsummary" name="blogsummary" placeholder="Enter blog Abstract" rows="5" cols="10"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogintro"><strong>Introduction:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogintro" name="blogintro" placeholder="Blog Introduction" rows="5" cols="10"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogbody"><strong>Body:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogbody" name="blogbody" placeholder="Blog Body" rows="5" cols="10"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogconclusion"><strong>Conclusion:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogconclusion" name="blogconclusion" placeholder="Blog Conclusion" rows="2" cols="10"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogstatus"><strong>Status:</strong></label></div>
+                    <div class="col-4 col-sm-4 col-md-4">
+                        <div class="form-check text-center"><input class="form-check-input" type="radio" id="statuscomplete" name="statuscomplete" value="statuscomplete"><label class="form-check-label" for="statuscomplete">Complete</label></div>
+                    </div>
+                    <div class="col-3 col-sm-3 col-md-4">
+                        <div class="form-check"><input class="form-check-input" type="radio" id="statusincomplete" name="statusincomplete" value="statusincomplete"><label class="form-check-label" for="statusincomplete">Incomplete</label></div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="blogsubmitbutton" name="blogsubmitbutton" type="submit">Submit</button></div>
+                </div>
+            </form>
+            <div class="form-group row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+{% endblock %}
+
+
