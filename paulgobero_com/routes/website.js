@@ -5,6 +5,7 @@ const router = express.Router();
 
 //Require controller modules
 const author_controller = require("../controllers/authorController");
+const specialisation_controller = require("../controllers/specialisationController");
 
 				//........AUTHOR ROUTES.....//
 //Get website home page
@@ -37,6 +38,29 @@ router.get("/author", author_controller.author_list);
 				//........PROJECT ROUTES.....//
 				//........BLOG ROUTES.....//
 				//........SPECILISATION ROUTES.....//
+//Get request for creating specialisation
+router.get("/specialisation/create", specialisation_controller.specialisation_create_get);
+
+//Post request for creating specialisation
+router.post("/specialisation/create", specialisation_controller.specialisation_create_post);
+
+//Get request for deleting specialisation
+router.get("/specialisation/:id/delete", specialisation_controller.specialisation_delete_get);
+
+//Post request for deleting specialisation
+router.post("/specialisation/:id/delete", specialisation_controller.specialisation_delete_post);
+
+//Get request for updating specialisation
+router.get("/specialisation/:id/update", specialisation_controller.specialisation_update_get);
+
+//Post request for updating specialisation
+router.post("/specialisation/:id/update", specialisation_controller.specialisation_update_post);
+
+//Get request for one specialisation
+router.get("/specialisation/:id", specialisation_controller.specialisation_detail);
+
+//Get request for all specialisations
+router.get("/specialisation", specialisation_controller.specialisation_list);
 				//........SKILLS ROUTES.....//
 
 module.exports = router;
