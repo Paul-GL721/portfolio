@@ -42,7 +42,7 @@ router.get("/author", author_controller.author_list);
 router.get("/specialisation/create", specialisation_controller.specialisation_create_get);
 
 //Post request for creating specialisation
-router.post("/specialisation/create", specialisation_controller.specialisation_create_post);
+router.post("/specialisation/create/post", specialisation_controller.specialisation_create_post);
 
 //Get request for deleting specialisation
 router.get("/specialisation/:id/delete", specialisation_controller.specialisation_delete_get);
