@@ -63,3 +63,8 @@ typings/
 #ignore env variables
 configs/.env.prod
 stageconfigs/
+
+#ignore ds store
+.DS_Store
+.DS_Store
+
