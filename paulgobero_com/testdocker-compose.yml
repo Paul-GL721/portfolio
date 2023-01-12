@@ -5,7 +5,7 @@ services:
         image: paulgl721/testnodejs-portfolio
         volumes:
                 # - ".:/nodeApp"    
-            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage:/nodeApp/stageconfigs/.env.stage 
+            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage:/nodeApp/stageconfigs/.env.stage
         build:
             context: .
             dockerfile: testdockerfile

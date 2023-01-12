@@ -43,7 +43,8 @@ exports.specialisation_create_post = [
 			name: req.body.specialisationname,
 			description: req.body.specialisationdescription
 		});
-		Specialisation.save((err) => {
+		console.log(spec);
+		spec.save((err) => {
 			if (err) {
 				return next(err);
 			}
