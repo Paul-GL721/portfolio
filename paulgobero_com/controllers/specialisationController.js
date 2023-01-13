@@ -36,21 +36,23 @@ exports.specialisation_create_post = [
 				errors: errors.array(),
 			});
 			return;
+		} else {
+			//if data from the form is valid
+			//create and save the object
+			const spec = new Specialisation({
+				name: req.body.specialisationname,
+				description: req.body.specialisationdescription
+			});
+			console.log("spec");
+			spec.save((err) => {
+				if (err) {
+					return next(err);
+				}
+				//successful, redirect to new record
+				res.redirect(spec.url);
+			});
+
 		}
-		//if data from the form is valid
-		//create and save the object
-		const spec = new Specialisation({
-			name: req.body.specialisationname,
-			description: req.body.specialisationdescription
-		});
-		console.log("spec");
-		spec.save((err) => {
-			if (err) {
-				return next(err);
-			}
-			//successful, redirect to new record
-			res.redirect(spec.url);
-		});
 
 	},
 
