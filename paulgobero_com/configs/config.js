@@ -1,7 +1,8 @@
 
 //file to load environment variables
 const dotenv = require('dotenv');
-const result = dotenv.config({ path: '/nodeApp/stageconfigs/.env.stage' });
+const result = dotenv.config({ path: __dirname+'/.env.dev' });
+
 if (result.error) {
     throw result.error;
 }

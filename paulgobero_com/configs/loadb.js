@@ -1,19 +1,23 @@
 //####### Connect mongodb to nodejs #####
 
-var database_connection = function () {
+const database_connection = async () => {
    //import required modules and variables
    const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = require('./config');
    const mongoose = require('mongoose');
 
    //set mongoose connection
-   const mongoDB = "mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin";
-   mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
-
-   //make the connection
-   const db = mongoose.connection;
-
-   //handle errors
-   db.on("error", console.error.bind(console, "MongoDB connection error:"));
+   const mongoDBurl = 'mongodb://'+DB_USER+':'+DB_PASSWORD+'@'+DB_HOST+':'+DB_PORT+'/'+DB_NAME+'?authSource=admin';
+   
+   await mongoose.connect(mongoDBurl, { useNewUrlParser: true, useUnifiedTopology: true },
+      (err) => {
+         if (err) {
+            console.error('FAILED TO CONNECT');
+            console.error(err);
+         } else {
+            console.log('CONNECTED TO MONGODB');
+         }
+      }
+   ) 
 };
-module.exports = database_connection
+module.exports = database_connection;
 
