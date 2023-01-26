@@ -1,5 +1,4 @@
 
-{% set Title = "Portfolio Create Specialisation" %}
 {% extends "website_base.njk" %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
@@ -13,8 +12,8 @@
             </div>
             <form id="Specialisationform" name="Specialisationform" action="" method="post" >
                 <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specialisationname"><strong>Specialization:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="specialisationname" name="specialisationname" placeholder="Enter Specialisation Name" value={{ "spec.specialisationname" if error }}></div>
+                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specialisationname"><strong>Specializations:</strong></label></div>
+                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="specialisationname" name="specialisationname" placeholder="Enter Specialisation Name"></div>
                 </div>
                 <div class="form-group row">
                     <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specialisationdescription"><strong>Description:</strong></label></div>
