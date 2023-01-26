@@ -15,9 +15,9 @@ exports.specialisation_detail = (req, res) => {
 }
 
 //Display specialisation create form on Get
-exports.specialisation_create_get = (req, res) => { 
-	res.render("create_specialisation");
-}
+exports.specialisation_create_get = (req, res, next) => { 
+	res.render("create_specialisation", { Title: "Create Specialisation" });
+};
 
 //Display specialisation create form on Post
 exports.specialisation_create_post = [
@@ -29,27 +29,39 @@ exports.specialisation_create_post = [
 	(req, res, next) => {
 		//extract validation errors from a request
 		const errors = validationResult(req);
+		
+		//create an object with trimed and escaped values
+		const spec = new Specialisation({
+			name: req.body.specialisationname,
+			description: req.body.specialisationdescription
+		});
+
 		if (!errors.isEmpty()) {
 			//if there errors, render the form with sanitized values/error messages
 			res.render("create_specialisation", {
-				spec: req.body,
+				Title: "Create Specialisation",
+				spec,
 				errors: errors.array(),
 			});
 			return;
 		} else {
 			//if data from the form is valid
-			//create and save the object
-			const spec = new Specialisation({
-				name: req.body.specialisationname,
-				description: req.body.specialisationdescription
-			});
-			spec.save((err) => {
+			//check that same name doesnot already exist
+			Specialisation.findOne({ name: req.body.specialisationname }).exec((err, found_name) => {
 				if (err) {
 					return next(err);
 				}
-				//successful, redirect to new record
-				res.redirect(spec.url);
-				console.log("successfully added to database");
+
+				if (found_name) {
+					res.redirect(found_name.url);
+				} else {
+					spec.save((err) => {
+						if (err) {
+							return next(err);
+						}
+						res.redirect(spec.url);
+					});
+				}
 			});
 
 		}
