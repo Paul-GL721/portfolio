@@ -3,8 +3,8 @@
 const Author = require("../models/author");
 
 //Display home website page
-exports.index = (req, res) => {
-	res.render("website_index");
+exports.index = (req, res, next) => {
+	res.render("website_index", { Title: "Portfolio"});
 };
 
 //Display a list of authors
