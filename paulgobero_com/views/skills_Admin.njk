@@ -1,0 +1,40 @@
+
+{% extends "website_base.njk" %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+    <div class="row" style="padding-top: 40px;">
+        <div class="col-md-1"></div>
+        <div class="col-sm-12 col-md-10">
+            <h3 style="text-align: center;">Skills Admin Form</h3>
+            <div class="table-responsive">
+                <table class="table table-striped" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true">
+                    <thead>
+                        <tr>
+                            <th data-checkbox="true" data-field="state"></th>
+                            <th id="id" data-field="id">id</th>
+                            <th id="cellicon" data-field="imageUrl">Icon</th>
+                            <th id="cellskillname" data-field="imageName">Skill Name</th>
+                            <th id="cellskilldesc" data-field="Description">Skill Description</th>
+                            <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><img class="rounded-circle img-fluid" src="assets/img/testimonials-1.jpg" width="40" height="40"></td>
+                            <td></td>
+                            <td></td>
+                            <td><a title="Add"><i class="la la-plus-circle tableicons"></i></a><a title="Edit"><i class="icon-pencil tableicons" style="padding-left: 10px;padding-right: 10px;"></i></a><a title="Delete"><i class="icon-trash tableicons"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+{% endblock %}
+
+
