@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var Buffer = require('safer-buffer');
 var nunjucks = require('nunjucks');
 var db = require('./configs/loadb');
 
