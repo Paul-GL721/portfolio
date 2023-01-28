@@ -35,11 +35,13 @@ exports.skill_list = async (req, res, next) => {
 		for (let skills of list_skills) {		
 			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
-				Key: imgfilename
+				Key: imgfilename,
+				ContentType: "application/octet-stream"
 			}), { expiresIn: 3600})			
 		}
-		
-		res.json(list_skills);
+
+		//res.json(list_skills);
+		res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
 	});
 	
 };
