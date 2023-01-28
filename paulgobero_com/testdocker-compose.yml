@@ -3,9 +3,8 @@ version: '3.8'
 services:
     app:
         image: paulgl721/testnodejs-portfolio
-        volumes:
-                # - ".:/nodeApp"    
-            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage:/nodeApp/stageconfigs/.env.stage
+        env_file:
+            - /configs/.env.dev
         build:
             context: .
             dockerfile: testdockerfile
@@ -21,11 +20,11 @@ services:
             context: ./mongodb
             dockerfile: Dockerfile
         env_file:
-            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
+            - /configs/.env.dev
         ports:
             - "27017:27017"
         volumes:
-            - /mnt/portfolio/paulgobero/stagedatabase:/data/db
+            - stagedatabase:/data/db
     
     #web-based mongoDB admin interface
     mongodbadmin:
@@ -33,7 +32,11 @@ services:
         ports:
             - "8081:8081"
         env_file:
-            - /mnt/portfolio/paulgobero/stageconfigs/.env.stage
+            - /configs/.env.dev
         depends_on:
             - mongo
+
+volumes:
+    stagedatabase:
+
       
