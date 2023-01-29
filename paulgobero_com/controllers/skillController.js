@@ -35,11 +35,9 @@ exports.skill_list = async (req, res, next) => {
 		for (let skills of list_skills) {		
 			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
-				Key: imgfilename,
-				ContentType: "application/octet-stream"
+				Key: imgfilename
 			}), { expiresIn: 3600})			
 		}
-
 		//res.json(list_skills);
 		res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
 	});
@@ -67,7 +65,7 @@ exports.skill_create_post = [
 	async (req, res, next) => {
 		//extract validation errors from a request
 		const errors = validationResult(req);
-
+		
 		//resize the image file
 		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
 
@@ -75,8 +73,7 @@ exports.skill_create_post = [
 		const s3uploadparams = {
 			Bucket: BUCKET_NAME,
 			Body: filebuffer,
-			Key: imgfilename,
-			ContentType: req.file.mimetype
+			Key: imgfilename
 		}
 
 		//send the upload to s3

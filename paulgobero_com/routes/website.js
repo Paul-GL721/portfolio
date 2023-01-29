@@ -37,7 +37,7 @@ router.get("/author/:id", author_controller.author_detail);
 router.get("/author", author_controller.author_list);
 
 				//........PROJECT ROUTES.....//
-				//........BLOG ROUTES.....//
+				//........BLOG ROUTES.....//	
 				//........SPECILISATION ROUTES.....//
 //Get request for creating specialisation
 router.get("/specialisation/create", specialisation_controller.specialisation_create_get);
