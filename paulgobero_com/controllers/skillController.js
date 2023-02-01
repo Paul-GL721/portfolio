@@ -130,7 +130,7 @@ exports.skill_delete_get = (req, res) => {
 //Display skill delete form on Post
 exports.skill_delete_post = async (req, res) => {
 	//delete from s3 bucket
-	const id = req.body.skillid
+	const id = req.body.skilid
 	const delskill = await Skill.findOne({where: {id}});
 	const delparams = {
 		Bucket: BUCKET_NAME,
