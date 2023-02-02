@@ -9,13 +9,13 @@
             <div class="col-md-1"></div>
             <div class="col-sm-12 col-md-10">
                 <h3 style="text-align: center;">Skills Admin Form</h3>
-                <div id="toolbar"><button class="btn btn-secondary" id="skillbtnAdd" type="button" title="Add New Skill"><i class="icon-plus tableicons"></i>Add<a href="create_skill"></a></button><button class="btn btn-danger" id="skillbtnDelete" type="button" title="Delete Selected  Row(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div id="toolbar"><button class="btn btn-secondary" id="skillbtnAdd" type="button" title="Add New Skill" onclick="location.href='skill/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="skillbtnDelete" type="button" title="Delete Selected  Row(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
                 <div class="table-responsive">
-                    <table class="table table-striped" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true">
+                    <table id="skilltable" class="table table-striped" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true">
                         <thead>
                             <tr>
                                 <th data-checkbox="true" data-field="state"></th>
-                                <th id="skills_id" data-field="skilid">id</th>
+                                <th id="skills_id" data-field="skills_id"">id</th>
                                 <th id="cellicon" data-field="imageUrl">Icon</th>
                                 <th id="cellskillname" data-field="imageName">Skill Name</th>
                                 <th id="cellskilldesc" data-field="Description">Skill Description</th>

@@ -4,13 +4,14 @@ const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
 
 //s3 file upload
-const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
 
 const { body, validationResult } = require("express-validator"); //form validator
 const { storage, fileFilter, uploadimg } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
+const skill = require("../models/skill");
 
 const s3Client = new S3Client({
 	region: BUCKET_REGION,
@@ -129,23 +130,25 @@ exports.skill_delete_get = (req, res) => {
 
 //Display skill delete form on Post
 exports.skill_delete_post = async (req, res) => {
+
+	//delete from database
+	const id = req.body.skilid
+	console.log("The id to delete is" + id);
+	Skill.findByIdAndDelete(id, (err) => {
+		if (err){
+			return next(err);
+		}
+		//if successful show the list of skills
+		//res.redirect("skillz.url")
+		//res.send("NOT IMPLEMENTED: skill delete post");
+	});
 	//delete from s3 bucket
-	const id = req.body.skillid
 	const delskill = await Skill.findOne({where: {id}});
 	const delparams = {
 		Bucket: BUCKET_NAME,
 		Key: delskill.imageName
 	}
-	return s3Client.send(new DeleteObjectCommand(delparams));
-
-	//delete from database
-	Skill.findByIdAndRemove(id, (err) => {
-		if (err){
-			return next(err);
-		}
-		//if successful show the list of skills
-		res.redirect("/paulgobero_com/skills")
-	});
+	await s3Client.send(new DeleteObjectCommand(delparams));
 	res.send("NOT IMPLEMENTED: skill delete post");
 }
 
