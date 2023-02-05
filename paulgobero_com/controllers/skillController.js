@@ -154,8 +154,25 @@ exports.skill_delete_post = async (req, res) => {
 }
 
 //Display skill update form on Get
-exports.skill_update_get = (req, res) => {
-	res.send("NOT IMPLEMENTED: skill update get");
+exports.skill_update_get = async (req, res, next) => {
+	//find a document with the specified id
+	update_doc_id = req.body.updateid;
+	console.log("The id to update is" + update_doc_id);
+
+	const updateskills = await Skill.findOne({ _id: update_doc_id }, "_id name description imageName ")
+	.exec(async function (err, update_skill) {
+		if (err) {
+			return next(err);
+		}
+		for (let skills of update_skill) {		
+			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: imgfilename
+			}), { expiresIn: 3600})			
+		}
+		res.json(update_skill);
+		//res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
+	});
 }
 
 //Display skill update form on Post

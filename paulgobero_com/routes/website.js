@@ -78,10 +78,10 @@ router.get("/skill/delete", skill_controller.skill_delete_get);
 router.post("/skill/delete", skill_controller.skill_delete_post);
 
 //Get request for updating skill
-router.get("/skill/:id/update", skill_controller.skill_update_get);
+router.get("/skill/update", skill_controller.skill_update_get);
 
 //Post request for updating skill
-router.post("/skill/:id/update", skill_controller.skill_update_post);
+router.post("/skill/update", skill_controller.skill_update_post);
 
 //Get request for one skill
 router.get("/skill/:id", skill_controller.skill_detail);

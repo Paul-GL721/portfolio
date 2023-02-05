@@ -5,60 +5,62 @@
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block content %}
-	<div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-12 col-sm-12 col-md-8" id="main_div">
-            <div class="page-header">
-                <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Author</span></em></h1>
-            </div>
-            <form id="Authorform" name="Authorform" action="http://localhost/glsranchers/Database1/Backend/Entryinfo/entrysubmtvals.php" method="post" enctype="multipart/form-data">
-                <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorfirstname"><strong>First Name:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorfirstname" name="authorfirstname" placeholder="Enter First Name"></div>
+    <section class="formsection">
+    	<div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-12 col-sm-12 col-md-8" id="main_div">
+                <div class="page-header">
+                    <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Author</span></em></h1>
                 </div>
-                <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authormiddlename"><strong>Middle Name:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authormiddlename" name="authormiddlename" placeholder="Enter Middle Name"></div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorlastname"><strong>Last Name:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorlastname" name="authorlastname" placeholder="Enter Last Name"></div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-5 col-sm-3 col-md-4 col-lg-4 offset-1 offset-sm-3 offset-md-2 offset-lg-3"><label class="col-form-label" for="photo1"><strong>Profile Image:</strong></label></div>
-                    <div class="col-6 col-sm-6 col-md-6 col-lg-5 text-sm-center"><input class="form-control-file imgz" type="file" id="photo1" set-to="div1" name="photo1"><img class="img-fluid image" id="div1" src="#" alt="Display Front image"></div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="mobilenumber"><strong>Mobile Number:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="tel" id="mobilenumber" name="mobilenumber" placeholder="Enter Mobile phone number" required=""></div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="worknumber"><strong>Work Number:</strong></label></div>
-                    <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="tel" id="worknumber" name="worknumber" placeholder="Enter Work phone number" required=""></div>
-                </div>
-                <div class="form-row">
-                    <div class="col text-center">
-                        <h4>Social Accounts</h4>
+                <form id="Authorform" name="Authorform" action="http://localhost/glsranchers/Database1/Backend/Entryinfo/entrysubmtvals.php" method="post" enctype="multipart/form-data">
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorfirstname"><strong>First Name:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorfirstname" name="authorfirstname" placeholder="Enter First Name"></div>
                     </div>
-                </div>
-                <div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authormiddlename"><strong>Middle Name:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authormiddlename" name="authormiddlename" placeholder="Enter Middle Name"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorlastname"><strong>Last Name:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorlastname" name="authorlastname" placeholder="Enter Last Name"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-3 col-md-4 col-lg-4 offset-1 offset-sm-3 offset-md-2 offset-lg-3"><label class="col-form-label" for="photo1"><strong>Profile Image:</strong></label></div>
+                        <div class="col-6 col-sm-6 col-md-6 col-lg-5 text-sm-center"><input class="form-control-file imgz" type="file" id="photo1" set-to="div1" name="photo1"><img class="img-fluid image" id="div1" src="#" alt="Display Front image"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="mobilenumber"><strong>Mobile Number:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="tel" id="mobilenumber" name="mobilenumber" placeholder="Enter Mobile phone number" required=""></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="worknumber"><strong>Work Number:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="tel" id="worknumber" name="worknumber" placeholder="Enter Work phone number" required=""></div>
+                    </div>
                     <div class="form-row">
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="facebookurl" name="facebookurl" placeholder="Facebook link"></label></div>
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="twitterurl" name="twitterurl" placeholder="Twitter link"></label></div>
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="githuburl" name="githuburl" placeholder="Github link"></label></div>
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="linkeninurl" name="linkeninurl" placeholder="Linkendin link"></label></div>
+                        <div class="col text-center">
+                            <h4>Social Accounts</h4>
+                        </div>
                     </div>
-                </div>
+                    <div>
+                        <div class="form-row">
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="facebookurl" name="facebookurl" placeholder="Facebook link"></label></div>
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="twitterurl" name="twitterurl" placeholder="Twitter link"></label></div>
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="githuburl" name="githuburl" placeholder="Github link"></label></div>
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-3" style="text-align: center;"><label class="col-form-label" style="text-align: center;"><input class="form-control" type="url" id="linkeninurl" name="linkeninurl" placeholder="Linkendin link"></label></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="authorsubmitbutton" name="authorsubmitbutton" type="submit">Submit</button></div>
+                    </div>
+                </form>
                 <div class="form-group row">
-                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="authorsubmitbutton" name="authorsubmitbutton" type="submit">Submit</button></div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
                 </div>
-            </form>
-            <div class="form-group row">
-                <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
             </div>
+            <div class="col-md-2"></div>
         </div>
-        <div class="col-md-2"></div>
-    </div>
+    </section>
 {% endblock %}
 
 
