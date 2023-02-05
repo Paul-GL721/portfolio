@@ -167,9 +167,8 @@ exports.skill_update_get = async (req, res, next) => {
 			Bucket: BUCKET_NAME,
 			Key: imgfilename
 		}), { expiresIn: 3600})
-		
+
 		res.json(update_skill);
-		//res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
 	});
 }
 
