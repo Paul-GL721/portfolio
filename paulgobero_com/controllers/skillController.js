@@ -150,6 +150,7 @@ exports.skill_delete_post = async (req, res) => {
 	}
 	await s3Client.send(new DeleteObjectCommand(delparams));
 	res.send("NOT IMPLEMENTED: skill delete post");
+	res.redirect("skillz.url")
 }
 
 //Display skill update form on Get
