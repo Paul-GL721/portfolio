@@ -371,8 +371,6 @@ div.fixed-table-scroll-outer {
 }
 
 .icon-pencil {
-  padding-right: 15px;
-  padding-left: 15px;
 }
 
 .tableicons {
@@ -397,4 +395,3 @@ th {
 #cellskilldesc {
   width: 30%;
 }
-
