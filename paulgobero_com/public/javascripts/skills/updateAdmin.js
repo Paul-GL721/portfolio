@@ -11,9 +11,9 @@ $(document).ready(function(){
 				success: function(data){
 					console.log(data);
 					location.href='skill/create';
-					$("#skillname").val(data.update_skill.name);
-					$("#skilldescription").val(data.update_skill.description);
-					$("div1").attr("src", data.update_skill.imageUrl);
+					$("#skillname").val(data.name);
+					$("#skilldescription").val(data.description);
+					$("div1").attr("src", data.imageUrl);
 				}
 			});
 		});

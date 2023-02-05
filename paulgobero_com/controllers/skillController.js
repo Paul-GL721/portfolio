@@ -140,7 +140,6 @@ exports.skill_delete_post = async (req, res) => {
 		}
 		//if successful show the list of skills
 		//res.redirect("skillz.url")
-		//res.send("NOT IMPLEMENTED: skill delete post");
 	});
 	//delete from s3 bucket
 	const delskill = await Skill.findOne({where: {id}});
@@ -156,7 +155,7 @@ exports.skill_delete_post = async (req, res) => {
 //Display skill update form on Get
 exports.skill_update_get = async (req, res, next) => {
 	//find a document with the specified id
-	update_doc_id = req.body.updateid;
+	update_doc_id = req.query.updateid;
 	console.log("The id to update is" + update_doc_id);
 
 	const updateskills = await Skill.findOne({ _id: update_doc_id }, "_id name description imageName ")
@@ -164,12 +163,11 @@ exports.skill_update_get = async (req, res, next) => {
 		if (err) {
 			return next(err);
 		}
-		for (let skills of update_skill) {		
-			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: imgfilename
-			}), { expiresIn: 3600})			
-		}
+		update_skill.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: imgfilename
+		}), { expiresIn: 3600})
+		
 		res.json(update_skill);
 		//res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
 	});
