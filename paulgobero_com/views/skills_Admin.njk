@@ -1,5 +1,6 @@
 
 {% extends "website_base.njk" %}
+{% set posturl = skill/update %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -35,6 +36,24 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="skillUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Skill</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_skill.njk" %}
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="submit">Save changes</button></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-1"></div>

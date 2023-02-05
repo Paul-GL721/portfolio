@@ -10,10 +10,10 @@ $(document).ready(function(){
 				data: { updateid:updateid },
 				success: function(data){
 					console.log(data);
-					location.href='skill/create';
-					$("#skillname").val(data.name);
-					$("#skilldescription").val(data.description);
-					$("div1").attr("src", data.imageUrl);
+					$("#skillUpdateModal").modal('show');					
+					$("#skillname").val(data.update_skill.name);
+					$("#skilldescription").val(data.update_skill.description);
+					$("div1").attr("src", data.update_skill.imageUrl);
 				}
 			});
 		});
