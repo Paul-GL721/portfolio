@@ -1,6 +1,6 @@
 
 {% extends "website_base.njk" %}
-{% set posturl = {submiturl: "update" } %}
+{% set posturl = {submiturl: "skill/update" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -47,10 +47,14 @@
                                 <div class="modal-body">
                                     <div class="container-fluid">
                                         {% include "reuse_skill.njk" %}
-                                        </form>
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="skillUpdateid"><strong>Skill Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="skillUpdateid" name="skillUpdateid" readonly="" placeholder="Skill Update Id"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
                             </div>
                         </div>
                     </div>

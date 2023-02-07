@@ -25,7 +25,7 @@ const s3Client = new S3Client({
 const randomimagefilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 const imgfilename = randomimagefilename();
 
-//Display a list of availabe skills
+//Display a list of all availabe skills
 exports.skill_list = async (req, res, next) => {
 	const allskills = await Skill.find({}, "_id name description imageName createdAt")
 	.sort({ createdAt: -1 })
@@ -138,8 +138,6 @@ exports.skill_delete_post = async (req, res) => {
 		if (err){
 			return next(err);
 		}
-		//if successful show the list of skills
-		//res.redirect("skillz.url")
 	});
 	//delete from s3 bucket
 	const delskill = await Skill.findOne({where: {id}});
@@ -148,11 +146,10 @@ exports.skill_delete_post = async (req, res) => {
 		Key: delskill.imageName
 	}
 	await s3Client.send(new DeleteObjectCommand(delparams));
-	res.send("NOT IMPLEMENTED: skill delete post");
-	res.redirect("skillz.url")
+	res.json({sucess: "Successfully Deleted"});
 }
 
-//Display skill update form on Get
+//Using GET, return information on a skill to update
 exports.skill_update_get = async (req, res, next) => {
 	//find a document with the specified id
 	update_doc_id = req.query.updateid;
@@ -172,7 +169,52 @@ exports.skill_update_get = async (req, res, next) => {
 	});
 }
 
-//Display skill update form on Post
-exports.skill_update_post = (req, res) => {
-	res.send("NOT IMPLEMENTED: skill update post");
-}
+//Handle skill update form on Post
+exports.skill_update_post = [
+	/* Delete the exiting image from s3 and add a new path
+	 to the bucket, then update data in the database */
+	//upload image using multer
+	uploadimg.single('photo1'),
+
+	//process request after validation 
+	async (req, res, next) => {
+		const update_skil_id = req.body.skillUpdateid;
+		
+		//resize the image file
+		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+
+		//delete from s3 bucket
+		const delskill = await Skill.findOne({where: {update_skil_id}});
+		const delparams = {
+			Bucket: BUCKET_NAME,
+			Key: delskill.imageName
+		}
+		await s3Client.send(new DeleteObjectCommand(delparams));
+
+		//upload images to S3
+		const s3uploadparams = {
+			Bucket: BUCKET_NAME,
+			Body: filebuffer,
+			Key: imgfilename
+		}
+		await s3Client.send(new PutObjectCommand(s3uploadparams));
+
+		//update object in database
+		const update_filter ={
+			_id: update_skil_id 
+		};
+		const update_skillz = { $set: {
+			name: req.body.skillname,
+			description: req.body.skilldescription,
+			imageName: imgfilename
+		}};
+		await Skill.findOneAndUpdate(update_filter, update_skillz, {
+			new: true,
+			upsert: true,
+			rawResult: true,
+			runValidators: true
+		});
+		console.log("Updated Successfully");
+		res.redirect("/website/skill");
+	},
+];

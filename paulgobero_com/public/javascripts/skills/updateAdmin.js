@@ -9,11 +9,11 @@ $(document).ready(function(){
 				dataType: "json",
 				data: { updateid:updateid },
 				success: function(data){
-					console.log(data);
 					$("#skillUpdateModal").modal('show');					
 					$("#skillname").val(data.name);
 					$("#skilldescription").val(data.description);
 					$("#div1").attr("src", data.imageUrl);
+					$("#skillUpdateid").val(data._id);
 					
 				}
 			});
