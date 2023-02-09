@@ -2,17 +2,15 @@
 const Skill = require("../models/skill"); //skill model controller
 const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
-
-//s3 file upload
-const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
-
 const { body, validationResult } = require("express-validator"); //form validator
 const { storage, fileFilter, uploadimg } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
-const skill = require("../models/skill");
+//s3 file upload
+const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
 
+//s3 bucket connection parameters
 const s3Client = new S3Client({
 	region: BUCKET_REGION,
 	credentials: {
@@ -20,7 +18,6 @@ const s3Client = new S3Client({
 		secretAccessKey: SECRET_ACCESS_KEY
 	}
 });
-
 
 //function to delete from s3 bucket
 const deletefroms3bucket = async (delparams) => {
@@ -203,7 +200,7 @@ exports.skill_update_get = async (req, res, next) => {
 exports.skill_update_post = [
 	/* Delete the exiting image from s3 and add a new path
 	 to the bucket, then update data in the database */
-	 
+
 	//upload image using multer
 	uploadimg.single('photo1'),
 
