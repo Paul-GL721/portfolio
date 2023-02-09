@@ -21,9 +21,26 @@ const s3Client = new S3Client({
 	}
 });
 
+
+//function to delete from s3 bucket
+const deletefroms3bucket = async (delparams) => {
+	try {
+	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
+	  console.log("Success. Object deleted.", data);
+	  return data; // For unit tests.
+	} catch (err) {
+	  console.log("Error when deleting images", err);
+	}
+};
+
+
 //generate random imagefile name
-const randomimagefilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
-const imgfilename = randomimagefilename();
+const generaterandomimgname = () => {
+	const randomimagefilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+	const imgfilename = randomimagefilename();
+	return imgfilename
+}
+
 
 //Display a list of all availabe skills
 exports.skill_list = async (req, res, next) => {
@@ -36,7 +53,7 @@ exports.skill_list = async (req, res, next) => {
 		for (let skills of list_skills) {		
 			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
-				Key: imgfilename
+				Key: skills.imageName
 			}), { expiresIn: 3600})			
 		}
 		//res.json(list_skills);
@@ -45,15 +62,18 @@ exports.skill_list = async (req, res, next) => {
 	
 };
 
+
 //Display details of specific skill
 exports.skill_detail = (req, res) => {
 	res.send(`NOT IMPLEMENTED: skill details: ${req.params.id}`);
 }
 
+
 //Display skill create form on Get
 exports.skill_create_get = (req, res, next) => { 
 	res.render("create_skill", { Title: "Create Skill" });
 };
+
 
 //Post skill form entries into the database and show form if there're errors.
 exports.skill_create_post = [
@@ -70,12 +90,14 @@ exports.skill_create_post = [
 		//resize the image file
 		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
 
+		const createimgfilename = generaterandomimgname();
 		//upload images to S3
 		const s3uploadparams = {
 			Bucket: BUCKET_NAME,
 			Body: filebuffer,
-			Key: imgfilename
+			Key: createimgfilename 
 		}
+		//ContentType: 'image/jpeg'
 
 		//send the upload to s3
 		await s3Client.send(new PutObjectCommand(s3uploadparams));
@@ -84,7 +106,7 @@ exports.skill_create_post = [
 		const skillz = new Skill({
 			name: req.body.skillname,
 			description: req.body.skilldescription,
-			imageName: imgfilename
+			imageName: createimgfilename 
 		});
 
 		if (!errors.isEmpty()) {
@@ -115,7 +137,6 @@ exports.skill_create_post = [
 						}
 						console.log("Saved successfully");
 						res.redirect(skillz.url);
-						
 					});
 				}
 			});
@@ -123,29 +144,37 @@ exports.skill_create_post = [
 	},
 ];
 
+
 //Display skill delete form on Get
 exports.skill_delete_get = (req, res) => {
 	res.send("NOT IMPLEMENTED: skill delete get");
 }
 
-//Display skill delete form on Post
-exports.skill_delete_post = async (req, res) => {
+
+//With post delete skill
+exports.skill_delete_post = async (req, res, next) => {
 
 	//delete from database
 	const id = req.body.skilid
-	console.log("The id to delete is" + id);
 	Skill.findByIdAndDelete(id, (err) => {
 		if (err){
 			return next(err);
 		}
 	});
 	//delete from s3 bucket
-	const delskill = await Skill.findOne({where: {id}});
-	const delparams = {
-		Bucket: BUCKET_NAME,
-		Key: delskill.imageName
-	}
-	await s3Client.send(new DeleteObjectCommand(delparams));
+	const delskill = await Skill.findOne({_id: id}, 'imageName').exec((err, delresult) => {
+		if (err){
+			console.log(err);
+		}
+		else if (delresult) {
+			console.log("the object to delete is"+delresult.imageName);
+			const delparams = {
+				Bucket: BUCKET_NAME,
+				Key: delresult.imageName
+			}
+			deletefroms3bucket(delparams);
+		}	
+	});
 	res.json({sucess: "Successfully Deleted"});
 }
 
@@ -162,51 +191,62 @@ exports.skill_update_get = async (req, res, next) => {
 		}
 		update_skill.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 			Bucket: BUCKET_NAME,
-			Key: imgfilename
+			Key: update_skill.imageName
 		}), { expiresIn: 3600})
 
 		res.json(update_skill);
 	});
 }
 
-//Handle skill update form on Post
+
+//On post update skill information 
 exports.skill_update_post = [
 	/* Delete the exiting image from s3 and add a new path
 	 to the bucket, then update data in the database */
+	 
 	//upload image using multer
 	uploadimg.single('photo1'),
 
 	//process request after validation 
 	async (req, res, next) => {
 		const update_skil_id = req.body.skillUpdateid;
+		const updateimgfilename = generaterandomimgname();
 		
 		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
 
 		//delete from s3 bucket
-		const delskill = await Skill.findOne({where: {update_skil_id}});
-		const delparams = {
-			Bucket: BUCKET_NAME,
-			Key: delskill.imageName
-		}
-		await s3Client.send(new DeleteObjectCommand(delparams));
+		const delupskill = await Skill.findOne({_id: update_skil_id }, 'imageName').exec((err, upresult) => {
+			if (err){
+				console.log(err);
+			}
+			else if (upresult) {
+				console.log("the object to delete is"+upresult.imageName);
+				const delparams = {
+					Bucket: BUCKET_NAME,
+					Key: upresult.imageName
+				}
+				deletefroms3bucket(delparams);
+			}	
+		});
 
-		//upload images to S3
-		const s3uploadparams = {
+		//upload new image to s3Bucket
+		const updates3uploadparams = {
 			Bucket: BUCKET_NAME,
-			Body: filebuffer,
-			Key: imgfilename
+			Body: upfilebuffer,
+			Key: updateimgfilename 
 		}
-		await s3Client.send(new PutObjectCommand(s3uploadparams));
+		//ContentType: 'image/jpeg'
+		await s3Client.send(new PutObjectCommand(updates3uploadparams));
 
 		//update object in database
-		const update_filter ={
+		const update_filter = {
 			_id: update_skil_id 
 		};
 		const update_skillz = { $set: {
 			name: req.body.skillname,
 			description: req.body.skilldescription,
-			imageName: imgfilename
+			imageName: updateimgfilename
 		}};
 		await Skill.findOneAndUpdate(update_filter, update_skillz, {
 			new: true,

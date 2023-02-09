@@ -6,7 +6,6 @@ $(document).ready(function(){
 			$.ajax({
 				type: "GET",
 				url: "skill/update",
-				dataType: "json",
 				data: { updateid:updateid },
 				success: function(data){
 					$("#skillUpdateModal").modal('show');					
