@@ -76,39 +76,40 @@ exports.author_create_post = [
 		if (!errors.isEmpty()) { //if formdata has errors
 			console.log("Form Data has errors" + " " + errors);
 			//render the author form with errors as values
-		}
-		//create an author object with escaped values
-		const authors = new Author({
-			name: {
-				first: req.body.authorfirstname,
-				middle: req.body.authormiddlename,
-				last: req.body.authorlastname
-			},
-			contact: {
-				phoneNumber: {
-					mobile: req.body.mobilenumber,
-					work: req.body.worknumber
+		} else {
+			//create an author object with escaped values
+			const authors = new Author({
+				name: {
+					first: req.body.authorfirstname,
+					middle: req.body.authormiddlename,
+					last: req.body.authorlastname
+				},
+				contact: {
+					phoneNumber: {
+						mobile: req.body.mobilenumber,
+						work: req.body.worknumber
+					}
+				},
+				socialmedia: {
+					facebook: req.body.facebookurl,
+					twitter: req.body.twitterurl,
+					github: req.body.githuburl,
+					linkedin: req.body.linkeninurl
+				},
+				email: req.body.authoremail,
+				personal_website: req.body.authorwebsite,
+				imageName: profilepic 
+			});
+			//save author object to database
+			author.save( (err) => {
+				if (err) {
+					console.log("Errors when saving data" + err )
+					return next(err);
 				}
-			},
-			socialmedia: {
-				facebook: req.body.facebookurl,
-				twitter: req.body.twitterurl,
-				github: req.body.githuburl,
-				linkedin: req.body.linkeninurl
-			},
-			email: req.body.authoremail,
-			personal_website: req.body.authorwebsite,
-			imageName: profilepic 
-		});
-		//save author object to database
-		author.save( (err) => {
-			if (err) {
-				console.log("Errors when saving data" + err )
-				return next(err);
-			}
-			console.log("Saved successfully");
-			res.redirect(author.url);
-		});
+				console.log("Saved successfully");
+				res.redirect(author.url);
+			});
+		}
 	},
 ];
 
