@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$(document).on("click", ".edit", function(){
+	$(document).on("click", ".skilledit", function(){
 		//get value of second column
 		$(this).parents("tr").find("td").slice(1,2).each(function(){
 			const updateid = $(this).html();
