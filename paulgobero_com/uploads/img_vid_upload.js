@@ -29,4 +29,4 @@ const uploadimg = multer({
   fileFilter: fileFilter
 });
 
-module.exports = {storage, fileFilter, uploadimg};
+module.exports = {storage, fileFilter, uploadimg };

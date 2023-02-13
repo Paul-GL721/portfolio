@@ -24,7 +24,9 @@ const AuthorSchema = new Schema({
 		linkedin: { type: String, trim: true }
     },
     email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
-    personal_website: { type: String, trim: true }
+    personal_website: { type: String, trim: true },
+	imageName: { type: String, required: true },
+	imageUrl: { type: String }
 }, { timestamps: true });
 
 //define the virtual property
