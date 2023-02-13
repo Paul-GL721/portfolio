@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 	$button.click(function(){
 		var authordel = $.map($table.bootstrapTable('getSelections'), function (row){
-			var authorid = row['author_id'];
+			var authorid = row['authorid'];
 			console.log("The id to delete is"+authorid);
 			$.ajax({
 				type: "POST",
@@ -20,7 +20,7 @@ $(document).ready(function() {
 		});
 
 		$table.bootstrapTable('remove', {
-			field: 'author_id',
+			field: 'authorid"',
 			values: authordel
 		});
 	});

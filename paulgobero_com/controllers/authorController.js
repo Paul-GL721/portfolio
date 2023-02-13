@@ -10,7 +10,6 @@ const async = require("async"); //run async functions
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
-const author = require("../models/author");
 const { isMainThread } = require("worker_threads");
 
 //s3 bucket connection parameters
@@ -29,15 +28,39 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
+//function to delete from s3 bucket
+const deletefroms3bucket = async (delparams) => {
+	try {
+	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
+	  console.log("Success. Object deleted.", data);
+	  return data; // For unit tests.
+	} catch (err) {
+	  console.log("Error when deleting images", err);
+	}
+};
 
 //Display home website page
 exports.index = (req, res, next) => {
 	res.render("website_index", { Title: "Portfolio"});
 };
 
-//Display a list of authors
-exports.author_list = (req, res) => {
-	res.send("NOT IMPLEMENTED: Author list");
+//Display a list of all authors
+exports.author_list = async (req, res, next) => {
+	const allauthors = await Author.find({}).sort({ createdAt: -1 })
+	.exec( async function (err, list_authors) {
+		if (err) {
+			return next(err);
+		}
+		for (let authors of list_authors) {		
+			authors.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: authors.imageName
+			}), { expiresIn: 3600})			
+		}
+
+		//res.json(list_authors);
+		res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
+	});
 };
 
 //Display details of specific author
@@ -69,16 +92,27 @@ exports.author_create_post = [
 	body("authorwebsite", "Author portfolio website ").isURL().trim().escape(),
 
 	async (req, res, next) => {
-		const profilepic = generaterandomimgname();//image name
+		const profilepic = "author"+generaterandomimgname();//image name
+		//resize the image file
+		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+
+		//upload images to S3
+		const s3uploadparams = {
+			Bucket: BUCKET_NAME,
+			Body: filebuffer,
+			Key: profilepic
+		}
+		//ContentType: 'image/jpeg'
 
 		//extract error from request
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) { //if formdata has errors
-			console.log("Form Data has errors" + " " + errors);
+			console.log("Form Data has errors");
+			console.log(errors);
 			//render the author form with errors as values
 		} else {
 			//create an author object with escaped values
-			const authors = new Author({
+			const authorz = new Author({
 				name: {
 					first: req.body.authorfirstname,
 					middle: req.body.authormiddlename,
@@ -100,8 +134,9 @@ exports.author_create_post = [
 				},
 				imageName: profilepic 
 			});
+
 			//save author object to database
-			author.save( (err) => {
+			authorz.save( (err) => {
 				if (err) {
 					console.log("Errors when saving data" + err )
 					return next(err);
@@ -109,6 +144,9 @@ exports.author_create_post = [
 				console.log("Saved successfully");
 				res.redirect(author.url);
 			});
+
+			//upload the actual image to s3
+			await s3Client.send(new PutObjectCommand(s3uploadparams));
 		}
 	},
 ];
@@ -118,17 +156,129 @@ exports.author_delete_get = (req, res) => {
 	res.send("NOT IMPLEMENTED: Author delete get");
 }
 
-//Display author delete form on Post
-exports.author_delete_post = (req, res) => {
-	res.send("NOT IMPLEMENTED: Author delete post");
+//On post, delete author
+exports.author_delete_post = async (req, res, next) => {
+
+	//delete from database
+	const id = req.body.authorid
+	Author.findByIdAndDelete(id, (err) => {
+		if (err){
+			return next(err);
+		}
+	});
+
+	//delete image from s3 bucket
+	const delauthor = await Author.findOne({_id: id}, 'imageName').exec((err, delresult) => {
+		if (err){
+			console.log(err);
+		}
+		else if (delresult) {
+			console.log("the object to delete is"+delresult.imageName);
+			const delparams = {
+				Bucket: BUCKET_NAME,
+				Key: delresult.imageName
+			}
+			deletefroms3bucket(delparams);
+		}	
+	});
+	res.json({sucess: "Successfully Deleted"});
 }
 
-//Display author update form on Get
-exports.author_update_get = (req, res) => {
-	res.send("NOT IMPLEMENTED: Author update get");
+//On update GET, return information about form
+exports.author_update_get = async (req, res, next) => {
+	//find a document with the specified id
+	update_doc_id = req.query.updateid;
+	console.log("The id to update is" + update_doc_id);
+
+	const updateauthor = await Author.findOne({ _id: update_doc_id })
+	.exec(async function (err, update_author) {
+		if (err) {
+			return next(err);
+		}
+		update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: update_author.imageName
+		}), { expiresIn: 3600})
+
+		res.json(update_author);
+	});
 }
 
-//Display author update form on Post
-exports.author_update_post = (req, res) => {
-	res.send("NOT IMPLEMENTED: Author update post");
-}
+//On update post, submit the dat to the database 
+exports.author_update_post = async (req, res, next) => [
+	/* Delete the exiting image from s3 and add a new path
+	 to the bucket, then update data in the database */
+
+	 //multer upload image
+	uploadimg.single('photo1'),
+
+	async (req, res, next) => {
+		const upprofilepic = "author"+generaterandomimgname();//image name
+		const update_author_id = req.body.authorUpdateid;
+
+		//resize the image file
+		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+
+		//delete image from s3 bucket
+		const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, delresult) => {
+			if (err){
+				console.log(err);
+			}
+			else if (delresult) {
+				console.log("the object to delete is"+delresult.imageName);
+				const delparams = {
+					Bucket: BUCKET_NAME,
+					Key: delresult.imageName
+				}
+				deletefroms3bucket(delparams);
+			}	
+		});
+
+		//upload new image to S3
+		const updates3uploadparams = {
+			Bucket: BUCKET_NAME,
+			Body: upfilebuffer,
+			Key: upprofilepic
+		};
+		//ContentType: 'image/jpeg'
+		await s3Client.send(new PutObjectCommand(updates3uploadparams));
+
+		//update object in database
+		const update_filter = {
+			_id: update_author_id 
+		};
+
+		const update_authorz = { $set: {
+			name: {
+				first: req.body.authorfirstname,
+				middle: req.body.authormiddlename,
+				last: req.body.authorlastname
+			},
+			contact: {
+				phoneNumber: {
+					mobile: req.body.mobilenumber,
+					work: req.body.worknumber
+				},
+				email: req.body.authoremail,
+				personal_website: req.body.authorwebsite,
+			},
+			socialmedia: {
+				facebook: req.body.facebookurl,
+				twitter: req.body.twitterurl,
+				github: req.body.githuburl,
+				linkedin: req.body.linkeninurl
+			},
+			imageName: upprofilepic
+		}};
+
+		await Author.findOneAndUpdate(update_filter, update_authorz, {
+			new: true,
+			upsert: true,
+			rawResult: true,
+			runValidators: true
+		});
+
+		console.log("Updated Successfully");
+		res.redirect("/website/author");
+	},
+]

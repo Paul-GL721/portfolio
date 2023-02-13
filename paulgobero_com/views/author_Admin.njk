@@ -7,10 +7,9 @@
 {% block content %}
 	<section class="formsection">
         <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-sm-12 col-md-10">
+            <div class="col-sm-12 col-md-12">
                 <h3 style="text-align: center;">Author's Admin Table</h3>
-                <div id="toolbar"><button class="btn btn-secondary" id="authorbtnAdd" type="button" title="Add New Author"><i class="icon-plus tableicons"></i>Add<a href="create_skill"></a></button><button class="btn btn-danger" id="authorbtnDelete" type="button" title="Delete Selected  Author(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div id="toolbar"><button class="btn btn-secondary" id="authorbtnAdd" type="button" title="Add New Author" onclick="location.href='author/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="authorbtnDelete" type="button" title="Delete Selected  Author(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
                 <div class="table-responsive">
                     <table class="table table-striped" id="authortable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
@@ -37,19 +36,19 @@
 	                            <tr>
 	                                <td></td>
 	                                <td>{{ author._id }}</td>
-	                                <td><img class="rounded-circle img-fluid" src="&quot;{{ author.imageUrl }}&quot; " width="40" height="40"></td>
+	                                <td><img class="rounded-circle img-fluid" src="{{ author.imageUrl }}" width="40" height="40"></td>
 	                                <td>{{ author.name.first }}</td>
 	                                <td>{{ author.name.middle }}</td>
 	                                <td>{{ author.name.last }}</td>
 	                                <td>{{ author.contact.phoneNumber.mobile }}</td>
 	                                <td>{{ author.contact.phoneNumber.work }}</td>
 	                                <td>{{ author.contact.email }}</td>
-	                                <td>{{ author.contact.personal_website }}</td>
-	                                <td>{{ author.socialmedia.facebook }}</td>
-	                                <td>{{ author.socialmedia.twitter }}</td>
-	                                <td>{{ author.socialmedia.github }}</td>
-	                                <td>{{ author.socialmedia.linkedin }}</td>
-	                                <td><a title="Edit Row"><i class="icon-pencil tableicons edit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+	                                <td>{{ author.contact.personal_website | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.facebook  | urlize | safe  }}</td>
+	                                <td>{{ author.socialmedia.twitter | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.github | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.linkedin | urlize | safe }}</td>
+	                                <td><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
 	                            </tr>
 	                        {% endfor %}
                         </tbody>
@@ -72,12 +71,12 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-1"></div>
         </div>
     </section>
 

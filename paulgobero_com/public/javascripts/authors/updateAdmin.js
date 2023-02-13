@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$(document).on("click", ".edit", function(){
+	$(document).on("click", ".authoredit", function(){
 		//get value of second column
 		$(this).parents("tr").find("td").slice(1,2).each(function(){
 			const updateid = $(this).html();
@@ -13,7 +13,7 @@ $(document).ready(function(){
 					$("#authormiddlename").val(data.name.middle);
 					$("#authorlastname").val(data.name.last);
 					$("#mobilenumber").val(data.contact.phoneNumber.mobile);
-					$("#worknumber").val(data..contact.phoneNumber.work);
+					$("#worknumber").val(data.contact.phoneNumber.work);
 					$("#authoremail").val(data.contact.email);
 					$("#authorwebsite").val(data.contact.personal_website);
 					$("#facebookurl").val(data.socialmedia.facebook);
