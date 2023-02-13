@@ -88,7 +88,9 @@ exports.author_create_post = [
 					phoneNumber: {
 						mobile: req.body.mobilenumber,
 						work: req.body.worknumber
-					}
+					},
+					email: req.body.authoremail,
+					personal_website: req.body.authorwebsite,
 				},
 				socialmedia: {
 					facebook: req.body.facebookurl,
@@ -96,8 +98,6 @@ exports.author_create_post = [
 					github: req.body.githuburl,
 					linkedin: req.body.linkeninurl
 				},
-				email: req.body.authoremail,
-				personal_website: req.body.authorwebsite,
 				imageName: profilepic 
 			});
 			//save author object to database

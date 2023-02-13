@@ -7,15 +7,17 @@ const Schema = mongoose.Schema;
 
 const AuthorSchema = new Schema({
     name: {
-	first: { type: String, required: [true, 'Please insert first name'], maxLength: 50, trim: true },
-	middle:  { type: String, maxLength: 50, trim: true },
-	last: { type: String, required: [true, 'Please insert last name'], maxLength: 50, trim: true }
+		first: { type: String, required: [true, 'Please insert first name'], maxLength: 50, trim: true },
+		middle:  { type: String, maxLength: 50, trim: true },
+		last: { type: String, required: [true, 'Please insert last name'], maxLength: 50, trim: true }
     },
     contact: {
-	phoneNumber: {
-	    mobile: { type: String, trim: true },
-	    work: { type: String, trim: true }
-	}
+		phoneNumber: {
+		    mobile: { type: String, trim: true },
+		    work: { type: String, trim: true }
+		},
+		email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
+	    personal_website: { type: String, trim: true }
     },
     socialmedia: {
 		facebook: { type: String, trim: true },
@@ -23,8 +25,6 @@ const AuthorSchema = new Schema({
 		github: { type: String, trim: true },
 		linkedin: { type: String, trim: true }
     },
-    email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
-    personal_website: { type: String, trim: true },
 	imageName: { type: String, required: true },
 	imageUrl: { type: String }
 }, { timestamps: true });
