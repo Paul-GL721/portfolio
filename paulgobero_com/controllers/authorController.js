@@ -141,12 +141,11 @@ exports.author_create_post = [
 					console.log("Errors when saving data" + err )
 					return next(err);
 				}
-				console.log("Saved successfully");
-				res.redirect(author.url);
+				console.log("Successfully Saved to Database");
 			});
-
 			//upload the actual image to s3
 			await s3Client.send(new PutObjectCommand(s3uploadparams));
+			res.redirect(Author.url);
 		}
 	},
 ];
@@ -205,43 +204,20 @@ exports.author_update_get = async (req, res, next) => {
 }
 
 //On update post, submit the dat to the database 
-exports.author_update_post = async (req, res, next) => [
-	/* Delete the exiting image from s3 and add a new path
-	 to the bucket, then update data in the database */
+exports.author_update_post = [
+	/* Update data in the database then Delete the exiting image from s3 and add a new path
+	 to the bucket. */
 
 	 //multer upload image
 	uploadimg.single('photo1'),
 
 	async (req, res, next) => {
-		const upprofilepic = "author"+generaterandomimgname();//image name
 		const update_author_id = req.body.authorUpdateid;
+		console.log ("The author update id is"+ update_author_id);
+		const upprofilepic = "author"+generaterandomimgname();//image name
 
 		//resize the image file
 		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
-
-		//delete image from s3 bucket
-		const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, delresult) => {
-			if (err){
-				console.log(err);
-			}
-			else if (delresult) {
-				console.log("the object to delete is"+delresult.imageName);
-				const delparams = {
-					Bucket: BUCKET_NAME,
-					Key: delresult.imageName
-				}
-				deletefroms3bucket(delparams);
-			}	
-		});
-
-		//upload new image to S3
-		const updates3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: upfilebuffer,
-			Key: upprofilepic
-		};
-		//ContentType: 'image/jpeg'
-		await s3Client.send(new PutObjectCommand(updates3uploadparams));
 
 		//update object in database
 		const update_filter = {
@@ -278,7 +254,30 @@ exports.author_update_post = async (req, res, next) => [
 			runValidators: true
 		});
 
+		//delete image from s3 bucket
+		const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
+			if (err){
+				console.log(err);
+			}
+			else if (updelresult) {
+				console.log("the object to delete is"+updelresult.imageName);
+				const delparams = {
+					Bucket: BUCKET_NAME,
+					Key: updelresult.imageName
+				}
+				deletefroms3bucket(delparams);
+			}	
+		});
+
+		//upload new image to S3
+		const updates3uploadparams = {
+			Bucket: BUCKET_NAME,
+			Body: upfilebuffer,
+			Key: upprofilepic
+		};
+		//ContentType: 'image/jpeg'
+		await s3Client.send(new PutObjectCommand(updates3uploadparams));
 		console.log("Updated Successfully");
 		res.redirect("/website/author");
 	},
-]
+];
