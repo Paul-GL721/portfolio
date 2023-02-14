@@ -59,6 +59,18 @@ exports.skill_list = async (req, res, next) => {
 	
 };
 
+//API for all available skills
+exports.project_skill = async (req, res, next) => {
+	const allskills = await Skill.find({}, "_id name ")
+	.sort({ createdAt: -1 })
+	.exec(async function (err, list_skills) {
+		if (err) {
+			return next(err);
+		}
+		res.json(list_skills);
+	});
+};
+
 
 //Display details of specific skill
 exports.skill_detail = (req, res) => {

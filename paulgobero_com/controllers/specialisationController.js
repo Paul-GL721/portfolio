@@ -9,6 +9,18 @@ exports.specialisation_list = (req, res) => {
 	res.send("NOT IMPLEMENTED: Specialisation list");
 };
 
+//API for all available specialisations
+exports.project_specialisations = async (req, res, next) => {
+	const allspecs = await Specialisation.find({}, "_id name ")
+	.sort({ createdAt: -1 })
+	.exec(async function (err, list_specs) {
+		if (err) {
+			return next(err);
+		}
+		res.json(list_specs);
+	});
+};
+
 //Display details of specific specialisation
 exports.specialisation_detail = (req, res) => {
 	res.send(`NOT IMPLEMENTED: specialisation details: ${req.params.id}`);

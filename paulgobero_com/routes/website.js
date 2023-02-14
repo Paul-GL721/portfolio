@@ -62,6 +62,15 @@ router.get("/project/:id", project_controller.project_detail);
 
 //Get request for all projects
 router.get("/project", project_controller.project_list);
+
+//Get request for all project skills
+router.get("/project/api/skills", skill_controller.project_skill);
+
+//Get request for all project skills
+router.get("/project/api/specialisations", specialisation_controller.project_specialisations);
+
+//Get request for all author skills
+router.get("/project/api/author", author_controller.project_authors);
 				//........BLOG ROUTES.....//
 
 
