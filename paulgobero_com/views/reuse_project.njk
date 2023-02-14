@@ -1,0 +1,52 @@
+                <form id="Projectform" name="Projectform" action="{{ posturl.submiturl }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projtitle"><strong>Title:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="projtitle" name="projtitle" placeholder="Enter Project Title"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projsummary"><strong>Summary:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projsummary" name="projsummary" placeholder="Summarize the project" rows="3" cols="10"></textarea></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projproblem"><strong>Problem:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projproblem" name="projproblem" placeholder="What was the problem?" rows="5" cols="10"></textarea></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projsoln"><strong>Solution:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projsoln" name="projsoln" placeholder="What solution did you provide?" rows="5" cols="10"></textarea></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-3 col-md-4 col-lg-4 offset-1 offset-sm-3 offset-md-2 offset-lg-3"><label class="col-form-label" for="video1"><strong>Project Video:</strong></label></div>
+                        <div class="col-6 col-sm-6 col-md-6 col-lg-5 text-sm-center"><input class="form-control-file imgz" type="file" id="video1" set-to="div1" name="video1"><img class="img-fluid image" id="div1" src="#" alt="Display Video Thumbnail"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="prorole"><strong>Role Played:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="prorole" name="prorole" placeholder="What role did you Play?" rows="2" cols="10"></textarea></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="progithub"><strong>GitHub&nbsp;URL:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="url" id="progithub" name="progithub" placeholder="Project GitHub link"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="proskills"><strong>Skills Learnt:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" id="proskills" name="proskills" value="SQL"><label class="form-check-label" for="projspecialisation">SQL</label></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projspecialisation"><strong>Specialization:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" id="projspecialisation" name="projspecialisation" value="fullstack"><label class="form-check-label" for="projspecialisation">Fullstack</label></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projauthor"><strong>Author:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><select class="form-control" id="projauthor" name="projauthor">
+                                <option value="undefined" selected="">Select registered Author</option>
+                                <option value="12">This is item 1</option>
+                            </select></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projcontibutor"><strong>Contributors:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projcontibutor" name="projcontibutor" placeholder="LinkedIn of any other contributors" rows="2" cols="10"></textarea></div>
+                    </div>
