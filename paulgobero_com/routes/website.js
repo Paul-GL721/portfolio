@@ -7,6 +7,7 @@ const router = express.Router();
 const author_controller = require("../controllers/authorController");
 const specialisation_controller = require("../controllers/specialisationController");
 const skill_controller = require("../controllers/skillController");
+const project_controller = require("../controllers/projectController");
 
 				//........AUTHOR ROUTES.....//
 //Get website home page
@@ -36,8 +37,34 @@ router.get("/author/:id", author_controller.author_detail);
 //Get request for all authors
 router.get("/author", author_controller.author_list);
 
+
 				//........PROJECT ROUTES.....//
-				//........BLOG ROUTES.....//	
+//Get request for creating project
+router.get("/project/create", project_controller.project_create_get);
+
+//Post request for created project
+router.post("/project/create", project_controller.project_create_post);
+
+//Get request for deleting project
+router.get("/project/delete", project_controller.project_delete_get);
+
+//Post request for deleting project
+router.post("/project/delete", project_controller.project_delete_post);
+
+//Get request for updating project
+router.get("/project/update", project_controller.project_update_get);
+
+//Post request for updating project
+router.post("/project/update", project_controller.project_update_post);
+
+//Get request for one project
+router.get("/project/:id", project_controller.project_detail);
+
+//Get request for all projects
+router.get("/project", project_controller.project_list);
+				//........BLOG ROUTES.....//
+
+
 				//........SPECILISATION ROUTES.....//
 //Get request for creating specialisation
 router.get("/specialisation/create", specialisation_controller.specialisation_create_get);
