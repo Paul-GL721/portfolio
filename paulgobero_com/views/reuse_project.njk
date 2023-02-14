@@ -29,15 +29,13 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="proskills"><strong>Skills Learnt:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="proskills" multiple="" data-source="/skill" data-valuekey="_id" data-displaykey="name" name="proskills">
-                            <option value="0" selected="">Select one or more skills</option>
+                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="proskills" multiple="" data-source="api/skills" data-valuekey="_id" data-displaykey="name" name="proskills">
                         </select></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projspecialisation"><strong>Specialization:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8">
-                            <div class="form-check"><input class="form-check-input" type="checkbox" id="projspecialisation" name="projspecialisation" value="fullstack"><label class="form-check-label" for="projspecialisation">Fullstack</label></div>
-                        </div>
+                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="projspecialisation" multiple="" data-source="api/specialisations" data-valuekey="_id" data-displaykey="name" name="projspecialisation">
+                        </select></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projauthor"><strong>Author:</strong></label></div>

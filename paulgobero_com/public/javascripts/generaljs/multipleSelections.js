@@ -1,4 +1,5 @@
 
-$(document).ready(function() {  
-    $('#proskills').multiselect();  
+$(document).ready(function() { 
+     //intialise multiselect
+    $('#proskills, #projspecialisation').multiselect();  
 });  

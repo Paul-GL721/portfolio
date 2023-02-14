@@ -1,8 +1,6 @@
 $('select[data-source]').each(function() {
   var $select = $(this);
   
-  //$select.append('<option></option>');
-  
   $.ajax({
     url: $select.attr('data-source'),
     dataType: "json",
@@ -16,5 +14,7 @@ $('select[data-source]').each(function() {
       
       $select.append($option);
     });
+    //multiselct reload the options
+    $('#proskills, #projspecialisation').multiselect('rebuild');
   });
 });
