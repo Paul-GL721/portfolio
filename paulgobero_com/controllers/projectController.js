@@ -1,12 +1,18 @@
 /* Project MOdel Controller */
 
 const Project = require("../models/project"); //project model
-
-
+const Author = require("../models/author"); //author model
 
 //On GET, display project form
-exports.project_create_get = (req, res, next) => {
-	res.render("create_project", { Title: "Project Form" });
+exports.project_create_get = async(req, res, next) => {
+	const allauthors = await Author.find({}, "_id name ")
+	.sort({ createdAt: -1 })
+	.exec(async function (err, list_authors) {
+		if (err) {
+			return next(err);
+		}
+		res.render("create_project", { Title: "Project Form", projectauthors: list_authors });
+	});
 };
 
 //On POST, submit project formdata to database
