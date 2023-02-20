@@ -15,7 +15,7 @@ $('select[data-source]').each(function() {
       $select.append($option);
       
     });
-    console.log(datas)
+    
     //multiselct reload the options
     $('#proskills, #projspecialisation, #projauthor').multiselect('rebuild');
   });
