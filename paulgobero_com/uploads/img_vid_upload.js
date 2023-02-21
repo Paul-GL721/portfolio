@@ -29,4 +29,18 @@ const uploadimg = multer({
   fileFilter: fileFilter
 });
 
-module.exports = {storage, fileFilter, uploadimg };
+const videofileFilter = (req, file, cb) => {
+  if (file.mimetype === 'video/mp4' || file.mimetype === 'video/mkv' || file.mimetype === 'video/mov') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+  
+const uploadvideo = multer({
+  storage: storage,
+  limits: {fileSize: 1024 * 1024 * 15},
+  fileFilter: videofileFilter
+});
+
+module.exports = {storage, fileFilter, uploadimg, uploadvideo, videofileFilter };
