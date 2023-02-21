@@ -1,0 +1,83 @@
+
+{% extends "website_base.njk" %}
+{% set posturl = {submiturl: "project/update" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <h3 style="text-align: center;">All Projects</h3>
+                <div id="toolbar"><button class="btn btn-secondary" id="projectbtnAdd" type="button" title="Add New Project" onclick="location.href='project/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="projectbtnDelete" type="button" title="Delete Selected  Project(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="projecttable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
+                        <thead>
+                            <tr>
+                                <th data-checkbox="true" data-field="state"></th>
+                                <th id="author_id" data-field="authoridz">id</th>
+                                <th id="cellprofilepic" data-field="imageUrl">Profile Picture</th>
+                                <th id="cellauthorfirstname" data-field="namefirst">First Name</th>
+                                <th id="cellauthormiddlename" data-field="namemiddle">Middle Name</th>
+                                <th id="cellauthorlastname" data-field="namelast">Last Name</th>
+                                <th id="cellmobilenumber" data-field="mobilenumber">Mobile Number</th>
+                                <th id="cellworknumber" data-field="worknumber">Work Number</th>
+                                <th id="cellauthoremail" data-field="authoremail">Email</th>
+                                <th id="cellauthorwebsite" data-field="authorwebsite">Profile website</th>
+                                <th id="cellfacebookurl" data-field="facebookurl">Facebook</th>
+                                <th id="celltwitterurl" data-field="twitterurl">Twitter</th>
+                                <th id="cellgithuburl" data-field="githuburl">Github</th>
+                                <th id="celllinkeninurl" data-field="linkeninurl">LinkedIn</th>
+                                <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+	                        {% for author in abtauthor %}
+	                            <tr>
+	                                <td></td>
+	                                <td>{{ author._id }}</td>
+	                                <td><img class="rounded-circle img-fluid" src="{{ author.imageUrl }}" width="40" height="40"></td>
+	                                <td>{{ author.name.first }}</td>
+	                                <td>{{ author.name.middle }}</td>
+	                                <td>{{ author.name.last }}</td>
+	                                <td>{{ author.contact.phoneNumber.mobile }}</td>
+	                                <td>{{ author.contact.phoneNumber.work }}</td>
+	                                <td>{{ author.contact.email }}</td>
+	                                <td>{{ author.contact.personal_website | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.facebook  | urlize | safe  }}</td>
+	                                <td>{{ author.socialmedia.twitter | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.github | urlize | safe }}</td>
+	                                <td>{{ author.socialmedia.linkedin | urlize | safe }}</td>
+	                                <td><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+	                            </tr>
+	                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="authorUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Author Details</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_author.njk" %}
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorUpdateid"><strong>Author Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorUpdateid" name="authorUpdateid" readonly="" placeholder="Author Update Id"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="authorUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

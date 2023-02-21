@@ -56,7 +56,6 @@ exports.project_create_post = [
 	body("projauthor", "Choose the project authors").trim().isLength({ min:2 }).escape(),
 	body("projcontibutor", "Any other authors").trim().escape(),
 
-	
 	async (req, res, next) => {
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
 
@@ -87,7 +86,7 @@ exports.project_create_post = [
 				skill: req.body.proskills,
 				author: req.body.projauthor,
 				specialisation: req.body.projauthor,
-				videoName: req.body.projvideoname
+				videoName: projvideoname
 			});
 
 			//save the project object to database
@@ -131,7 +130,20 @@ exports.project_detail = (req, res, next) => {
 	res.send(`NOT IMPLEMENTED: Project details: ${req.params.id}`);
 };
 
-//On GET, dispaly all available projects4
-exports.project_list = (req, res, next) => {
-	res.send("NOT IMPLEMENTED: Project display list on get");
+//On GET, dispaly all available projects
+exports.project_list = async(req, res, next) => {
+	const allprojects = await Project.find({}).sort({ createdAt: -1 })
+	.exec( async function (err, list_projects) {
+		if (err) {
+			return next(err);
+		}
+		for (let projectz of list_projects) {
+			projectz.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: projectz.videoName
+			}), { expiresIn: 3600 })
+		}	
+		//res.json(list_projects);
+		res.render( "project_Admin", { Title: "Admin Project", abtproject: list_projects });
+	});
 };
