@@ -85,7 +85,7 @@ exports.project_create_post = [
 				contributor: req.body.projcontibutor,
 				skill: req.body.proskills,
 				author: req.body.projauthor,
-				specialisation: req.body.projauthor,
+				specialisation: req.body.projspecialisation,
 				videoName: projvideoname
 			});
 
@@ -144,6 +144,6 @@ exports.project_list = async(req, res, next) => {
 			}), { expiresIn: 3600 })
 		}	
 		//res.json(list_projects);
-		res.render( "project_Admin", { Title: "Admin Project", abtproject: list_projects });
+		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 	});
 };
