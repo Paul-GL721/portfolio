@@ -15,20 +15,21 @@
                     <table class="table table-striped" id="projecttable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
                             <tr>
-                                <th data-checkbox="true" data-field="state" style="width: 5%"></th>
-                                <th id="project_id" data-field="projectidz" style="width: 5%">id</th>
-                                <th id="cellvideoid" data-field="videoUrl" style="width: 5%">Uploaded Video</th>
-                                <th id="cellprojecttitle" data-field="projecttitle" style="width: 5%">Title</th>
-                                <th id="cellprojectsummary" data-field="projectsummary" style="width: 15%">Summary</th>
-                                <th id="cellprojectproblem" data-field="problemstatement" style="width: 15%">Challenge Faced</th>
-                                <th id="cellprojectsolution" data-field="projectsolution" style="width: 15%">Solution</th>
-                                <th id="cellprojectrole" data-field="projectrole" style="width: 5%">Role Played</th>
-                                <th id="cellprojectgithuburl" data-field="projectgithuburl" style="width: 5%">Github link</th>
-                                <th id="cellprojectcontributors" data-field="projectcontributors" style="width: 5%">Contributors</th>
-                                <th id="cellprojectskill" data-field="projectskill" style="width: 5%">Skill(s) Gained</th>
-                                <th id="cellprojectauthors" data-field="projectauthors" style="width: 5%">Author(s)</th>
-                                <th id="cellprojectspecs" data-field="projectspecs" style="width: 5%">Specializations</th>
-                                <th id="cellactions" data-field="Actions" style="width: 5%">Actions</th>
+
+                                <th class="w-5" data-checkbox="true" data-field="state"></th>
+                                <th id="project_id" class="w-5" data-field="projectid">id</th>
+                                <th id="cellvideoid" class="w-5" data-field="videoUrl">Uploaded Video</th>
+                                <th id="cellprojecttitle" class="w-5" data-field="projecttitle">Title</th>
+                                <th id="cellprojectsummary" class="w-15" data-field="projectsummary">Summary</th>
+                                <th id="cellprojectproblem" class="w-15" data-field="problemstatement">Challenge Faced</th>
+                                <th id="cellprojectsolution" class="w-15" data-field="projectsolution">Solution</th>
+                                <th id="cellprojectrole" class="w-5" data-field="projectrole">Role Played</th>
+                                <th id="cellprojectgithuburl" class="w-5" data-field="projectgithuburl">Github link</th>
+                                <th id="cellprojectcontributors" class="w-5" data-field="projectcontributors">Contributors</th>
+                                <th id="cellprojectskill" class="w-5" data-field="projectskill">Skill(s) Gained</th>
+                                <th id="cellprojectauthors" class="w-5" data-field="projectauthors">Author(s)</th>
+                                <th id="cellprojectspecs" class="w-5" data-field="projectspecs">Specializations</th>
+                                <th id="cellactions" class="w-5" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,7 +37,9 @@
                                 <tr>
                                     <td></td>
                                     <td>{{ project._id }}</td>
-                                    <td><img class="rounded-circle img-fluid" src="&quot;{{ author.imageUrl }}&quot; " width="40" height="40"></td>
+                                    <td>
+                                        <div class="embed-responsive embed-responsive-4by3"><iframe class="embed-responsive-item" src="{{ project.videoUrl }}"></iframe></div>
+                                    </td>
                                     <td>{{ project.ptitle }}</td>
                                     <td>{{ project.psummary }}</td>
                                     <td>{{ project.problemStatement }}</td>
