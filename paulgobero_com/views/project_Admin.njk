@@ -44,9 +44,19 @@
                                     <td>{{ project.role }}</td>
                                     <td>{{ project.githubUrl | urlize | safe }}</td>
                                     <td>{{ project.contributor }}</td>
-                                    <td>{{ project.skill }}</td>
-                                    <td>{{ project.author }}</td>
-                                    <td>{{ project.specialisation }}</td>
+
+                                    {% for skll in project.skill %}
+                                        <td>{{ skll.name }}</td>
+                                    {% endfor %}
+
+                                    {% for athor in project.author %}
+                                        <td>{{ athor.name.first }} {{ athor.name.middle }} {{ athor.name.last }}</td>
+                                    {% endfor %}
+
+                                    {% for spec in  project.specialisation %}
+                                        <td>{{ spec.name }}</td>
+                                    {% endfor %}
+
                                     <td><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
                                 </tr>
                             {% endfor %}

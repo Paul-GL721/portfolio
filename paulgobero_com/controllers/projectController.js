@@ -133,6 +133,9 @@ exports.project_detail = (req, res, next) => {
 //On GET, dispaly all available projects
 exports.project_list = async(req, res, next) => {
 	const allprojects = await Project.find({}).sort({ createdAt: -1 })
+	.populate('author', 'name')
+	.populate('skill', 'name')
+	.populate('specialisation', 'name')
 	.exec( async function (err, list_projects) {
 		if (err) {
 			return next(err);
@@ -142,7 +145,7 @@ exports.project_list = async(req, res, next) => {
 				Bucket: BUCKET_NAME,
 				Key: projectz.videoName
 			}), { expiresIn: 3600 })
-		}	
+		}
 		//res.json(list_projects);
 		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 	});
