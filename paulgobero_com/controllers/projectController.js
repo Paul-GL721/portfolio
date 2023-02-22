@@ -58,20 +58,24 @@ exports.project_create_post = [
 
 	async (req, res, next) => {
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
-
-		//s3 bucket
+		//console.log(req.file.buffer);
+		//console.log(req.file);
+		
+		//s3 bucket parameters
 		const s3uploadparams = {
 			Bucket: BUCKET_NAME,
-			Body: req.body.buffer,
-			Key: projvideoname
+			Key: projvideoname,
+			Body: req.file.buffer,
+			ContentType: req.file.mimetype		
 		}
-
-		//check validation errors
+		
+		//check for validation errors
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) { //if formdata has errors
 			console.log("The data has errors");
 			console.log(errors);
 			//Re-render the project form with errors
+
 
 		} else {
 			//if formdata has no errors, submit the video to S3 and formdata to db
@@ -97,12 +101,15 @@ exports.project_create_post = [
 				}
 				console.log("Successfully saved to database");
 			});
-
+			
 			//upload to s3 bucket
 			await s3Client.send(new PutObjectCommand(s3uploadparams));
-			res.redirect(Project.url);
+			console.log("uploaded to s3 sucessfully");
+
+			//redirect to individual project page
+			res.redirect(Project.url); 
 		}
-	},
+	},	
 ];
 
 //On GET, display project delete information 
@@ -146,6 +153,7 @@ exports.project_list = async(req, res, next) => {
 				Key: projectz.videoName
 			}), { expiresIn: 3600 })
 		}
+
 		//res.json(list_projects);
 		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 	});

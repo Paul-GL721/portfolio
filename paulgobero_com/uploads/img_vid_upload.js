@@ -16,7 +16,7 @@ const storage = multer.memoryStorage();
   });*/
   
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4' || file.mimetype === 'video/mkv' || file.mimetype === 'video/mov') {
     cb(null, true);
   } else {
     cb(null, false);
@@ -28,19 +28,11 @@ const uploadimg = multer({
   limits: {fileSize: 1024 * 1024 * 5},
   fileFilter: fileFilter
 });
-
-const videofileFilter = (req, file, cb) => {
-  if (file.mimetype === 'video/mp4' || file.mimetype === 'video/mkv' || file.mimetype === 'video/mov') {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
   
 const uploadvideo = multer({
   storage: storage,
-  limits: {fileSize: 1024 * 1024 * 15},
-  fileFilter: videofileFilter
+  limits: {fileSize: 1024 * 1024 * 100},
+  fileFilter: fileFilter
 });
 
-module.exports = {storage, fileFilter, uploadimg, uploadvideo, videofileFilter };
+module.exports = {storage, fileFilter, uploadimg, uploadvideo };
