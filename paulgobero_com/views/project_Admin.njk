@@ -14,28 +14,28 @@
                 <div class="table-responsive">
                     <table class="table table-striped" id="projecttable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
-                            <tr>
+                            <tr class="d-flex">
                                 <th class="w-5" data-checkbox="true" data-field="state"></th>
-                                <th id="project_id" class="w-5" data-field="projectid">id</th>
-                                <th id="cellvideoid" class="w-5" data-field="videoUrl">Uploaded Video</th>
+                                <th id="project_id" class="w-5 hidden" data-field="projectidz">id</th>
+                                <th id="cellvideoid" class="w-6" data-field="videoUrl">Uploaded Video</th>
                                 <th id="cellprojecttitle" class="w-5" data-field="projecttitle">Title</th>
                                 <th id="cellprojectsummary" class="w-15" data-field="projectsummary">Summary</th>
                                 <th id="cellprojectproblem" class="w-15" data-field="problemstatement">Challenge Faced</th>
                                 <th id="cellprojectsolution" class="w-15" data-field="projectsolution">Solution</th>
                                 <th id="cellprojectrole" class="w-5" data-field="projectrole">Role Played</th>
-                                <th id="cellprojectgithuburl" class="w-5" data-field="projectgithuburl">Github link</th>
+                                <th id="cellprojectgithuburl" class="w-6" data-field="projectgithuburl">Github link</th>
                                 <th id="cellprojectcontributors" class="w-5" data-field="projectcontributors">Contributors</th>
                                 <th id="cellprojectskill" class="w-5" data-field="projectskill">Skill(s) Gained</th>
                                 <th id="cellprojectauthors" class="w-5" data-field="projectauthors">Author(s)</th>
                                 <th id="cellprojectspecs" class="w-5" data-field="projectspecs">Specializations</th>
-                                <th id="cellactions" class="w-5" data-field="Actions">Actions</th>
+                                <th id="cellactions" class="w-3" data-field="Actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for project in abtprojects %}
-                                <tr>
+                                <tr class="d-flex">
                                     <td></td>
-                                    <td>{{ project._id }}</td>
+                                    <td class="hidden">{{ project._id }}</td>
                                     <td>
                                         <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.videoUrl }}" ></iframe></div>
                                     </td>
@@ -46,19 +46,27 @@
                                     <td>{{ project.role }}</td>
                                     <td>{{ project.githubUrl | urlize | safe }}</td>
                                     <td>{{ project.contributor }}</td>
-
-                                    {% for skll in project.skill %}
-                                        <td>{{ skll.name }}</td>
-                                    {% endfor %}
-
-                                    {% for athor in project.author %}
-                                        <td>{{ athor.name.first }} {{ athor.name.middle }} {{ athor.name.last }}</td>
-                                    {% endfor %}
-
-                                    {% for spec in  project.specialisation %}
-                                        <td>{{ spec.name }}</td>
-                                    {% endfor %}
-
+                                    <td>
+                                        <ul class="list-group">
+                                            {% for skll in project.skill %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ skll.name }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td> 
+                                        <ul class="list-group">
+                                            {% for athor in project.author %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ athor.name.first }} {{ athor.name.middle }} {{ athor.name.last }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td> 
+                                        <ul class="list-group">
+                                            {% for spec in  project.specialisation %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ spec.name }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
                                     <td><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
                                 </tr>
                             {% endfor %}

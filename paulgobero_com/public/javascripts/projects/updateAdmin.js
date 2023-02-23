@@ -16,9 +16,9 @@ $(document).ready(function(){
 					$("#prorole").val(data.role);
 					$("#progithub").val(data.githubUrl);
 					$("#projcontibutor").val(data.contributor);
-					$("#proskills").val(data.skill);
-					$("#projauthor").val(data.author);
-					$("#projspecialisation").val(data.specialisation);
+					//$("#proskills").val(data.skill);
+					//$("#projauthor").val(data.author);
+					//$("#projspecialisation").val(data.specialisation);
 					$("#div1").attr("src", data.videoUrl);
 					$("#projectUpdateid").val(data._id);	
 				}

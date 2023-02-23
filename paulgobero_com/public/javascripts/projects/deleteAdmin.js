@@ -16,7 +16,7 @@ $(document).ready(function() {
 					alert('Successfully Deleted from Table!');
 				},
 			});
-			return projectid;
+			return row.projectidz;
 		});
 
 		$table.bootstrapTable('remove', {
