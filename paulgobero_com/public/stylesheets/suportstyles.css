@@ -2,10 +2,26 @@
   padding-top: 80px;
 }
 
+.w-3 {
+  width: 90px;
+}
+
 .w-5 {
-  width: 50px;
+  width: 200px;
 }
+
+.w-6 {
+  width: 300px;
+}
+
 .w-15 {
-  width: 10px;
+  width: 400px;
 }
+
+.hidden {
+  display:none;
+  visibility:hidden;
+}
+
+
 
