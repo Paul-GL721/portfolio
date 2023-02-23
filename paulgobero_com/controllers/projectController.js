@@ -10,6 +10,8 @@ const async = require("async"); //run async functions
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
+const project = require("../models/project");
+const { stringify } = require("querystring");
 
 //s3 bucket connection parameters
 const s3Client = new S3Client({
@@ -26,6 +28,17 @@ const generaterandomvidname = () => {
 	const vidfilename = randomvideofilename();
 	return vidfilename
 }
+
+//function to delete from s3 bucket
+const deletefroms3bucket = async (delparams) => {
+	try {
+	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
+	  console.log("Success. Object deleted.", data);
+	  return data; // For unit tests.
+	} catch (err) {
+	  console.log("Error when deleting images", err);
+	}
+};
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
@@ -51,15 +64,19 @@ exports.project_create_post = [
 	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
 	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
 	body("progithub", "Project Github url").isURL().trim().escape(),
-	body("proskills", "Name the skills you gained in this project").trim().isLength({ min:2 }).escape(),
-	body("projspecialisation", "Specialisation you gained in this project").trim().isLength({ min:2 }).escape(),
-	body("projauthor", "Choose the project authors").trim().isLength({ min:2 }).escape(),
+	body("proskills.*").escape(),
+	body("projspecialisation.*").escape(),
+	body("projauthor.*").escape(),
 	body("projcontibutor", "Any other authors").trim().escape(),
 
 	async (req, res, next) => {
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
 		//console.log(req.file.buffer);
 		//console.log(req.file);
+		console.log("The body is" );
+		console.log( req.body);
+		console.log(JSON.stringify(req.body));
+
 		
 		//s3 bucket parameters
 		const s3uploadparams = {
@@ -117,15 +134,54 @@ exports.project_delete_get = (req, res, next) => {
 	res.send("NOT IMPLEMENTED: Project deletes get");
 };
 
-//On POST, delete data from database
-exports.project_delete_post = (req, res, next) => {
-	res.send("NOT IMPLEMENTED: Project deletes post");
+//On post, delete project
+exports.project_delete_post = async (req, res, next) => {
+
+	//delete from database
+	const id = req.body.projectid
+	console.log(id);
+	Project.findByIdAndDelete(id, async (err) => {
+		if (err){
+			return next(err);
+		}
+	});
+	//delete image from s3 bucket
+	const delproject = await Project.findOne({_id: id}, 'videoName').exec((err, delresult) => {
+		if (err){
+			console.log(err);
+		}
+		else if (delresult) {
+			console.log("the object to delete is"+delresult.videoName);
+			const delparams = {
+				Bucket: BUCKET_NAME,
+				Key: delresult.videoName
+			}
+			deletefroms3bucket(delparams);
+		}	
+	});
+	res.json({sucess: "Successfully Deleted"});
 };
 
 //On GET, display project update information
-exports.project_update_get = (req, res, next) => {
-	res.send("NOT IMPLEMENTED: Project updates get");
-};
+exports.project_update_get = async (req, res, next) => {
+	//find a document with the specified id
+	update_doc_id = req.query.updateid;
+	console.log("The id to update is" + update_doc_id);
+
+	const updateproject = await Project.findOne({ _id: update_doc_id })
+	.exec(async function (err, update_project) {
+		if (err) {
+			return next(err);
+		}
+		update_project.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: update_project.videoName
+		}), { expiresIn: 3600})
+
+
+		res.json(update_project);
+	});
+}
 
 //On POST, update project data in database
 exports.project_update_post = (req, res, next) => {
@@ -153,7 +209,6 @@ exports.project_list = async(req, res, next) => {
 				Key: projectz.videoName
 			}), { expiresIn: 3600 })
 		}
-
 		//res.json(list_projects);
 		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 	});
