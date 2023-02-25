@@ -1,6 +1,7 @@
 
 {% extends "website_base.njk" %}
-{% set posturl = {submiturl: "project/update" } %}
+{% set posturl = {submiturl: "project/update", skillurl: "project/api/skills", specurl: "project/api/specialisations", authorurl: "project/api/authors"  } %}
+{% set objarray = data.authorzproj %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -84,7 +85,7 @@
                                     <div class="container-fluid">
                                         {% include "reuse_project.njk" %}
                                         <div class="form-group row">
-                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projectUpdateid"><strong>Author Update ID:</strong></label></div>
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projectUpdateid"><strong>Project Update ID:</strong></label></div>
                                             <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="projectUpdateid" name="projectUpdateid" readonly="" placeholder="Project Update Id"></div>
                                         </div>
                                     </div>

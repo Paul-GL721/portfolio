@@ -1,6 +1,7 @@
 
 {% extends "website_base.njk" %}
-{% set posturl = { submiturl: "create" } %}
+{% set posturl = { submiturl: "create", skillurl: "api/skills", specurl: "api/specialisations", authorurl: "api/authors" } %}
+{% set objarray = projectauthors %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 

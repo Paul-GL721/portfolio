@@ -69,6 +69,9 @@ router.get("/project/api/skills", skill_controller.project_skill);
 //Get request for all project skills
 router.get("/project/api/specialisations", specialisation_controller.project_specialisations);
 
+//Get request for all project authors
+router.get("/project/api/authors", author_controller.project_authors);
+
 				//........BLOG ROUTES.....//
 
 

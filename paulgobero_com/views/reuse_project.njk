@@ -29,21 +29,21 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="proskills"><strong>Skills Learnt:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="proskills" multiple="" data-source="api/skills" data-valuekey="_id" data-displaykey="name" name="proskills[]">
+                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="proskills" multiple="" data-source="{{ posturl.skillurl }}" data-valuekey="_id" data-displaykey="name" name="proskills[]">
                         </select></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projspecialisation"><strong>Specialization:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="projspecialisation" multiple="" data-source="api/specialisations" data-valuekey="_id" data-displaykey="name" name="projspecialisation[]">
+                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="projspecialisation" multiple="" data-source="{{ posturl.specurl }}" data-valuekey="_id" data-displaykey="name" name="projspecialisation[]">
                         </select></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projauthor"><strong>Author:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="projauthor" multiple="" name="projauthor[]">
-                        {% for author in projectauthors %}
-                        <option value="{{ author._id }}"> {{ author.name.first }} {{ author.name.middle }} {{ author.name.last }} </option>
-                        {% endfor %}
-                        </select></div>
+                        <div class="col-7 col-sm-7 col-md-8"><select class="custom-select" id="projauthor" multiple="" name="projauthor[]" data-source1="{{ posturl.authorurl }}" data-valuekey="_id" data-displaykey="name.first">
+                        <!--{% for author in objarray %}
+                            <option value="{{ author._id }}"> {{ author.name.first }} {{ author.name.middle }} {{ author.name.last }} </option>
+                        {% endfor %} -->
+                        </select></div> 
                     </div>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projcontibutor"><strong>Contributors:</strong></label></div>
