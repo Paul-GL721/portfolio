@@ -73,9 +73,9 @@ exports.project_create_post = [
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
 		//console.log(req.file.buffer);
 		//console.log(req.file);
-		console.log("The body is" );
-		console.log( req.body);
-		console.log(JSON.stringify(req.body));
+		//console.log("The body is" );
+		//console.log( req.body);
+		//console.log(JSON.stringify(req.body));
 
 		
 		//s3 bucket parameters
@@ -145,7 +145,7 @@ exports.project_delete_post = async (req, res, next) => {
 			return next(err);
 		}
 	});
-	//delete image from s3 bucket
+	//delete video from s3 bucket
 	const delproject = await Project.findOne({_id: id}, 'videoName').exec((err, delresult) => {
 		if (err){
 			console.log(err);
@@ -168,25 +168,123 @@ exports.project_update_get = async (req, res, next) => {
 	update_doc_id = req.query.updateid;
 	console.log("The id to update is" + update_doc_id);
 
-	const updateproject = await Project.findOne({ _id: update_doc_id })
-	.exec(async function (err, update_project) {
+	//return all authors and projects in the same object
+	async.parallel({
+		authorzproj: function(callback){
+			Author.find({}, "_id name ").sort({ createdAt: -1 }).exec(callback);
+		},
+		all_projs: function(callback){
+			Project.findOne({ _id: update_doc_id }).exec(callback);
+		}
+	}, async function(err, results){
 		if (err) {
 			return next(err);
-		}
-		update_project.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+        }
+		console.log(results);
+		results.all_projs.videoUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 			Bucket: BUCKET_NAME,
-			Key: update_project.videoName
+			Key: results.all_projs.videoName
 		}), { expiresIn: 3600})
 
-
-		res.json(update_project);
+		res.json(results);
 	});
 }
 
-//On POST, update project data in database
-exports.project_update_post = (req, res, next) => {
-	res.send("NOT IMPLEMENTED: Project updates post");
-};
+//On POST, update project data in database 
+exports.project_update_post = [
+	/* Update data in the database then Delete the exiting video from s3 and add a new path
+	 to the bucket. */
+
+	//upload single video
+	uploadvideo.single('video1'),
+
+	//validate and sanitize the form fields
+	body("projtitle", "Project title is required").trim().isLength({ min:2 }).escape(),
+	body("projsummary", "Project summary is required").trim().isLength({ min:2 }).escape(),
+	body("projproblem", "What problem was the project solving?").trim().isLength({ min:2 }).escape(),
+	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
+	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
+	body("progithub", "Project Github url").isURL().trim().escape(),
+	body("proskills.*").escape(),
+	body("projspecialisation.*").escape(),
+	body("projauthor.*").escape(),
+	body("projcontibutor", "Any other authors").trim().escape(),
+
+	async (req, res, next) => {
+		const update_project_id = req.body.projectUpdateid;
+		console.log ("The project update id is"+ update_project_id);
+		const projvideoname = "projvid"+generaterandomvidname(); //video name
+
+		//console.log(req.file.buffer);
+		console.log(req.file);
+		console.log("The body is" );
+		console.log( req.body);
+
+		//check for validation errors
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) { //if formdata has errors
+			console.log("The data has errors");
+			console.log(errors);
+			//Re-render the project form with errors
+
+
+		} else {
+			//update object in database
+			const update_filter = {
+				_id: update_project_id 
+			};
+
+			const update_projectz = { $set: {
+					ptitle: req.body.projtitle,
+					psummary: req.body.projsummary,
+					problemStatement: req.body.projproblem,
+					solution: req.body.projsoln,
+					role: req.body.prorole,
+					githubUrl: req.body.progithub,
+					contributor: req.body.projcontibutor,
+					skill: req.body.proskills,
+					author: req.body.projauthor,
+					specialisation: req.body.projspecialisation,
+					videoName: projvideoname
+				} 
+			}
+
+			await Project.findOneAndUpdate(update_filter, update_projectz, {
+				new: true,
+				upsert: true,
+				rawResult: true,
+				runValidators: true
+			});
+
+			//delete video from s3 bucket
+			const delproject = await Project.findOne({_id: update_project_id}, 'videoName').exec((err, delresult) => {
+				if (err){
+					console.log(err);
+				}
+				else if (delresult) {
+					console.log("the object to delete is"+delresult.videoName);
+					const delparams = {
+						Bucket: BUCKET_NAME,
+						Key: delresult.videoName
+					}
+					deletefroms3bucket(delparams);
+				}	
+			});
+
+			//s3 bucket parameters
+			const vidpdates3uploadparams = {
+				Bucket: BUCKET_NAME,
+				Key: projvideoname,
+				Body: req.file.buffer,
+				ContentType: req.file.mimetype		
+			}
+			//upload to s3 bucket
+			await s3Client.send(new PutObjectCommand(vidpdates3uploadparams));
+			console.log("Video in S3 updated sucessfully");
+			res.redirect("/website/project");
+		}
+	},
+];
 
 //On GET, show individual project
 exports.project_detail = (req, res, next) => {
