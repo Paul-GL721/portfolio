@@ -63,6 +63,18 @@ exports.author_list = async (req, res, next) => {
 	});
 };
 
+//API for all available skills
+exports.project_authors = async (req, res, next) => {
+	const allauthors = await Author.find({}, "_id name ")
+	.sort({ createdAt: -1 })
+	.exec(async function (err, list_authors) {
+		if (err) {
+			return next(err);
+		}
+		res.json(list_authors);
+	});
+};
+
 //Display details of specific author
 exports.author_detail = (req, res) => {
 	res.send(`NOT IMPLEMENTED: Author details: ${req.params.id}`);
