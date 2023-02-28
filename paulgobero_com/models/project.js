@@ -16,8 +16,14 @@ const ProjectSchema = new Schema({
     skill: [{ type: Schema.Types.ObjectId, ref: "Skill", required: true }],
     author: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     specialisation: [{ type: Schema.Types.ObjectId, ref: "Specialisation", required: true }],
-    videoName: { type: String, required: true },
-    videoUrl: { type: String }
+    mediaName: {
+        imageName: { type: String, required: true },
+        videoName: { type: String, required: true }
+    },
+    mediaUrl: {
+        imageUrl: { type: String },
+        videoUrl: { type: String }
+    }
 }, {timestamps: true });
 
 //Add virtual property

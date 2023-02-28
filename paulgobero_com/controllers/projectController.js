@@ -25,8 +25,8 @@ const s3Client = new S3Client({
 //generate random videofile name
 const generaterandomvidname = () => {
 	const randomvideofilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
-	const vidfilename = randomvideofilename();
-	return vidfilename
+	const projfilename = randomvideofilename();
+	return projfilename
 }
 
 //function to delete from s3 bucket
@@ -56,6 +56,8 @@ exports.project_create_get = async(req, res, next) => {
 exports.project_create_post = [
 	//upload single video
 	uploadvideo.single('video1'),
+	//multer upload image
+	uploadimg.single('photo1'),
 
 	//validate and sanitize the form fields
 	body("projtitle", "Project title is required").trim().isLength({ min:2 }).escape(),
@@ -71,8 +73,9 @@ exports.project_create_post = [
 
 	async (req, res, next) => {
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
-		//console.log(req.file.buffer);
-		//console.log(req.file);
+		const projimagename = "projimg"+generaterandomvidname(); //image name
+		console.log(req.file.buffer);
+		console.log(req.file);
 		//console.log("The body is" );
 		//console.log( req.body);
 		//console.log(JSON.stringify(req.body));
