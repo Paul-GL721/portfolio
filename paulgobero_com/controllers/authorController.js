@@ -63,7 +63,7 @@ exports.author_list = async (req, res, next) => {
 	});
 };
 
-//API for all available skills
+//API for all available authors
 exports.project_authors = async (req, res, next) => {
 	const allauthors = await Author.find({}, "_id name ")
 	.sort({ createdAt: -1 })
