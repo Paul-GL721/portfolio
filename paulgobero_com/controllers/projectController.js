@@ -40,6 +40,19 @@ const deletefroms3bucket = async (delparams) => {
 	}
 };
 
+//function to upload to s3
+const uploadtos3bucket = async (uploadParams) => {
+	try {
+		const data = await s3Client.send(new PutObjectCommand(uploadParams));
+		console.log("Success. Object uploaded", data);
+		return data; // For unit tests.
+	} catch (err) {
+	  console.log("Error", err);
+	}
+};
+
+
+
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
 	const allauthors = await Author.find({}, "_id name ")
@@ -54,10 +67,9 @@ exports.project_create_get = async(req, res, next) => {
 
 //On POST, submit project formdata to database
 exports.project_create_post = [
-	//upload single video
-	uploadvideo.single('video1'),
-	//multer upload image
-	uploadimg.single('photo1'),
+	//multer upload image and video
+	uploadvideo.fields([{ name: 'photo1', maxCount: 1 }, { name: 'video1', maxCount: 1 }]),
+	
 
 	//validate and sanitize the form fields
 	body("projtitle", "Project title is required").trim().isLength({ min:2 }).escape(),
@@ -74,19 +86,28 @@ exports.project_create_post = [
 	async (req, res, next) => {
 		const projvideoname = "projvid"+generaterandomvidname(); //video name
 		const projimagename = "projimg"+generaterandomvidname(); //image name
-		console.log(req.file.buffer);
-		console.log(req.file);
+		const photo = req.files['photo1'][0];
+		const video = req.files['video1'][0];
+
+		//console.log(req.files);
 		//console.log("The body is" );
 		//console.log( req.body);
 		//console.log(JSON.stringify(req.body));
 
-		
-		//s3 bucket parameters
-		const s3uploadparams = {
+		//s3 bucket video upload parameters
+		const s3projvideouploadparams = {
 			Bucket: BUCKET_NAME,
 			Key: projvideoname,
-			Body: req.file.buffer,
-			ContentType: req.file.mimetype		
+			Body: video.buffer,
+			ContentType: video.mimetype		
+		}
+
+		//s3 bucket image upload parameters
+		const s3projimageuploadparams = {
+			Bucket: BUCKET_NAME,
+			Key: projimagename,
+			Body: photo.buffer,
+			ContentType: photo.mimetype		
 		}
 		
 		//check for validation errors
@@ -110,7 +131,10 @@ exports.project_create_post = [
 				skill: req.body.proskills,
 				author: req.body.projauthor,
 				specialisation: req.body.projspecialisation,
-				videoName: projvideoname
+				mediaName: {
+					imageName:  projimagename,
+					videoName: projvideoname
+				}
 			});
 
 			//save the project object to database
@@ -123,7 +147,8 @@ exports.project_create_post = [
 			});
 			
 			//upload to s3 bucket
-			await s3Client.send(new PutObjectCommand(s3uploadparams));
+			uploadtos3bucket(s3projimageuploadparams);
+			uploadtos3bucket(s3projvideouploadparams);
 			console.log("uploaded to s3 sucessfully");
 
 			//redirect to individual project page
@@ -149,17 +174,22 @@ exports.project_delete_post = async (req, res, next) => {
 		}
 	});
 	//delete video from s3 bucket
-	const delproject = await Project.findOne({_id: id}, 'videoName').exec((err, delresult) => {
+	const delproject = await Project.findOne({_id: id}, 'mediaName').exec((err, delresult) => {
 		if (err){
 			console.log(err);
 		}
 		else if (delresult) {
-			console.log("the object to delete is"+delresult.videoName);
-			const delparams = {
+			console.log("the object to delete is"+delresult.mediaName.videoName);
+			const delvidparams = {
 				Bucket: BUCKET_NAME,
-				Key: delresult.videoName
+				Key: delresult.mediaName.videoName
 			}
-			deletefroms3bucket(delparams);
+			const delimgparams = {
+				Bucket: BUCKET_NAME,
+				Key: delresult.mediaName.imageName
+			}
+			deletefroms3bucket(delimgparams);
+			deletefroms3bucket(delvidparams);
 		}	
 	});
 	res.json({sucess: "Successfully Deleted"});
@@ -184,9 +214,15 @@ exports.project_update_get = async (req, res, next) => {
 			return next(err);
         }
 		console.log(results);
-		results.all_projs.videoUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+		//create video and image signed Urls
+		results.all_projs.mediaUrl.videoUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 			Bucket: BUCKET_NAME,
-			Key: results.all_projs.videoName
+			Key: results.all_projs.mediaName.videoName
+		}), { expiresIn: 3600})
+
+		results.all_projs.mediaUrl.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: results.all_projs.mediaName.imageName
 		}), { expiresIn: 3600})
 
 		res.json(results);
@@ -198,8 +234,8 @@ exports.project_update_post = [
 	/* Update data in the database then Delete the exiting video from s3 and add a new path
 	 to the bucket. */
 
-	//upload single video
-	uploadvideo.single('video1'),
+	//multer upload image and video
+	uploadvideo.fields([{ name: 'photo1', maxCount: 1 }, { name: 'video1', maxCount: 1 }]),
 
 	//validate and sanitize the form fields
 	body("projtitle", "Project title is required").trim().isLength({ min:2 }).escape(),
@@ -216,12 +252,31 @@ exports.project_update_post = [
 	async (req, res, next) => {
 		const update_project_id = req.body.projectUpdateid;
 		console.log ("The project update id is"+ update_project_id);
-		const projvideoname = "projvid"+generaterandomvidname(); //video name
+		const updateprojvideoname = "projvid"+generaterandomvidname(); //video name
+		const updateprojimagename = "projimg"+generaterandomvidname(); //image name
+		const updatephoto = req.files['photo1'][0];
+		const updatevideo = req.files['video1'][0];
 
-		//console.log(req.file.buffer);
-		console.log(req.file);
-		console.log("The body is" );
-		console.log( req.body);
+		//console.log(req.files);
+		//console.log("The body is" );
+		//console.log( req.body);
+		//console.log(JSON.stringify(req.body));
+
+		//s3 bucket video upload parameters
+		const s3projvideouploadparams = {
+			Bucket: BUCKET_NAME,
+			Key: updateprojvideoname,
+			Body: updatevideo.buffer,
+			ContentType: updatevideo.mimetype		
+		}
+
+		//s3 bucket image upload parameters
+		const s3projimageuploadparams = {
+			Bucket: BUCKET_NAME,
+			Key: updateprojimagename,
+			Body: updatephoto.buffer,
+			ContentType: updatephoto.mimetype		
+		}
 
 		//check for validation errors
 		const errors = validationResult(req);
@@ -232,6 +287,25 @@ exports.project_update_post = [
 
 
 		} else {
+			//delete video and image from s3 bucket
+			const delproject = await Project.findOne({_id: update_project_id}, 'mediaName').exec((err, updelresult) => {
+				if (err){
+					console.log(err);
+				}
+				else if (updelresult) {
+					const updelimgparams = {
+						Bucket: BUCKET_NAME,
+						Key: updelresult.mediaName.imageName
+					}
+					const updelvidparams = {
+						Bucket: BUCKET_NAME,
+						Key: updelresult.mediaName.videoName
+					}
+					deletefroms3bucket(updelimgparams);
+					deletefroms3bucket(updelvidparams);
+				}	
+			});
+
 			//update object in database
 			const update_filter = {
 				_id: update_project_id 
@@ -248,10 +322,12 @@ exports.project_update_post = [
 					skill: req.body.proskills,
 					author: req.body.projauthor,
 					specialisation: req.body.projspecialisation,
-					videoName: projvideoname
+					mediaName: {
+						imageName:  updateprojimagename,
+						videoName: updateprojvideoname
+					}
 				} 
 			}
-
 			await Project.findOneAndUpdate(update_filter, update_projectz, {
 				new: true,
 				upsert: true,
@@ -259,33 +335,12 @@ exports.project_update_post = [
 				runValidators: true
 			});
 
-			//delete video from s3 bucket
-			const delproject = await Project.findOne({_id: update_project_id}, 'videoName').exec((err, delresult) => {
-				if (err){
-					console.log(err);
-				}
-				else if (delresult) {
-					console.log("the object to delete is"+delresult.videoName);
-					const delparams = {
-						Bucket: BUCKET_NAME,
-						Key: delresult.videoName
-					}
-					deletefroms3bucket(delparams);
-				}	
-			});
-
-			//s3 bucket parameters
-			const vidpdates3uploadparams = {
-				Bucket: BUCKET_NAME,
-				Key: projvideoname,
-				Body: req.file.buffer,
-				ContentType: req.file.mimetype		
-			}
 			//upload to s3 bucket
-			await s3Client.send(new PutObjectCommand(vidpdates3uploadparams));
-			console.log("Video in S3 updated sucessfully");
-			res.redirect("/website/project");
+			uploadtos3bucket(s3projimageuploadparams);
+			uploadtos3bucket(s3projvideouploadparams);
+			console.log("Media in S3 updated sucessfully");
 		}
+		res.redirect("/website/project");
 	},
 ];
 
@@ -293,6 +348,7 @@ exports.project_update_post = [
 exports.project_detail = (req, res, next) => {
 	res.send(`NOT IMPLEMENTED: Project details: ${req.params.id}`);
 };
+
 
 //On GET, dispaly all available projects
 exports.project_list = async(req, res, next) => {
@@ -305,9 +361,13 @@ exports.project_list = async(req, res, next) => {
 			return next(err);
 		}
 		for (let projectz of list_projects) {
-			projectz.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+			projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
-				Key: projectz.videoName
+				Key: projectz.mediaName.videoName
+			}), { expiresIn: 3600 })
+			projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: projectz.mediaName.imageName
 			}), { expiresIn: 3600 })
 		}
 		//res.json(list_projects);

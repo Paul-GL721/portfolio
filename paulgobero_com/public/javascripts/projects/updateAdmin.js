@@ -21,7 +21,8 @@ $(document).ready(function(){
 					//$("#proskills").val(data.skill);
 					//$("#projauthor").val(data.author);
 					//$("#projspecialisation").val(data.specialisation);
-					$("#div1").attr("src", data.all_projs.videoUrl);
+					$("#div1").attr("src", data.all_projs.mediaUrl.imageUrl);
+					$("#div2").attr("src", data.all_projs.mediaUrl.videoUrl);
 					$("#projectUpdateid").val(data.all_projs._id);	
 				}
 			});

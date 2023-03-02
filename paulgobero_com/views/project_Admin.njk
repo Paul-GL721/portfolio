@@ -19,6 +19,7 @@
                                 <th class="w-5" data-checkbox="true" data-field="state"></th>
                                 <th id="project_id" class="w-5 hidden" data-field="projectidz">id</th>
                                 <th id="cellvideoid" class="w-6" data-field="videoUrl">Uploaded Video</th>
+                                <th id="cellprojpic" class="w-6 data-field="imageUrl">Images</th>
                                 <th id="cellprojecttitle" class="w-5" data-field="projecttitle">Title</th>
                                 <th id="cellprojectsummary" class="w-15" data-field="projectsummary">Summary</th>
                                 <th id="cellprojectproblem" class="w-15" data-field="problemstatement">Challenge Faced</th>
@@ -38,8 +39,9 @@
                                     <td></td>
                                     <td class="hidden">{{ project._id }}</td>
                                     <td>
-                                        <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.videoUrl }}" ></iframe></div>
+                                        <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.mediaUrl.videoUrl }}" ></iframe></div>
                                     </td>
+                                    <td><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
                                     <td>{{ project.ptitle }}</td>
                                     <td>{{ project.psummary }}</td>
                                     <td>{{ project.problemStatement }}</td>
