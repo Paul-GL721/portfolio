@@ -1,6 +1,7 @@
 /* Author model controller */
 
 const Author = require("../models/author"); //author model
+const Project = require("../models/project"); //project model
 const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
 const { body, validationResult } = require("express-validator"); //form validator
@@ -39,9 +40,32 @@ const deletefroms3bucket = async (delparams) => {
 	}
 };
 
+
+
 //Display home website page
-exports.index = (req, res, next) => {
-	res.render("website_index", { Title: "Portfolio"});
+exports.index = async (req, res, next) => {
+	const allprojects = await Project.find({}).sort({ createdAt: -1 })
+	.populate('author', 'name')
+	.populate('skill', 'name')
+	.populate('specialisation', 'name')
+	.exec( async function (err, list_projects) {
+		if (err) {
+			return next(err);
+		}
+		for (let projectz of list_projects) {
+			projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: projectz.mediaName.videoName
+			}), { expiresIn: 3600 })
+			projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: projectz.mediaName.imageName
+			}), { expiresIn: 3600 })
+		}
+		//res.json(list_projects);
+		//res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
+		res.render("website_index", { Title: "Portfolio", index_data: list_projects});
+	});
 };
 
 //Display a list of all authors
