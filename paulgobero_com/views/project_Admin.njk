@@ -42,13 +42,13 @@
                                         <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.mediaUrl.videoUrl }}" ></iframe></div>
                                     </td>
                                     <td><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
-                                    <td>{{ project.ptitle }}</td>
-                                    <td>{{ project.psummary }}</td>
-                                    <td>{{ project.problemStatement }}</td>
-                                    <td>{{ project.solution }}</td>
-                                    <td>{{ project.role }}</td>
+                                    <td>{{ project.ptitle | urlize | safe }}</td>
+                                    <td>{{ project.psummary | urlize | safe }}</td>
+                                    <td>{{ project.problemStatement | urlize | safe }}</td>
+                                    <td>{{ project.solution | urlize | safe }}</td>
+                                    <td>{{ project.role | urlize | safe }}</td>
                                     <td>{{ project.githubUrl | urlize | safe }}</td>
-                                    <td>{{ project.contributor }}</td>
+                                    <td>{{ project.contributor | urlize | safe }}</td>
                                     <td>
                                         <ul class="list-group">
                                             {% for skll in project.skill %} 
