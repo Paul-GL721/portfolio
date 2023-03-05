@@ -28,8 +28,10 @@ const ProjectSchema = new Schema({
 
 //Add virtual property
 ProjectSchema.virtual("url").get(function() {
-    return `/paulgobero_com/project/${this._id}`;
+    return `/website/project/${this._id}`;
 });
+//make virtual properties querable
+ProjectSchema.set('toObject', { virtuals: true });
 
 //export model
 module.exports = mongoose.model("Project", ProjectSchema);
