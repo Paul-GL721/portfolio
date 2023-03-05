@@ -1,5 +1,6 @@
 
 {% extends "website_base.njk" %}
+{% set navbarurl = {about: "#about_section", projects: "#project_section", contact: "#contact_section" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -17,96 +18,85 @@
 	</section>
 
     
-    <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);">
+    <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);padding-top: 50px; padding-bottom:0px">
         <div class="row">
-            <div class="col-lg-4">
-                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div><img class="img-thumbnail img-fluid" style="width: 300px;height: 300px;" src="assets/img/testimonials-2.jpg"></div>
-                    <h3>Fully Responsive</h3>
-                    <p class="lead mb-0">This theme will look great on any device, no matter the size!<a href="#projectmodal" data-toggle="modal">Read more</a></p>
-                    <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Modal Title</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                </div>
-                                <div class="modal-body">
-                                    <section class="showcase">
-                                        <div class="container-fluid p-0">
-                                            <div class="row">
-                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;"></video></div>
-                                                <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
-                                                    <h2>Fully Responsive Design</h2>
-                                                    <p class="lead mb-0">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
-                                                </div>
+            <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
+                <p class="lead mb-0"> 
+                    These are three of my recent projects but <a href="#allprojectmodal" data-toggle="modal">you can view all</a>
+                </p> 
+                <div class="modal fade" role="dialog" tabindex="-1" id="allprojectmodal">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">All Projects</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <section class="showcase">
+                                    <div class="container-fluid p-0">
+                                        <div class="row">
+                                            <div class="col text-justify order-lg-2">
+                                                <ul class="text-wrap" >
+                                                    {% for proj in index_data %}
+                                                        <p> <a href="{{ proj.url}}">{{ proj.ptitle | capitalize | urlize | safe }}</a> <br> {{ proj.psummary | capitalize | urlize | safe }}  </p>
+                                                    {% endfor %}
+                                                </ul>
                                             </div>
                                         </div>
-                                    </section>
-                                </div>
-                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Save</button></div>
+                                    </div>
+                                </section>
                             </div>
+                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div class="d-flex features-icons-icon"><i class="icon-layers m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
-                    <h3>Bootstrap 4 Ready</h3>
-                    <p class="lead mb-0">Featuring the latest build of the new Bootstrap 4 framework!</p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div class="d-flex features-icons-icon"><i class="icon-check m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
-                    <h3>Easy to Use</h3>
-                    <p class="lead mb-0">Ready to use with your own content, or customize the source files!</p>
-                </div>
-            </div>
+        </div>
+        <div class="row">
+            {% for dindex in index_data %}
+                {% if (loop.index <= 3) %}
+                    <div class="col-lg-4">
+                        <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                            <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;" src="{{ dindex.mediaUrl.imageUrl }}"></div>
+                            <h3>{{ dindex.ptitle }}</h3>
+                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }} <a href="#projectmodal" data-toggle="modal">Read more</a></p>
+                            <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">{{ dindex.ptitle }}</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <section class="showcase">
+                                                <div class="container-fluid p-0">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 10px;" src="{{ dindex.mediaUrl.videoUrl }}"></video></div>
+                                                        <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
+                                                            <p class="lead mb-0" style="text-align: left; padding-bottom: 20px">
+                                                                {{ dindex.problemStatement | urlize | safe  }}.  
+                                                            </p> 
+                                                            <p class="lead mb-0">
+                                                                For a solution {{ dindex.solution | urlize | safe }}. My main role(s) included {{ dindex.role | urlize | safe }} and i gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
+                                                            </p>    
+                                                            <p class="lead mb-0" style="text-align: left; padding-top: 20px">
+                                                                View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </section>
 
-
-    <!-- <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);">
-        <div class="row">
-            {% for dindex in index_data %}
-                <div class="col-lg-4">
-                    <div class="lead mb-0">
-                        <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;" src="{{ dindex.mediaUrl.imageUrl }}"></div>
-                        <h3>{{ dindex.ptitle }}</h3>
-                        <p class="lead mb-0">{{ dindex.psummary }}<a href="#projectmodal" data-toggle="modal">Read more</a></p>
-                        <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
-                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">{{ dindex.ptitle }}</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <section class="showcase">
-                                            <div class="container-fluid p-0">
-                                                <div class="row">
-                                                    <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" src="{{ dindex.mediaUrl.videoUrl }}"></video></div>
-                                                    <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
-                                                        <p class="lead mb-0"> 
-                                                            This project aimed to address {{ dindex.problemStatement }}. The solution involved {{ dindex.solution  }}. Follow up the project at this <a href="{{ dindex.githubUrl }}">Github link</a>. My main role was to {{ dindex.role  }} and i gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </section>
-                                    </div>
-                                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>  
-                    </div> 
-                </div> 
-            {% endfor %} 
-        </div>
-    </section> -->
-
-
-    <section id="contact_section" style="padding-top: 80px;background: rgb(248,249,250);">
+    <section id="contact_section" style="padding-top: 50px;background: rgb(248,249,250);">
         <div class="row">
             <div class="col-md-12">
                 <h1 class="text-center"><a href="mailto: paul@paulgobero.com">Email me</a><a href="#">&nbsp;or click to Leave a Message</a></h1>
