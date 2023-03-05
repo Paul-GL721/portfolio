@@ -70,7 +70,6 @@ exports.project_create_post = [
 	//multer upload image and video
 	uploadvideo.fields([{ name: 'photo1', maxCount: 1 }, { name: 'video1', maxCount: 1 }]),
 	
-
 	//validate and sanitize the form fields
 	body("projtitle", "Project title is required").trim().isLength({ min:2 }).escape(),
 	body("projsummary", "Project summary is required").trim().isLength({ min:2 }).escape(),
@@ -345,8 +344,27 @@ exports.project_update_post = [
 ];
 
 //On GET, show individual project
-exports.project_detail = (req, res, next) => {
-	res.send(`NOT IMPLEMENTED: Project details: ${req.params.id}`);
+exports.project_detail = async(req, res, next) => {
+	const detailproject = await Project.findById(req.params.id, {})
+	.populate('author', 'name')
+	.populate('skill', 'name')
+	.populate('specialisation', 'name')
+	.exec( async function (err, details_projects) {
+		if (err) {
+			return next(err);
+		}
+		details_projects.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: details_projects.mediaName.videoName
+		}), { expiresIn: 3600 })
+		details_projects.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: details_projects.mediaName.imageName
+		}), { expiresIn: 3600 })
+		
+		//res.json(details_projects);
+		res.render( "project_detail", { Title: "Project details", detailprojects: details_projects });
+	});
 };
 
 
