@@ -13,6 +13,9 @@ const project_controller = require("../controllers/projectController");
 //Get website home page
 router.get("/", author_controller.index);
 
+//Post contact page from website home page
+router.post("/", author_controller.index_post);
+
 //Get request for creating author
 router.get("/author/create", author_controller.author_create_get);
 

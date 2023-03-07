@@ -7,11 +7,14 @@ const sharp = require("sharp"); //resize images
 const { body, validationResult } = require("express-validator"); //form validator
 const { storage, fileFilter, uploadimg } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
+const nodemailer = require("nodemailer"); //send email from contact form
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
+const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, EMAIL_USER, EMAIL_PASSWORD } = require('../configs/config');
 const { isMainThread } = require("worker_threads");
+const { error } = require("console");
+const { response } = require("express");
 
 //s3 bucket connection parameters
 const s3Client = new S3Client({
@@ -65,6 +68,36 @@ exports.index = async (req, res, next) => {
 		//res.json(list_projects);
 		//res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 		res.render("website_index", { Title: "Portfolio", index_data: list_projects});
+	});
+};
+
+//Send email from contact form
+exports.index_post = async (req, res, next) => {
+	const transporter = nodemailer.createTransport({
+		host: "mail.paulgobero.com",
+		port: 465,
+		secure: true,
+		auth: {
+			type: "login",
+			user: EMAIL_USER,
+			pass: EMAIL_PASSWORD
+		}
+	});
+
+	const mailoptions = {
+		from: req.body.contactemail,
+		to: EMAIL_USER,
+		subject: `Message from ${req.body.contactname}`,
+		text: req.body.contactmessage
+	}
+	transporter.sendMail(mailoptions, (error, response) => {
+		if (error) {
+			console.log(error);
+			res.send(error);
+		} else {
+			console.log("Email Sent");
+			res.send("Success")
+		}
 	});
 };
 
