@@ -2,26 +2,11 @@
   padding-top: 80px;
 }
 
-.w-3 {
-  width: 90px;
+.tableid {
+  display: none;
 }
 
-.w-5 {
-  width: 200px;
+.formValidationError {
+  color: red;
 }
-
-.w-6 {
-  width: 300px;
-}
-
-.w-15 {
-  width: 400px;
-}
-
-.hidden {
-  display:none;
-  visibility:hidden;
-}
-
-
 
