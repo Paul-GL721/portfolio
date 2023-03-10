@@ -12,9 +12,6 @@ const nodemailer = require("nodemailer"); //send email from contact form
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, EMAIL_USER, EMAIL_PASSWORD } = require('../configs/config');
-const { isMainThread } = require("worker_threads");
-const { error } = require("console");
-const { response } = require("express");
 
 //s3 bucket connection parameters
 const s3Client = new S3Client({
@@ -65,41 +62,64 @@ exports.index = async (req, res, next) => {
 				Key: projectz.mediaName.imageName
 			}), { expiresIn: 3600 })
 		}
-		//res.json(list_projects);
-		//res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
 		res.render("website_index", { Title: "Portfolio", index_data: list_projects});
 	});
 };
 
 //Send email from contact form
-exports.index_post = async (req, res, next) => {
-	const transporter = nodemailer.createTransport({
-		host: "mail.paulgobero.com",
-		port: 465,
-		secure: true,
-		auth: {
-			type: "login",
-			user: EMAIL_USER,
-			pass: EMAIL_PASSWORD
-		}
-	});
+exports.index_post = [
+	//validate and sanitize the form fields
+	body("contactname", "Contact name is required").trim().isLength({ min:3 }).escape(),
+	body("contactemail", "Contact email is required").isEmail().trim().escape(),
+	body("contactmessage", "Contact message is required").trim().isLength({ min:3 }).escape(),
 
-	const mailoptions = {
-		from: req.body.contactemail,
-		to: EMAIL_USER,
-		subject: `Message from ${req.body.contactname}`,
-		text: req.body.contactmessage
-	}
-	transporter.sendMail(mailoptions, (error, response) => {
-		if (error) {
-			console.log(error);
-			res.send(error);
+    async (req, res, next) => {
+		//check for validation errors
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) { //if formdata has errors
+			console.log("The data has errors");
+			console.log(errors);
+			//Re-render the project form with errors
+
 		} else {
-			console.log("Email Sent");
-			res.send("Success")
+			//console.log("this is the body");
+			//console.log(req.body);
+			
+			const transporter = nodemailer.createTransport({
+				host: "mail.paulgobero.com",
+				port: 465,
+				secure: true,
+				auth: {
+					type: "login",
+					user: EMAIL_USER,
+					pass: EMAIL_PASSWORD
+				}
+			});
+
+			const mailoptions = {
+				from: {
+					name: req.body.contactname,
+					address: EMAIL_USER,
+				},
+				to:  EMAIL_USER,
+				subject: `Message from ${req.body.contactname}`,
+				text: req.body.contactmessage,
+				replyTo: req.body.contactemail
+			};
+			
+			transporter.sendMail(mailoptions, (error, response) => {
+				if (error) {
+					console.log(error);
+					//res.send(error);
+					res.jsonp({failed : true});
+				} else {
+					console.log("Email Sent");
+					res.redirect("/website#contact_section");
+				}
+			});
 		}
-	});
-};
+	}
+];
 
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
