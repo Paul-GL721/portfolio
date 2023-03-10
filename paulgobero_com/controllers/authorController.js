@@ -40,30 +40,59 @@ const deletefroms3bucket = async (delparams) => {
 	}
 };
 
+//function to upload to s3
+const uploadtos3bucket = async (uploadParams) => {
+	try {
+		const data = await s3Client.send(new PutObjectCommand(uploadParams));
+		console.log("Success. Object uploaded", data);
+		return data; // For unit tests.
+	} catch (err) {
+	  console.log("Error", err);
+	}
+};
+
 
 
 //Display home website page
+/* Get projects per individual author */
 exports.index = async (req, res, next) => {
-	const allprojects = await Project.find({}).sort({ createdAt: -1 })
-	.populate('author', 'name')
-	.populate('skill', 'name')
-	.populate('specialisation', 'name')
-	.exec( async function (err, list_projects) {
-		if (err) {
-			return next(err);
-		}
-		for (let projectz of list_projects) {
-			projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+	const author_id = "63ea93e3e6fa6c31469ba1b0";
+	async.parallel(
+		{
+			author(callback) {
+				Author.findById(author_id).exec(callback);
+			},
+			author_projects(callback) {
+				Project.find({ author: author_id }).sort({ createdAt: -1 })
+				.populate('author', 'name')
+				.populate('skill', 'name')
+				.populate('specialisation', 'name')
+				.exec(callback);
+			},
+		},
+		async (err, results) => {
+			if (err) {
+				return next(err);
+			}
+			console.log(results);
+			//create video and image signed Urls
+			results.author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
-				Key: projectz.mediaName.videoName
-			}), { expiresIn: 3600 })
-			projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: projectz.mediaName.imageName
-			}), { expiresIn: 3600 })
+				Key: results.author.imageName
+			}), { expiresIn: 3600})	
+			for (let projectz of results.author_projects) {
+				projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+					Bucket: BUCKET_NAME,
+					Key: projectz.mediaName.videoName
+				}), { expiresIn: 3600 })
+				projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+					Bucket: BUCKET_NAME,
+					Key: projectz.mediaName.imageName
+				}), { expiresIn: 3600 })
+			}
+			res.render("website_index", { Title: "Portfolio", index_data: results});
 		}
-		res.render("website_index", { Title: "Portfolio", index_data: list_projects});
-	});
+	);
 };
 
 //Send email from contact form
@@ -207,6 +236,10 @@ exports.author_create_post = [
 					middle: req.body.authormiddlename,
 					last: req.body.authorlastname
 				},
+				about: {
+					short_description: req.body.authorshortdesc,
+					full_description: req.body.authorfulldesc
+				},
 				contact: {
 					phoneNumber: {
 						mobile: req.body.mobilenumber,
@@ -233,7 +266,8 @@ exports.author_create_post = [
 				console.log("Successfully Saved to Database");
 			});
 			//upload the actual image to s3
-			await s3Client.send(new PutObjectCommand(s3uploadparams));
+			//await s3Client.send(new PutObjectCommand(s3uploadparams));
+			uploadtos3bucket(s3uploadparams);
 			res.redirect(Author.url);
 		}
 	},
@@ -318,6 +352,10 @@ exports.author_update_post = [
 				first: req.body.authorfirstname,
 				middle: req.body.authormiddlename,
 				last: req.body.authorlastname
+			},
+			about: {
+				short_description: req.body.authorshortdesc,
+				full_description: req.body.authorfulldesc
 			},
 			contact: {
 				phoneNumber: {

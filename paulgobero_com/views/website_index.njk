@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
                 <p class="lead mb-0" style="text-align: left;font-size: 20px;">
-                    These are three of my recent projects:&nbsp;<a href="#allprojectmodal" data-toggle="modal">you can view all of them</a>;
+                    These are three of my recent projects: but&nbsp;<a href="#allprojectmodal" data-toggle="modal">you can view all of them</a>;
                 </p> 
                 <div class="modal fade" role="dialog" tabindex="-1" id="allprojectmodal">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
@@ -52,7 +52,7 @@
             </div>
         </div>
         <div class="row">
-            {% for dindex in index_data %}
+            {% for dindex in index_data.author_projects %}
                 {% if (loop.index <= 3) %}
                     <div class="col-lg-4">
                         <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
