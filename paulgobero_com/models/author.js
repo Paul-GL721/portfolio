@@ -11,6 +11,10 @@ const AuthorSchema = new Schema({
 		middle:  { type: String, maxLength: 50, trim: true },
 		last: { type: String, required: [true, 'Please insert last name'], maxLength: 50, trim: true }
     },
+	about: {
+		short_description: { type: String, required: [true, 'Write a short descirpion of you'], maxLength: 100, trim: true },
+		full_description: { type: String, required: [true, 'Tell us more about you'], maxLength: 500, trim: true }
+    },
     contact: {
 		phoneNumber: {
 		    mobile: { type: String, trim: true },
@@ -29,10 +33,15 @@ const AuthorSchema = new Schema({
 	imageUrl: { type: String }
 }, { timestamps: true });
 
-//define the virtual property
-AuthorSchema.virtual('fullName').get(function() {
-    return this.name.first + ' ' + this.name.middle + ' ' + this.name.last;
+//define the virtual properties
+AuthorSchema.virtual('brand').get(function() {
+    return this.name.first + ' ' + this.name.last;
 });
+AuthorSchema.virtual("url").get(function() {
+    return `/website/author/${this._id}`;
+});
+//make virtual properties querable
+AuthorSchema.set('toObject', { virtuals: true });
 
 //export the model
 module.exports = mongoose.model( "Author", AuthorSchema );
