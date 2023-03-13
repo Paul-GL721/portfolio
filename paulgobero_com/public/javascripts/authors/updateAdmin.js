@@ -12,6 +12,8 @@ $(document).ready(function(){
 					$("#authorfirstname").val(data.name.first);
 					$("#authormiddlename").val(data.name.middle);
 					$("#authorlastname").val(data.name.last);
+					$("#authorshortdesc").val(data.about.short_description);
+					$("#authorfulldesc").val(data.about.full_description);
 					$("#mobilenumber").val(data.contact.phoneNumber.mobile);
 					$("#worknumber").val(data.contact.phoneNumber.work);
 					$("#authoremail").val(data.contact.email);

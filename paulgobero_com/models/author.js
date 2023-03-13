@@ -13,7 +13,7 @@ const AuthorSchema = new Schema({
     },
 	about: {
 		short_description: { type: String, required: [true, 'Write a short descirpion of you'], maxLength: 100, trim: true },
-		full_description: { type: String, required: [true, 'Tell us more about you'], maxLength: 500, trim: true }
+		full_description: { type: String, required: [true, 'Tell us more about you'], maxLength: 900, trim: true }
     },
     contact: {
 		phoneNumber: {

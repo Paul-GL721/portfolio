@@ -20,6 +20,8 @@
                                 <th id="cellauthorfirstname" data-field="namefirst">First Name</th>
                                 <th id="cellauthormiddlename" data-field="namemiddle">Middle Name</th>
                                 <th id="cellauthorlastname" data-field="namelast">Last Name</th>
+                                <th id="cellauthorshortdesc" data-field="shortdesc">Short Description</th>
+                                <th id="cellauthorlongdesc" data-field="longdesc">Long Description</th>
                                 <th id="cellmobilenumber" data-field="mobilenumber">Mobile Number</th>
                                 <th id="cellworknumber" data-field="worknumber">Work Number</th>
                                 <th id="cellauthoremail" data-field="authoremail">Email</th>
@@ -40,6 +42,8 @@
 	                                <td>{{ author.name.first }}</td>
 	                                <td>{{ author.name.middle }}</td>
 	                                <td>{{ author.name.last }}</td>
+                                    <td>{{ author.about.short_description }}</td>
+                                    <td>{{ author.about.full_description }}</td>
 	                                <td>{{ author.contact.phoneNumber.mobile }}</td>
 	                                <td>{{ author.contact.phoneNumber.work }}</td>
 	                                <td>{{ author.contact.email }}</td>
