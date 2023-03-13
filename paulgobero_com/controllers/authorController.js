@@ -56,7 +56,7 @@ const uploadtos3bucket = async (uploadParams) => {
 //Display home website page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
-	const author_id = "63ea93e3e6fa6c31469ba1b0";
+	const author_id = "640b9882be40727206ddeeb9";
 	async.parallel(
 		{
 			author(callback) {
@@ -74,7 +74,7 @@ exports.index = async (req, res, next) => {
 			if (err) {
 				return next(err);
 			}
-			console.log(results);
+			//console.log(results);
 			//create video and image signed Urls
 			results.author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
@@ -212,7 +212,7 @@ exports.author_create_post = [
 	async (req, res, next) => {
 		const profilepic = "author"+generaterandomimgname();//image name
 		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+		const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
 
 		//upload images to S3
 		const s3uploadparams = {
@@ -340,7 +340,7 @@ exports.author_update_post = [
 		const upprofilepic = "author"+generaterandomimgname();//image name
 
 		//resize the image file
-		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
 
 		//update object in database
 		const update_filter = {
