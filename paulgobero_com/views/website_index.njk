@@ -7,12 +7,12 @@
 {% block content %}
 	<section id="about_section" class="showcase formsection">
 	    <div class="row no-gutters">
-	        <div class="col-lg-6 text-white order-lg-2">
-	            <div><img class="rounded-circle img-fluid" src="/images/img/testimonials-2.jpg"></div>
+	        <div class="col-lg-4 text-white order-lg-2">
+	            <div><img class="rounded-circle img-fluid" src="{{ index_data.author.imageUrl }}"></div>
 	        </div>
-	        <div class="col-lg-6 my-auto order-lg-1 showcase-text">
-	            <h2>Fully Responsive Design</h2>
-	            <p class="lead mb-0">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
+	        <div class="col-lg-8 my-auto order-lg-1" style="padding-left: 80px;padding-right: 50px;">
+	            <h2 class="text-wrap" style="text-align: center;">A {{ index_data.author.about.short_description | title }}</h2>
+	            <p class="lead">{{ index_data.author.about.full_description | capitalize }}</p>
 	        </div>
 	    </div>
 	</section>
