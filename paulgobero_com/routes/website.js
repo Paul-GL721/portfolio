@@ -16,6 +16,24 @@ router.get("/", author_controller.index);
 //Post contact page from website home page
 router.post("/", author_controller.index_post);
 
+//Get login page
+router.get("/login", author_controller.login);
+
+//Post login page
+router.post("/login", author_controller.login_post);
+
+//Get signup page
+router.get("/signup", author_controller.signup);
+
+//Post signup page
+router.post("/signup", author_controller.signup_post);
+
+//Get demologin page
+router.get("/demologin", author_controller.demologin);
+
+//Post demologin page
+router.post("/demologin", author_controller.demologin_post);
+
 //Get request for creating author
 router.get("/author/create", author_controller.author_create_get);
 
