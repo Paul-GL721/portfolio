@@ -15,6 +15,11 @@ const AuthorSchema = new Schema({
 		short_description: { type: String, required: [true, 'Write a short descirpion of you'], maxLength: 100, trim: true },
 		full_description: { type: String, required: [true, 'Tell us more about you'], maxLength: 900, trim: true }
     },
+	brandName: { type: String, required: true },
+	location: {
+		address: { type: String, required: [true, 'Town, Country'], trim: true },
+		timezone: { type: String, required: [true, 'UTC Timezone'], trim: true }
+    },
     contact: {
 		phoneNumber: {
 		    mobile: { type: String, trim: true },
@@ -30,7 +35,11 @@ const AuthorSchema = new Schema({
 		linkedin: { type: String, trim: true }
     },
 	imageName: { type: String, required: true },
-	imageUrl: { type: String }
+	imageUrl: { type: String },
+	login_details: {
+		email: { type: String, lowercase: true, trim: true },
+	    password: { type: String, trim: true }
+    }
 }, { timestamps: true });
 
 //define the virtual properties

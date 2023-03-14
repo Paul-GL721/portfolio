@@ -200,6 +200,11 @@ exports.author_create_post = [
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authoraddress", "Tell us where you are located").trim().isLength({ min:2 }).escape(),
+	body("authortimezone", "Your UTC timezone").trim().isLength({ min:2 }).escape(),
 	body("mobilenumber", "Your mobile number").isNumeric().trim().escape(),
 	body("worknumber", "Workplace number").isNumeric().trim().escape(),
 	body("facebookurl", "Facebook url").isURL().trim().escape(),
@@ -240,6 +245,11 @@ exports.author_create_post = [
 					short_description: req.body.authorshortdesc,
 					full_description: req.body.authorfulldesc
 				},
+				brandName: req.body.authorbrandname,
+				location: {
+					address: req.body.authoraddress,
+					timezone: req.body.authortimezone
+				},
 				contact: {
 					phoneNumber: {
 						mobile: req.body.mobilenumber,
@@ -254,7 +264,11 @@ exports.author_create_post = [
 					github: req.body.githuburl,
 					linkedin: req.body.linkeninurl
 				},
-				imageName: profilepic 
+				imageName: profilepic,
+				login_details: {
+					email: req.body.authoremail,
+					password: req.body.authorpassword
+				} 
 			});
 
 			//save author object to database
