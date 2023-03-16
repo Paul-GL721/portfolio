@@ -52,6 +52,34 @@ const uploadtos3bucket = async (uploadParams) => {
 };
 
 
+//Display login page
+exports.login = async (req, res, next) => {
+	res.render("login", { Title: "Login" });	
+};
+
+//Post login page
+exports.login_post = async (req, res, next) => {
+	res.send("NOT IMPLEMENTED: POST LOGIN page");	
+};
+
+//Display signup page
+exports.signup = async (req, res, next) => {
+	res.render("create_author", { Title: "Sign up" });	
+};
+
+//Post signup page
+exports.signup_post = async (req, res, next) => {
+	res.send("NOT IMPLEMENTED: GET signup page");	
+};
+//Display demologin page
+exports.demologin = async (req, res, next) => {
+	res.render("demologin", { Title: "Demo login" });	
+};
+
+//Post demologin page
+exports.demologin_post = async (req, res, next) => {
+	res.send("NOT IMPLEMENTED: GET demologin page");	
+};
 
 //Display home website page
 /* Get projects per individual author */
