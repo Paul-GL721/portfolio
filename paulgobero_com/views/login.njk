@@ -1,5 +1,7 @@
 {% extends "website_base.njk" %}
 
+{% set logindetails = { emailid: "loginemail", passwdid: "loginpasswd" } %}
+
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block navabar %}   {% endblock %}
@@ -15,12 +17,10 @@
                                 <div class="card">
                                     <div class="card-body text-center d-flex flex-column align-items-center">
                                         <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"><img class="rounded-circle" width="80" height="80" src="assets/img/testimonials-2.jpg"></div>
-                                        <form method="post" action=" ">
-                                            <div class="mb-3"><input class="form-control" type="email" id="loginemail" name="loginemail" placeholder="Email" required=""></div>
-                                            <div class="mb-3"><input class="form-control" type="password" id="loginpasswd" name="loginpasswd" placeholder="Password" required=""></div>
+                                        {% include "reuse_login.njk" %}
                                             <div class="mb-3">
-                                                <button class="btn btn-primary" type="submit">Log in</button>
-                                                <a class="btn btn-light ml-5" role="button" href="/website/signup">Sign up</a>
+                                                <button class="btn btn-primary" type="submit">Login</button>
+                                                <a class="btn btn-outline-primary ml-5" role="button" href="/website/signup">Sign up</a>
                                             </div>
                                             <p class="text-muted"><a href="#">Forgot your password?</a></p>
                                         </form>
