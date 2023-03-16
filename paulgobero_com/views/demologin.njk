@@ -2,6 +2,8 @@
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
+{% block navabar %}   {% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row">
@@ -13,10 +15,10 @@
                                 <div class="card">
                                     <div class="card-body text-center d-flex flex-column align-items-center">
                                         <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"><img class="rounded-circle" width="80" height="80" src="assets/img/testimonials-2.jpg"></div>
-                                        <form method="post" action="/demologin">
-                                            <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email"></div>
-                                            <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password"></div>
-                                            <div class="mb-3"><button class="btn btn-danger" id="dloginbtn" type="submit">Log in</button><button class="btn btn-success ml-4" id="demologin" type="submit">Demo User Log in</button></div>
+                                        <form method="post" action=" ">
+                                            <div class="mb-3"><input class="form-control" type="email" id="demoemail" name="demoemail" placeholder="Email" required=""></div>
+                                            <div class="mb-3"><input class="form-control" type="password" id="demopasswd" name="demopasswd" placeholder="Password" required=""></div>
+                                            <div class="mb-3"><button class="btn btn-danger" id="dloginbtn" type="submit">Log in</button><button class="btn btn-success ml-4" id="demologin" type="button">Demo User Log in</button></div>
                                         </form>
                                     </div>
                                 </div>
@@ -28,3 +30,5 @@
         </div>
     </div>
 {% endblock %}
+
+{% block footer %}  {% endblock %}
