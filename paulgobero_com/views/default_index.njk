@@ -1,14 +1,9 @@
 
 {% extends "website_base.njk" %}
 
-
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
-{% block createOwnerbutton %}
-    <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="create_owner_portfolio">Create Owner</a>
-{% endblock %}
-
-{% block loginbutton %}   {% endblock %}
+{% block navabar %}    {% endblock %}
 
 {% block content %}
     <div class="row">
@@ -20,7 +15,12 @@
                             <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
                             <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
                             <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
-                        </ul><a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="login.html">Create Owner</a><a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="login.html">login</a><a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="login.html">Sign out</a><a class="btn btn-outline-danger" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used by user to quickly test live demos" href="login.html">Demo User</a>
+                        </ul>
+                        {% block createOwnerbutton %}
+                            <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/website/signup/owner">Create Owner</a>
+                        {% endblock %}
+                        {% block loginbutton %}   {% endblock %}
+                        {% block createDemoUserbutton %}   {% endblock %}    
                     </div>
                 </div>
             </nav>

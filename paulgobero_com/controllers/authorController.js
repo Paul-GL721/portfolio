@@ -63,12 +63,12 @@ exports.login_post = async (req, res, next) => {
 };
 
 //Display signup page
-exports.signup = async (req, res, next) => {
-	res.render("create_author", { Title: "Sign up" });	
+exports.owner_signup = async (req, res, next) => {
+	res.render("create_owner_portfolio", { Title: "Owner Sign up" });	
 };
 
 //Post signup page
-exports.signup_post = async (req, res, next) => {
+exports.owner_signup_post = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: GET signup page");	
 };
 //Display demologin page
@@ -84,43 +84,69 @@ exports.demologin_post = async (req, res, next) => {
 //Display home website page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
-	const author_id = "640b9882be40727206ddeeb9";
-	async.parallel(
-		{
-			author(callback) {
-				Author.findById(author_id).exec(callback);
-			},
-			author_projects(callback) {
-				Project.find({ author: author_id }).sort({ createdAt: -1 })
-				.populate('author', 'name')
-				.populate('skill', 'name')
-				.populate('specialisation', 'name')
-				.exec(callback);
-			},
-		},
-		async (err, results) => {
-			if (err) {
-				return next(err);
-			}
-			//console.log(results);
-			//create video and image signed Urls
-			results.author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: results.author.imageName
-			}), { expiresIn: 3600})	
-			for (let projectz of results.author_projects) {
-				projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: projectz.mediaName.videoName
-				}), { expiresIn: 3600 })
-				projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: projectz.mediaName.imageName
-				}), { expiresIn: 3600 })
-			}
-			res.render("website_index", { Title: "Portfolio", index_data: results});
+	const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, ownportfolio) {
+		if (err) {
+			res.send("There was an error");
+		} else if (ownportfolio===null) { 
+			res.render("default_index", { Title: "Default Page" });
+		} else {
+			console.log(checkauthors);
+			console.log(ownportfolio);
+			res.send("An Owner has already signed up");
 		}
-	);
+	});
+
+	/*const checkauthors = await Author.find({ authorStatus: 'owner' }).sort({ createdAt: -1 })
+	.exec( async function (err, available_owner) {
+		if (err) {
+			//return next(err);
+			//res.json(list_authors);
+			console.log("You need to signup as an owner");
+			res.render("default_index", { Title: "Default Page" });
+		} else {
+			console.log("looks like an owner signed up!")
+			res.json(available_owner);
+			const author_id = available_owner._id;
+			console.log(author_id)
+			async.parallel(
+				{
+					author(callback) {
+						Author.findById(author_id).exec(callback);
+					},
+					author_projects(callback) {
+						Project.find({ author: author_id }).sort({ createdAt: -1 })
+						.populate('author', 'name')
+						.populate('skill', 'name')
+						.populate('specialisation', 'name')
+						.exec(callback);
+					},
+				},
+				async (err, results) => {
+					if (err) {
+						return next(err);
+					}
+					//console.log(results);
+					//create video and image signed Urls
+					results.author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+						Bucket: BUCKET_NAME,
+						Key: results.author.imageName
+					}), { expiresIn: 3600})	
+					for (let projectz of results.author_projects) {
+						projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+							Bucket: BUCKET_NAME,
+							Key: projectz.mediaName.videoName
+						}), { expiresIn: 3600 })
+						projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+							Bucket: BUCKET_NAME,
+							Key: projectz.mediaName.imageName
+						}), { expiresIn: 3600 })
+					}
+					res.render("website_index", { Title: "Portfolio", index_data: results});
+				}
+			);
+
+		}
+	});*/
 };
 
 //Send email from contact form

@@ -23,10 +23,10 @@ router.get("/login", author_controller.login);
 router.post("/login", author_controller.login_post);
 
 //Get signup page
-router.get("/signup", author_controller.signup);
+router.get("/signup/owner", author_controller.owner_signup);
 
 //Post signup page
-router.post("/signup", author_controller.signup_post);
+router.post("/signup/owner", author_controller.owner_signup_post);
 
 //Get demologin page
 router.get("/demologin", author_controller.demologin);
