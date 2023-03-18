@@ -1,24 +1,39 @@
 
 {% extends "website_base.njk" %}
 
-{% set posturl = { submiturl: "create", skillurl: "api/skills", specurl: "api/specialisations", authorurl: "api/authors" } %}
-
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block createOwnerbutton %}
-    <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="login.html">Create Owner</a>
+    <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="create_owner_portfolio">Create Owner</a>
 {% endblock %}
 
+{% block loginbutton %}   {% endblock %}
+
 {% block content %}
+    <div class="row">
+        <div class="col">
+            <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
+                <div class="container-fluid"><a class="navbar-brand" href="#">Brand Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navcol-1">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
+                        </ul><a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="login.html">Create Owner</a><a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="login.html">login</a><a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="login.html">Sign out</a><a class="btn btn-outline-danger" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used by user to quickly test live demos" href="login.html">Demo User</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
     <section id="about_section" class="showcase" style="padding-top: 80px;">
         <div class="row no-gutters">
             <div class="col-lg-4 text-white order-lg-2">
-                <div><img class="rounded-circle img-fluid" src="assets/img/testimonials-2.jpg" style="text-align: center;"></div>
+                <div><img class="rounded-circle img-fluid" src="assets/img/My%20project.png" style="text-align: center;"></div>
             </div>
             <div class="col-lg-8 my-auto order-lg-1" style="padding-right: 50px;padding-left: 80px;">
-                <h2 class="text-wrap" style="text-align: center;">Fully Responsive Design</h2>
-                <p class="lead mb-0">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!&nbsp;<br><br>In 1912, Kampala Township received its first land-use plan and had a European and Asian population of 2,850.<a href="https://en.wikipedia.org/wiki/Kampala#cite_note-19"><sup>[19]</sup></a><br>In 1922, Kampala's oldest university, <a href="https://en.wikipedia.org/wiki/Makerere_University">Makerere</a>,<br> was founded as the Uganda Technical College at the present Makerere <br>Hill and initially offered carpentry, building construction, mechanics, <br>arts, education, agriculture, and medicine.<sup>[</sup><a href="https://en.wikipedia.org/wiki/Wikipedia:Citation_needed"><sup><em>citation needed</em></sup></a><sup>]</sup><br>In 1930, the first sewerage plan was prepared to target a population of 20,000 people in the <a href="https://en.wikipedia.org/wiki/Nakasero">Nakasero</a> and <a href="https://en.wikipedia.org/wiki/Old_Kampala">Old Kampala</a><br> areas of the Kampala township. This plan guided sewerage development <br>from 1936 to 1940 in planned urban areas of the Kampala Township and <br>excluded the <em>Kibuga</em> area occupied by the <a href="https://en.wikipedia.org/wiki/Baganda">Baganda</a> and other natives.<a href="https://en.wikipedia.org/wiki/Kampala#cite_note-20"><sup>[20]</sup></a><br><br><br></p>
+                <h2 class="text-wrap" style="text-align: center;">Job Title</h2>
+                <p class="lead mb-0">&nbsp;Lorem ipsum dolor sit amet. Aut minus nulla sit laudantium voluptatem ex autem dolorem et officia aliquam. Cum mollitia officiis hic tempore voluptates aut maxime labore. Ut galisum consequatur est laborum tempore aut libero nisi et magni enim id voluptatem distinctio sed voluptatem magnam 33 magni similique. Eos nemo earum est corrupti voluptas sit illo quos et voluptas officia eum nihil repellat aut perferendis internos. Est odio saepe eum minus omnis et rerum aperiam qui dolores explicabo eos sunt asperiores. In placeat quaerat et quasi quidem aut fuga maiores sit ducimus galisum est cupiditate sequi est nobis tempora. At fugiat atque in nihil provident At distinctio voluptas in fugiat voluptatem ad maxime harum et nesciunt dolore vel voluptatum odio. Et quae illo non recusandae harum cum necessitatibus praesentium. Sed tempore tenetur vel beatae corrupti et expedita omnis a aliquam asperiores ut enim quia.</p>
             </div>
         </div>
     </section>
@@ -50,31 +65,32 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/testimonials-2.jpg"></div>
-                    <h3>Fully Responsive</h3>
-                    <p class="lead mb-0">This theme will look great on any device, no matter the size!<a href="#projectmodal" data-toggle="modal">Read more</a></p>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project1.jpg"></div>
+                    <h3>Project One&nbsp;</h3>
+                    <p class="lead text-left mb-0">Sit soluta nobis 33 placeat velit qui cumque labore in ducimus sequi! Et&nbsp;autem temporibus At autem consequatur ut accusamus iure et iusto autem et assumenda molestiae!<a href="#projectmodal" data-toggle="modal">Read more</a></p>
                     <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title" style="text-align: center;">Modal Title</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    <h4 class="modal-title" style="text-align: center;">Project One</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                 </div>
                                 <div class="modal-body">
                                     <section class="showcase">
                                         <div class="container-fluid p-0">
                                             <div class="row">
-                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;"></video>
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" preload="auto" poster="assets/img/project1.jpg">
+                                                        <track kind="subtitles">
+                                                    </video>
                                                     <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
                                                 </div>
                                                 <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;padding-top: 0px;">
-                                                    <h2>Fully Responsive Design</h2>
-                                                    <p class="lead mb-0" style="text-align: left;padding-bottom: 10px;">When you use a theme created with Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
+                                                    <p class="lead mb-0" style="text-align: left;padding-bottom: 10px;">Eget nunc scelerisque viverra mauris in aliquam sem. Molestie a iaculis <br>at erat pellentesque adipiscing commodo. In iaculis nunc sed augue. In <br>iaculis nunc sed augue lacus viverra vitae. Nam libero justo laoreet sit<br> amet cursus. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Imperdiet proin fermentum leo vel orci porta non.&nbsp;<a href="#">View project on Github</a> Faucibus ornare <br>suspendisse sed nisi lacus sed viverra. Sit amet consectetur adipiscing <br>elit duis. Ligula ullamcorper malesuada proin libero&nbsp;<a href="#">View project on Github</a> nunc.</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </section>
                                 </div>
-                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Save</button></div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
                             </div>
                         </div>
                     </div>
@@ -82,16 +98,64 @@
             </div>
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div class="d-flex features-icons-icon"><i class="icon-layers m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
-                    <h3>Bootstrap 4 Ready</h3>
-                    <p class="lead mb-0">Featuring the latest build of the new Bootstrap 4 framework!</p>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project2.jpg"></div>
+                    <h3>Project Two&nbsp;</h3>
+                    <p class="lead text-left mb-0">Qui dolores consequatur ut aliquam repellat sit eveniet adipisci. Eos&nbsp;voluptatum voluptate rem quia sunt qui rerum asperiores 33 itaque autem&nbsp;At quia sequi.<br><a href="#projectmodal-1" data-toggle="modal">Read more</a></p>
+                    <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-1">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" style="text-align: center;">Project Two</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <section class="showcase">
+                                        <div class="container-fluid p-0">
+                                            <div class="row">
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="assets/img/project2.jpg"></video>
+                                                    <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
+                                                </div>
+                                                <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;padding-top: 0px;">
+                                                    <p class="lead mb-0" style="text-align: left;padding-bottom: 10px;">Ut voluptas alias 33 reiciendis odio et error laborum ut nesciunt sunt <br>vel cupiditate fugit qui modi iusto ut dolore nostrum! Ut debitis <br>dolores est quam quia hic laboriosam ullam qui error sint ut quod <br>molestiae ut veniam harum&nbsp;<a href="#">view project on Github&nbsp;</a>. Qui laudantium facere et unde omnis 33 omnis&nbsp;placeat ut asperiores&nbsp;<a href="#">view live demo</a> accusamus et provident pariatur ut delectus ipsum.&nbsp;</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div class="d-flex features-icons-icon"><i class="icon-check m-auto text-primary" data-bss-hover-animate="pulse"></i></div>
-                    <h3>Easy to Use</h3>
-                    <p class="lead mb-0">Ready to use with your own content, or customize the source files!</p>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project3.jpg"></div>
+                    <h3>Project Three</h3>
+                    <p class="lead text-left mb-0">Vel accusantium dolorum et officia aliquam et odio dolore. Et similique vero aut itaque neque aut sunt delectus hic rerum soluta ab eius <br>voluptas eum dolorum natus<br><a href="#projectmodal-2" data-toggle="modal">Read more</a></p>
+                    <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-2">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" style="text-align: center;">Project Three</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <section class="showcase">
+                                        <div class="container-fluid p-0">
+                                            <div class="row">
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="assets/img/project3.jpg"></video>
+                                                    <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
+                                                </div>
+                                                <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;padding-top: 0px;">
+                                                    <p class="lead mb-0" style="text-align: left;padding-bottom: 10px;">Sed officiis quia quo voluptate omnis qui aperiam nihil sed omnis amet <br>et exercitationem tempore. Vel dolores vero in illum rerum ad voluptatem<br> ipsam quo omnis cumque et aspernatur sint ea numquam fuga et esse&nbsp;pariatur. Aut libero placeat ea harum dignissimos et <a href="#">view project on Github&nbsp;</a>nisi consectetur. <br>Ut Quis exercitationem ab voluptatum&nbsp; &nbsp;aliquid est laboriosam voluptates<a href="#">Live demonstration of the project</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,53 +165,21 @@
             <div class="row mb-5">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
                     <h2 class="font-weight-bold">Contact Me</h2>
-                    <p class="lead">Get in touch by email, phone or leave a message: I try to reply as soon as possible</p>
+                    <p class="lead">Et internos inventore aut quos enim ut quas eaque eum fugiat quia? Et voluptatem vero eos quod distinctio aut dolor internos.</p>
                 </div>
             </div>
             <div class="row d-flex justify-content-center">
                 <div class="col-md-6 col-xl-4">
-                    <div class="d-flex flex-column justify-content-center align-items-start h-100">
-                        <div class="d-flex align-items-center p-3">
-                            <div class="bs-icon-md bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block bs-icon bs-icon-md"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-telephone">
-                                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"></path>
-                                </svg></div>
-                            <div class="px-2">
-                                <h6 class="font-weight-bold mb-0">Phone</h6>
-                                <p class="mb-0">+256704815315</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center p-3">
-                            <div class="bs-icon-md bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block bs-icon bs-icon-md"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-envelope">
-                                    <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"></path>
-                                </svg></div>
-                            <div class="px-2">
-                                <h6 class="font-weight-bold mb-0">Email</h6>
-                                <p class="mb-0">paul@paulgobero.com</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center p-3">
-                            <div class="bs-icon-md bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block bs-icon bs-icon-md"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-pin">
-                                    <path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 0 1 5 6.708V2.277a2.77 2.77 0 0 1-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 0 1 .146-.354zm1.58 1.408-.002-.001.002.001zm-.002-.001.002.001A.5.5 0 0 1 6 2v5a.5.5 0 0 1-.276.447h-.002l-.012.007-.054.03a4.922 4.922 0 0 0-.827.58c-.318.278-.585.596-.725.936h7.792c-.14-.34-.407-.658-.725-.936a4.915 4.915 0 0 0-.881-.61l-.012-.006h-.002A.5.5 0 0 1 10 7V2a.5.5 0 0 1 .295-.458 1.775 1.775 0 0 0 .351-.271c.08-.08.155-.17.214-.271H5.14c.06.1.133.191.214.271a1.78 1.78 0 0 0 .37.282z"></path>
-                                </svg></div>
-                            <div class="px-2">
-                                <h6 class="font-weight-bold mb-0">Location</h6>
-                                <p class="mb-0">Kampala, Uganda</p>
-                                <p class="mb-0">utc: +03:00</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xl-4">
                     <div>
                         <form class="form-inline p-3 p-xl-4" id="contactForm" method="post" action="" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Name" required=""></div>
+                                <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
                             </div>
                             <div class="mb-3">
-                                <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Email" required=""></div>
+                                <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Your Email" required=""></div>
                             </div>
                             <div class="mb-3">
-                                <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message" required=""></textarea></div>
+                                <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
                             </div>
                             <div><button class="btn btn-primary d-block w-100" type="submit">Send Message</button></div>
                         </form>
