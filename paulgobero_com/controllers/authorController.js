@@ -82,6 +82,16 @@ exports.demologin_post = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: GET demologin page");	
 };
 
+//Check if a demouser exists
+exports.demouseravailablity = async (req, res, next) => {
+	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
+};
+
+//Get login information for an existing demo user
+exports.demouserinfo = async (req, res, next) => {
+	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
+};
+
 //Display home website page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {

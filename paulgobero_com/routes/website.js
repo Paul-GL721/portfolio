@@ -34,6 +34,12 @@ router.get("/demologin", author_controller.demologin);
 //Post demologin page
 router.post("/demologin", author_controller.demologin_post);
 
+//Get existing demologin info
+router.get("/demologin/userinfo", author_controller.demouserinfo);
+
+//Check if a demo user exists
+router.get("/demologin/availablity", author_controller.demouseravailablity);
+
 //Get request for creating author
 router.get("/author/create", author_controller.author_create_get);
 
