@@ -18,6 +18,7 @@ const AuthorSchema = new Schema({
 	brandName: { type: String },
 	email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
 	password: { type: String },
+	authorStatus: { type: String, required: true, trim: true },
     socialmedia: {
 		github: { type: String, trim: true },
 		linkedin: { type: String, trim: true }
