@@ -1,0 +1,46 @@
+
+{% extends "website_base.njk" %}
+{% set posturl = {submiturl: "/website/author/create" } %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section", contact: "/#contact_section" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block createOwnerbutton %}     {% endblock %}
+{% block loginbutton %}     {% endblock %} 
+{% block createDemoUserbutton %}     {% endblock %}
+
+{% block content %}
+    <section class="formsection">
+    	<div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-12 col-sm-12 col-md-8" id="main_div">
+                <div class="page-header">
+                    <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Owner</span></em></h1>
+                </div>
+
+                {% include "reuse_author.njk" %}
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorpassword"><strong>Password:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="password" id="authorpassword" placeholder="Type your password" name="authorpassword" required=""></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorstatus"><strong>Author Status:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorstatus" name="authorstatus" readonly="" value="demouser"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="demousersubmitbutton" name="demousersubmitbutton" type="submit">Submit</button></div>
+                    </div>
+                </form>
+
+                <div class="form-group row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </section>
+{% endblock %}
+
+
