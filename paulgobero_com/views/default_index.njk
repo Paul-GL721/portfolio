@@ -3,33 +3,33 @@
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
-{% block navabar %}    {% endblock %}
-
 {% block content %}
-    <div class="row">
-        <div class="col">
-            <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
-                <div class="container-fluid"><a class="navbar-brand" href="#">Brand Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-                    <div class="collapse navbar-collapse" id="navcol-1">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
-                        </ul>
-                        {% block createOwnerbutton %}
-                            <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/website/signup/owner">Create Owner</a>
-                        {% endblock %}
-                        {% block loginbutton %}   {% endblock %}
-                        {% block createDemoUserbutton %}   {% endblock %}    
+    {% block navabar %}
+        <div class="row">
+            <div class="col">
+                <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
+                    <div class="container-fluid"><a class="navbar-brand" href="#">Brand Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navcol-1">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
+                            </ul>
+                            {% block createOwnerbutton %}
+                                <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/website/signup/owner">Create Owner</a>
+                            {% endblock %}
+                            {% block loginbutton %}   {% endblock %}
+                            {% block createDemoUserbutton %}   {% endblock %}    
+                        </div>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </div>
-    </div>
+    {% endblock %}
     <section id="about_section" class="showcase" style="padding-top: 80px;">
         <div class="row no-gutters">
             <div class="col-lg-4 text-white order-lg-2">
-                <div><img class="rounded-circle img-fluid" src="assets/img/My%20project.png" style="text-align: center;"></div>
+                <div><img class="rounded-circle img-fluid" src="/images/img/My%20project.png" style="text-align: center;"></div>
             </div>
             <div class="col-lg-8 my-auto order-lg-1" style="padding-right: 50px;padding-left: 80px;">
                 <h2 class="text-wrap" style="text-align: center;">Job Title</h2>
@@ -65,7 +65,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project1.jpg"></div>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="/images/img/project1.jpg"></div>
                     <h3>Project One&nbsp;</h3>
                     <p class="lead text-left mb-0">Sit soluta nobis 33 placeat velit qui cumque labore in ducimus sequi! Et&nbsp;autem temporibus At autem consequatur ut accusamus iure et iusto autem et assumenda molestiae!<a href="#projectmodal" data-toggle="modal">Read more</a></p>
                     <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
@@ -78,7 +78,7 @@
                                     <section class="showcase">
                                         <div class="container-fluid p-0">
                                             <div class="row">
-                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" preload="auto" poster="assets/img/project1.jpg">
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" preload="auto" poster="/images/img/project1.jpg">
                                                         <track kind="subtitles">
                                                     </video>
                                                     <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
@@ -98,7 +98,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project2.jpg"></div>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="/images/img/project2.jpg"></div>
                     <h3>Project Two&nbsp;</h3>
                     <p class="lead text-left mb-0">Qui dolores consequatur ut aliquam repellat sit eveniet adipisci. Eos&nbsp;voluptatum voluptate rem quia sunt qui rerum asperiores 33 itaque autem&nbsp;At quia sequi.<br><a href="#projectmodal-1" data-toggle="modal">Read more</a></p>
                     <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-1">
@@ -111,7 +111,7 @@
                                     <section class="showcase">
                                         <div class="container-fluid p-0">
                                             <div class="row">
-                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="assets/img/project2.jpg"></video>
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="/images/img/project2.jpg"></video>
                                                     <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
                                                 </div>
                                                 <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;padding-top: 0px;">
@@ -129,7 +129,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="assets/img/project3.jpg"></div>
+                    <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;margin-top: -4px;" src="/images/img/project3.jpg"></div>
                     <h3>Project Three</h3>
                     <p class="lead text-left mb-0">Vel accusantium dolorum et officia aliquam et odio dolore. Et similique vero aut itaque neque aut sunt delectus hic rerum soluta ab eius <br>voluptas eum dolorum natus<br><a href="#projectmodal-2" data-toggle="modal">Read more</a></p>
                     <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-2">
@@ -142,7 +142,7 @@
                                     <section class="showcase">
                                         <div class="container-fluid p-0">
                                             <div class="row">
-                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="assets/img/project3.jpg"></video>
+                                                <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 0px;" poster="/images/img/project3.jpg"></video>
                                                     <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="hjn" allowfullscreen=""></iframe></div>
                                                 </div>
                                                 <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;padding-top: 0px;">
