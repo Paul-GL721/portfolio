@@ -16,16 +16,14 @@ $(document).ready(function() {
     }); 
 	
 	/* If a Demo user exits, hide the 'create demo user' button */
-	$(window).load(function(){ 
-		$.ajax({
-			type: "GET",
-			url: "author/demologin/availablity",
-			success: function(data){
-				console.log(data);
-				if (data.status == "true"){
-					$("#projectcreatedemouser").hide();
-				}	
-			}
-		});
+	$.ajax({
+		type: "GET",
+		url: "demologin/availablity",
+		success: function(data){
+			//console.log(data);
+			if (data.status == true){
+				$("#projectcreatedemouser").hide();
+			}	
+		}
 	});
 }); 

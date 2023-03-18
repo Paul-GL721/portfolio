@@ -84,7 +84,16 @@ exports.demologin_post = async (req, res, next) => {
 
 //Check if a demouser exists
 exports.demouseravailablity = async (req, res, next) => {
-	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
+	const checkauthors = Author.exists({ authorStatus: 'demouser' }, function(err, available_demouser) {
+		if (err) {
+			res.send("There was an error: while checking for your portfolio");
+		} else if (available_demouser===null) { 
+			res.send("You need to add a demouser");
+		} else {
+			//console.log("The demouser is available");
+			res.json({ status: true});
+		}
+	});
 };
 
 //Get login information for an existing demo user
