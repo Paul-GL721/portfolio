@@ -62,15 +62,16 @@ exports.login_post = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: POST LOGIN page");	
 };
 
-//Display signup page
+//Display owner signup page
 exports.owner_signup = async (req, res, next) => {
 	res.render("create_owner_portfolio", { Title: "Owner Sign up" });	
 };
 
-//Post signup page
-exports.owner_signup_post = async (req, res, next) => {
-	res.send("NOT IMPLEMENTED: GET signup page");	
+//Display demouser signup page
+exports.demouser_signup = async (req, res, next) => {
+	res.render("create_demouser", { Title: "Demo user" });	
 };
+
 //Display demologin page
 exports.demologin = async (req, res, next) => {
 	res.render("demologin", { Title: "Demo login" });	
@@ -84,28 +85,12 @@ exports.demologin_post = async (req, res, next) => {
 //Display home website page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
-	const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, ownportfolio) {
+	const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, available_owner) {
 		if (err) {
-			res.send("There was an error");
-		} else if (ownportfolio===null) { 
+			res.send("There was an error: while checking for your portfolio");
+		} else if (available_owner===null) { 
 			res.render("default_index", { Title: "Default Page" });
 		} else {
-			console.log(checkauthors);
-			console.log(ownportfolio);
-			res.send("An Owner has already signed up");
-		}
-	});
-
-	/*const checkauthors = await Author.find({ authorStatus: 'owner' }).sort({ createdAt: -1 })
-	.exec( async function (err, available_owner) {
-		if (err) {
-			//return next(err);
-			//res.json(list_authors);
-			console.log("You need to signup as an owner");
-			res.render("default_index", { Title: "Default Page" });
-		} else {
-			console.log("looks like an owner signed up!")
-			res.json(available_owner);
 			const author_id = available_owner._id;
 			console.log(author_id)
 			async.parallel(
@@ -144,9 +129,9 @@ exports.index = async (req, res, next) => {
 					res.render("website_index", { Title: "Portfolio", index_data: results});
 				}
 			);
-
+			
 		}
-	});*/
+	});
 };
 
 //Send email from contact form
@@ -257,16 +242,10 @@ exports.author_create_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authoraddress", "Tell us where you are located").trim().isLength({ min:2 }).escape(),
-	body("authortimezone", "Your UTC timezone").trim().isLength({ min:2 }).escape(),
-	body("mobilenumber", "Your mobile number").isNumeric().trim().escape(),
-	body("worknumber", "Workplace number").isNumeric().trim().escape(),
-	body("facebookurl", "Facebook url").isURL().trim().escape(),
-	body("twitterurl", "Twitter url").isURL().trim().escape(),
+	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
 	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
-	body("authorwebsite", "Author portfolio website ").isURL().trim().escape(),
 
 	async (req, res, next) => {
 		const profilepic = "author"+generaterandomimgname();//image name
@@ -300,29 +279,14 @@ exports.author_create_post = [
 					full_description: req.body.authorfulldesc
 				},
 				brandName: req.body.authorbrandname,
-				location: {
-					address: req.body.authoraddress,
-					timezone: req.body.authortimezone
-				},
-				contact: {
-					phoneNumber: {
-						mobile: req.body.mobilenumber,
-						work: req.body.worknumber
-					},
-					email: req.body.authoremail,
-					personal_website: req.body.authorwebsite,
-				},
+				email: req.body.authoremail,
+				password: req.body.authorpassword,
+				authorStatus: req.body.authorstatus,
 				socialmedia: {
-					facebook: req.body.facebookurl,
-					twitter: req.body.twitterurl,
 					github: req.body.githuburl,
 					linkedin: req.body.linkeninurl
 				},
-				imageName: profilepic,
-				login_details: {
-					email: req.body.authoremail,
-					password: req.body.authorpassword
-				} 
+				imageName: profilepic 
 			});
 
 			//save author object to database
