@@ -22,11 +22,11 @@ router.get("/login", author_controller.login);
 //Post login page
 router.post("/login", author_controller.login_post);
 
-//Get signup page
+//Get owner signup page
 router.get("/signup/owner", author_controller.owner_signup);
 
-//Post signup page
-router.post("/signup/owner", author_controller.owner_signup_post);
+//Get demo user signup page
+router.get("/signup/demouser", author_controller.demouser_signup);
 
 //Get demologin page
 router.get("/demologin", author_controller.demologin);

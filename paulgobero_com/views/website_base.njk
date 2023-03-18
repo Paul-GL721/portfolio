@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col">
                     <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
-                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ navbarurl.brand | default("brandname", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brand | default("brandname", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                             <div class="collapse navbar-collapse" id="navcol-1">
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.about }}">About</a></li>
@@ -37,13 +37,11 @@
                                 {% block createOwnerbutton %}          {% endblock %}
 
                                 {% block loginbutton %}
-                                    <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="login.html">login</a>
-                                    <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="login.html">Sign out</a>
+                                    <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/website/login">login</a>
+                                    <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/website/logout">Sign out</a>
                                 {% endblock %}
 
-                                {% block createDemoUserbutton %}
-                                    <a class="btn btn-outline-danger" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used by user to quickly test live demos" href="login.html">Demo User</a>
-                                {% endblock %}
+                                {% block createDemoUserbutton %}      {% endblock %}
                             </div>
                         </div>
                     </nav>
