@@ -16,9 +16,10 @@ const AuthorSchema = new Schema({
 		full_description: { type: String, required: [true, 'Tell us more about you'], maxLength: 900, trim: true }
     },
 	brandName: { type: String },
-	email: { type: String, required: [ true, 'Please enter your email address' ], lowercase: true, trim: true },
+	email: { type: String, required: [ true, 'Please enter your email address' ], unique: true, lowercase: true, trim: true },
 	password: { type: String },
 	authorStatus: { type: String, required: true, trim: true },
+	authorRole: { type: String, required: true, trim: true },
     socialmedia: {
 		github: { type: String, trim: true },
 		linkedin: { type: String, trim: true }
