@@ -8,6 +8,7 @@ const author_controller = require("../controllers/authorController");
 const specialisation_controller = require("../controllers/specialisationController");
 const skill_controller = require("../controllers/skillController");
 const project_controller = require("../controllers/projectController");
+const login_controller = require("../controllers/loginController");
 
 				//........AUTHOR ROUTES.....//
 //Get website home page
@@ -17,28 +18,34 @@ router.get("/", author_controller.index);
 router.post("/", author_controller.index_post);
 
 //Get login page
-router.get("/login", author_controller.login);
+router.get("/login", login_controller.login);
 
 //Post login page
-router.post("/login", author_controller.login_post);
+router.post("/login", login_controller.login_post);
+
+//Get request to refresh JWToken
+router.get("/refreshlogin", login_controller.refreshToken);
+
+//Logout user
+router.get("/logout", login_controller.logout);
 
 //Get owner signup page
-router.get("/signup/owner", author_controller.owner_signup);
+router.get("/signup/owner", login_controller.owner_signup);
 
 //Get demo user signup page
-router.get("/signup/demouser", author_controller.demouser_signup);
+router.get("/signup/demouser", login_controller.demouser_signup);
 
 //Get demologin page
-router.get("/demologin", author_controller.demologin);
+router.get("/demologin", login_controller.demologin);
 
 //Post demologin page
-router.post("/demologin", author_controller.demologin_post);
+router.post("/demologin", login_controller.demologin_post);
 
 //Get existing demologin info
-router.get("/demologin/userinfo", author_controller.demouserinfo);
+router.get("/demologin/userinfo", login_controller.demouserinfo);
 
 //Check if a demo user exists
-router.get("/demologin/availablity", author_controller.demouseravailablity);
+router.get("/demologin/availablity", login_controller.demouseravailablity);
 
 //Get request for creating author
 router.get("/author/create", author_controller.author_create_get);
@@ -62,7 +69,7 @@ router.post("/author/update", author_controller.author_update_post);
 router.get("/author/:id", author_controller.author_detail);
 
 //Get request for all authors
-router.get("/author", author_controller.author_list);
+router.get("/author", login_controller.verifyToken, author_controller.author_list);
 
 
 				//........PROJECT ROUTES.....//
