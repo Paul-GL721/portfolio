@@ -52,55 +52,6 @@ const uploadtos3bucket = async (uploadParams) => {
 };
 
 
-//Display login page
-exports.login = async (req, res, next) => {
-	res.render("login", { Title: "Login" });	
-};
-
-//Post login page
-exports.login_post = async (req, res, next) => {
-	res.send("NOT IMPLEMENTED: POST LOGIN page");	
-};
-
-//Display owner signup page
-exports.owner_signup = async (req, res, next) => {
-	res.render("create_owner_portfolio", { Title: "Owner Sign up" });	
-};
-
-//Display demouser signup page
-exports.demouser_signup = async (req, res, next) => {
-	res.render("create_demouser", { Title: "Demo user" });	
-};
-
-//Display demologin page
-exports.demologin = async (req, res, next) => {
-	res.render("demologin", { Title: "Demo login" });	
-};
-
-//Post demologin page
-exports.demologin_post = async (req, res, next) => {
-	res.send("NOT IMPLEMENTED: GET demologin page");	
-};
-
-//Check if a demouser exists
-exports.demouseravailablity = async (req, res, next) => {
-	const checkauthors = Author.exists({ authorStatus: 'demouser' }, function(err, available_demouser) {
-		if (err) {
-			res.send("There was an error: while checking for your portfolio");
-		} else if (available_demouser===null) { 
-			res.send("You need to add a demouser");
-		} else {
-			//console.log("The demouser is available");
-			res.json({ status: true});
-		}
-	});
-};
-
-//Get login information for an existing demo user
-exports.demouserinfo = async (req, res, next) => {
-	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
-};
-
 //Display home website page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
@@ -210,21 +161,32 @@ exports.index_post = [
 
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
-	const allauthors = await Author.find({}).sort({ createdAt: -1 })
-	.exec( async function (err, list_authors) {
-		if (err) {
-			return next(err);
-		}
-		for (let authors of list_authors) {		
-			authors.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: authors.imageName
-			}), { expiresIn: 3600})			
-		}
+	// Get brand name and role from decoded token
+	const Brand = req.userinfo.user;
+	const Role = req.userinfo.role; 
+	console.log("Role is");
+	console.log(Role);
+  
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		const allauthors = await Author.find({}).sort({ createdAt: -1 })
+		.exec( async function (err, list_authors) {
+			if (err) {
+				return next(err);
+			}
+			for (let authors of list_authors) {		
+				authors.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+					Bucket: BUCKET_NAME,
+					Key: authors.imageName
+				}), { expiresIn: 3600})			
+			}
 
-		//res.json(list_authors);
-		res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
-	});
+			res.json(list_authors);
+			//res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
+		});
+	}
 };
 
 //API for all available authors
@@ -262,6 +224,7 @@ exports.author_create_post = [
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
+	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
 	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
@@ -301,6 +264,7 @@ exports.author_create_post = [
 				email: req.body.authoremail,
 				password: req.body.authorpassword,
 				authorStatus: req.body.authorstatus,
+				authorRole: req.body.authorRole,
 				socialmedia: {
 					github: req.body.githuburl,
 					linkedin: req.body.linkeninurl
