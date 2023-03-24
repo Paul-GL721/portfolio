@@ -23,9 +23,13 @@ exports.login_post = async (req, res, next) => {
 		}
 		//if the user is available, generate a JWT, load the admin dashboard
 		else if (availresult) {
-			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
-			res.cookie('jwt', jwt_token, {httpOnly: true});
-			res.json({availresult});
+			//create an access token for the user
+			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
+			//create a refresh token for the user
+			const refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
+			
+			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, {httpOnly: true});
+			res.json({ jwt_token, refresh_jwt_token });
 		}
 		//else the user is not available: send an error response
 		else {
@@ -68,6 +72,13 @@ exports.demouseravailablity = async (req, res, next) => {
 	});
 };
 
+//logout user
+exports.logout = (req, res, next) => {
+	//'expires' attribute is set to a date in the past (January 1, 1970) which causes the cookie to expire immediately
+	res.cookie('jwtTokens', '', { expires: new Date(0) });
+	res.send("Succesfully Logout")
+}
+
 //Get login information for an existing demo user
 exports.demouserinfo = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
@@ -75,20 +86,52 @@ exports.demouserinfo = async (req, res, next) => {
 
 //Middleware for authorisation
 exports.verifyToken = (req, res, next) => {
-	const token = req.cookies.jwt;
-	if (!token) {
+	const cookietoken = req.cookies.jwtTokens;
+	const accessToken = cookietoken.jwt
+	
+	console.log("The token is");
+	console.log(cookietoken);
+	if (!accessToken) {
 		return res.status(401).json({ message: 'Unauthorised' });
 	} else {
 		try {
 			//verifiy token using secret key
-			const decodedToken = jwt.verify(token, AUTH_SECRET_KEY);
+			const decodedToken = jwt.verify(accessToken, AUTH_SECRET_KEY);
 			//attach decoded token to userinfo object
 			req.userinfo = decodedToken;
 			//call the next middleware
 			next();
 		} catch (err) {
 			//return error if token is inalid
-			res.status(403).send({ message: 'Invalid Token' })
+			res.status(403).send({ message: 'Invalid Access Token' })
+		}
+	}
+}
+
+//refresh user access token
+exports.refreshToken = (req, res, next) => {
+	//get the refreshtoken from the request body
+	const cookietoken = req.cookies.jwtTokens;
+	const refreshToken = cookietoken.reftok;
+	console.log("refreshToken is");
+	console.log(refreshToken);
+	
+	//verify the original token sent
+	//if valid, generate a new token with the same parameters.
+	if (!refreshToken) {
+		return res.status(401).json({ message: 'Unauthorised Refresh Token' });
+	} else {
+		try {
+			//verifiy token using secret key
+			const decodedToken = jwt.verify(refreshToken, AUTH_SECRET_KEY);
+			//create an access token for the user
+			const jwt_token = jwt.sign({ user:decodedToken.brandName, role:decodedToken.authorRole }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
+
+			res.cookie('jwtTokens',{ jwt:jwt_token }, {httpOnly: true});
+			res.send("REfreshed Token");
+		} catch (err) {
+			//return error if token is inalid
+			res.status(403).send({ message: 'Invalid Refresh Token' })
 		}
 	}
 }
