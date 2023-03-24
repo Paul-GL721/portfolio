@@ -26,4 +26,18 @@ $(document).ready(function() {
 			}	
 		}
 	});
+
+	//Get login details dor demouser and Toggle login demo button
+    $('#loginbtn').click(function(){
+        $.ajax({
+			type: "GET",
+			url: "/login",
+			success: function(data){
+				console.log(data);
+				if (data.status == false){
+					$(".loginerrors").text('Oops! Wrong Password or Username');
+				}	
+			}
+		});
+    });
 }); 
