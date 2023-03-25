@@ -125,16 +125,6 @@ exports.verifyToken = (req, res, next) => {
 	}
 }
 
-//Middleware for user authorisation
-exports.isauthorised = (req, res, next) => {
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} 
-}
-
 //refresh user access token
 exports.refreshToken = (req, res, next) => {
 	//get the refreshtoken from the request body
