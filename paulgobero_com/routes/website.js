@@ -17,6 +17,32 @@ router.get("/", author_controller.index);
 //Post contact page from website home page
 router.post("/", author_controller.index_post);
 
+//Get request for creating author
+router.get("/author/create", author_controller.author_create_get);
+
+//Post request for creating author
+router.post("/author/create", author_controller.author_create_post);
+
+//Get request for deleting author
+router.get("/author/delete", author_controller.author_delete_get);
+
+//Post request for deleting author
+router.post("/author/delete", author_controller.author_delete_post);
+
+//Get request for updating author
+router.get("/author/update", author_controller.author_update_get);
+
+//Post request for updating author
+router.post("/author/update", author_controller.author_update_post);
+
+//Get request for one author
+router.get("/author/:id", author_controller.author_detail);
+
+//Get request for all authors
+router.get("/author", login_controller.verifyToken, author_controller.author_list);
+
+
+				//........LOGIN ROUTES.....//
 //Get login page
 router.get("/login", login_controller.login);
 
@@ -46,30 +72,6 @@ router.get("/demologin/userinfo", login_controller.demouserinfo);
 
 //Check if a demo user exists
 router.get("/demologin/availablity", login_controller.demouseravailablity);
-
-//Get request for creating author
-router.get("/author/create", author_controller.author_create_get);
-
-//Post request for creating author
-router.post("/author/create", author_controller.author_create_post);
-
-//Get request for deleting author
-router.get("/author/delete", author_controller.author_delete_get);
-
-//Post request for deleting author
-router.post("/author/delete", author_controller.author_delete_post);
-
-//Get request for updating author
-router.get("/author/update", author_controller.author_update_get);
-
-//Post request for updating author
-router.post("/author/update", author_controller.author_update_post);
-
-//Get request for one author
-router.get("/author/:id", author_controller.author_detail);
-
-//Get request for all authors
-router.get("/author", login_controller.verifyToken, author_controller.author_list);
 
 
 				//........PROJECT ROUTES.....//
