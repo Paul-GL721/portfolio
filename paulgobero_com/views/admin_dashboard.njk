@@ -1,0 +1,88 @@
+
+{% extends "website_base.njk" %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section", contact: "/#contact_section" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section id="adminabout" class="showcase formsection">
+        <div class="row no-gutters">
+            <div class="col-lg-12 text-center text-white order-lg-2">
+                <div>
+                    <h3 class="font-weight-bold text-dark">brandName You are now logged in!</h3><img class="rounded-circle img-fluid" src="/images/img/My%20project.png" style="text-align: center;" width="150px" height="150px">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="text-center bg-light features-icons" id="adminpages" style="background: rgb(248, 249, 250);padding-bottom: 0px;padding-top: 50px;">
+        <div class="row">
+            <div class="col">
+                <p style="text-align: left;font-size: 20px;">CREATE, READ, UPDATE and DELETE from the database</p>
+                <div class="modal fade" role="dialog" tabindex="-1" id="loginout">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <p class="lead">Would you like to stay signed in?</p>
+                            </div>
+                            <div class="modal-footer"><button class="btn btn-primary" id="btnstaysignedin" type="button" data-dismiss="modal">Stay signed in</button><button class="btn btn-success" id="btnlogout" type="button" data-dismiss="modal">Logout</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-lg-3">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div></div>
+                    <h3>Skills&nbsp;</h3>
+                    <p class="lead text-left mb-0">CRUD operations on the skills in the database.</p>
+                    <div>
+                        <ul style="font-size: 20px;">
+                            <li class="text-left"><a href="#">Add a new skill.</a></li>
+                            <li class="text-left"><a href="#">View, Update, and Delete existing skill(s).</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div></div>
+                    <h3>Specializations</h3>
+                    <p class="lead text-left mb-0">CRUD operations on the specializations in the database.</p>
+                    <div>
+                        <ul style="font-size: 20px;">
+                            <li class="text-left"><a href="#">Add a new specialization.</a></li>
+                            <li class="text-left"><a href="#">View, Update, and Delete existing specialization(s).</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div></div>
+                    <h3>Authors</h3>
+                    <p class="lead text-left mb-0">CRUD operations on the authors in the database.</p>
+                    <div>
+                        <ul style="font-size: 20px;">
+                            <li class="text-left"><a href="#">Add a new author.</a></li>
+                            <li class="text-left"><a href="#">View, Update, and Delete existing author(s).</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                    <div></div>
+                    <h3>Project</h3>
+                    <p class="lead text-left mb-0">CRUD operations on projects in the database.</p>
+                    <div>
+                        <ul style="font-size: 20px;">
+                            <li class="text-left"><a href="#">Add a new project.</a></li>
+                            <li class="text-left"><a href="#">View, Update, and Delete existing project(s).</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
