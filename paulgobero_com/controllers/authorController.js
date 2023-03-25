@@ -98,8 +98,7 @@ exports.index = async (req, res, next) => {
 					}
 					res.render("website_index", { Title: "Portfolio", index_data: results});
 				}
-			);
-			
+			);	
 		}
 	});
 };
@@ -161,12 +160,8 @@ exports.index_post = [
 
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
-	// Get brand name and role from decoded token
-	const Brand = req.userinfo.user;
+	// Get role from decoded cookie token
 	const Role = req.userinfo.role; 
-	console.log("Role is");
-	console.log(Role);
-  
 	// If user is not an admin or normal user, return error
 	if (Role !== 'admin') {
 	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
@@ -182,23 +177,29 @@ exports.author_list = async (req, res, next) => {
 					Key: authors.imageName
 				}), { expiresIn: 3600})			
 			}
-
-			res.json(list_authors);
-			//res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
-		});
+			//res.json(list_authors);
+			res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
+		});	
 	}
 };
 
 //API for all available authors
 exports.project_authors = async (req, res, next) => {
-	const allauthors = await Author.find({}, "_id name ")
-	.sort({ createdAt: -1 })
-	.exec(async function (err, list_authors) {
-		if (err) {
-			return next(err);
-		}
-		res.json(list_authors);
-	});
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		const allauthors = await Author.find({}, "_id name ")
+		.sort({ createdAt: -1 })
+		.exec(async function (err, list_authors) {
+			if (err) {
+				return next(err);
+			}
+			res.json(list_authors);
+		});
+	}
 };
 
 //Display details of specific author
@@ -208,7 +209,14 @@ exports.author_detail = (req, res) => {
 
 //on GET request, display the author create form
 exports.author_create_get = (req, res, next) => {
-	res.render("create_author.njk", {Title: "Create author"});
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		res.render("create_author.njk", {Title: "Create author"});
+	}
 }
 
 //On post, send data to database
@@ -230,60 +238,67 @@ exports.author_create_post = [
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
-		const profilepic = "author"+generaterandomimgname();//image name
-		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
-
-		//upload images to S3
-		const s3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: filebuffer,
-			Key: profilepic
-		}
-		//ContentType: 'image/jpeg'
-
-		//extract error from request
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) { //if formdata has errors
-			console.log("Form Data has errors");
-			console.log(errors);
-			//render the author form with errors as values
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 		} else {
-			//create an author object with escaped values
-			const authorz = new Author({
-				name: {
-					first: req.body.authorfirstname,
-					middle: req.body.authormiddlename,
-					last: req.body.authorlastname
-				},
-				about: {
-					short_description: req.body.authorshortdesc,
-					full_description: req.body.authorfulldesc
-				},
-				brandName: req.body.authorbrandname,
-				email: req.body.authoremail,
-				password: req.body.authorpassword,
-				authorStatus: req.body.authorstatus,
-				authorRole: req.body.authorRole,
-				socialmedia: {
-					github: req.body.githuburl,
-					linkedin: req.body.linkeninurl
-				},
-				imageName: profilepic 
-			});
+			const profilepic = "author"+generaterandomimgname();//image name
+			//resize the image file
+			const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
 
-			//save author object to database
-			authorz.save( (err) => {
-				if (err) {
-					console.log("Errors when saving data" + err )
-					return next(err);
-				}
-				console.log("Successfully Saved to Database");
-			});
-			//upload the actual image to s3
-			//await s3Client.send(new PutObjectCommand(s3uploadparams));
-			uploadtos3bucket(s3uploadparams);
-			res.redirect(Author.url);
+			//upload images to S3
+			const s3uploadparams = {
+				Bucket: BUCKET_NAME,
+				Body: filebuffer,
+				Key: profilepic
+			}
+			//ContentType: 'image/jpeg'
+
+			//extract error from request
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) { //if formdata has errors
+				console.log("Form Data has errors");
+				console.log(errors);
+				//render the author form with errors as values
+			} else {
+				//create an author object with escaped values
+				const authorz = new Author({
+					name: {
+						first: req.body.authorfirstname,
+						middle: req.body.authormiddlename,
+						last: req.body.authorlastname
+					},
+					about: {
+						short_description: req.body.authorshortdesc,
+						full_description: req.body.authorfulldesc
+					},
+					brandName: req.body.authorbrandname,
+					email: req.body.authoremail,
+					password: req.body.authorpassword,
+					authorStatus: req.body.authorstatus,
+					authorRole: req.body.authorRole,
+					socialmedia: {
+						github: req.body.githuburl,
+						linkedin: req.body.linkeninurl
+					},
+					imageName: profilepic 
+				});
+
+				//save author object to database
+				authorz.save( (err) => {
+					if (err) {
+						console.log("Errors when saving data" + err )
+						return next(err);
+					}
+					console.log("Successfully Saved to Database");
+				});
+				//upload the actual image to s3
+				//await s3Client.send(new PutObjectCommand(s3uploadparams));
+				uploadtos3bucket(s3uploadparams);
+				res.redirect(Author.url);
+			}
 		}
 	},
 ];
@@ -295,50 +310,63 @@ exports.author_delete_get = (req, res) => {
 
 //On post, delete author
 exports.author_delete_post = async (req, res, next) => {
-
-	//delete from database
-	const id = req.body.authorid
-	Author.findByIdAndDelete(id, (err) => {
-		if (err){
-			return next(err);
-		}
-	});
-
-	//delete image from s3 bucket
-	const delauthor = await Author.findOne({_id: id}, 'imageName').exec((err, delresult) => {
-		if (err){
-			console.log(err);
-		}
-		else if (delresult) {
-			console.log("the object to delete is"+delresult.imageName);
-			const delparams = {
-				Bucket: BUCKET_NAME,
-				Key: delresult.imageName
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		//delete from database
+		const id = req.body.authorid
+		Author.findByIdAndDelete(id, (err) => {
+			if (err){
+				return next(err);
 			}
-			deletefroms3bucket(delparams);
-		}	
-	});
-	res.json({sucess: "Successfully Deleted"});
+		});
+
+		//delete image from s3 bucket
+		const delauthor = await Author.findOne({_id: id}, 'imageName').exec((err, delresult) => {
+			if (err){
+				console.log(err);
+			}
+			else if (delresult) {
+				console.log("the object to delete is"+delresult.imageName);
+				const delparams = {
+					Bucket: BUCKET_NAME,
+					Key: delresult.imageName
+				}
+				deletefroms3bucket(delparams);
+			}	
+		});
+		res.json({sucess: "Successfully Deleted"});
+	}
 }
 
 //On update GET, return information about form
 exports.author_update_get = async (req, res, next) => {
-	//find a document with the specified id
-	update_doc_id = req.query.updateid;
-	console.log("The id to update is" + update_doc_id);
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		//find a document with the specified id
+		update_doc_id = req.query.updateid;
+		console.log("The id to update is" + update_doc_id);
 
-	const updateauthor = await Author.findOne({ _id: update_doc_id })
-	.exec(async function (err, update_author) {
-		if (err) {
-			return next(err);
-		}
-		update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-			Bucket: BUCKET_NAME,
-			Key: update_author.imageName
-		}), { expiresIn: 3600})
+		const updateauthor = await Author.findOne({ _id: update_doc_id })
+		.exec(async function (err, update_author) {
+			if (err) {
+				return next(err);
+			}
+			update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: update_author.imageName
+			}), { expiresIn: 3600})
 
-		res.json(update_author);
-	});
+			res.json(update_author);
+		});
+	}
 }
 
 //On update post, submit the dat to the database 
@@ -350,76 +378,83 @@ exports.author_update_post = [
 	uploadimg.single('photo1'),
 
 	async (req, res, next) => {
-		const update_author_id = req.body.authorUpdateid;
-		console.log ("The author update id is"+ update_author_id);
-		const upprofilepic = "author"+generaterandomimgname();//image name
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			const update_author_id = req.body.authorUpdateid;
+			console.log ("The author update id is"+ update_author_id);
+			const upprofilepic = "author"+generaterandomimgname();//image name
 
-		//resize the image file
-		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
+			//resize the image file
+			const upfilebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
 
-		//update object in database
-		const update_filter = {
-			_id: update_author_id 
-		};
+			//update object in database
+			const update_filter = {
+				_id: update_author_id 
+			};
 
-		const update_authorz = { $set: {
-			name: {
-				first: req.body.authorfirstname,
-				middle: req.body.authormiddlename,
-				last: req.body.authorlastname
-			},
-			about: {
-				short_description: req.body.authorshortdesc,
-				full_description: req.body.authorfulldesc
-			},
-			contact: {
-				phoneNumber: {
-					mobile: req.body.mobilenumber,
-					work: req.body.worknumber
+			const update_authorz = { $set: {
+				name: {
+					first: req.body.authorfirstname,
+					middle: req.body.authormiddlename,
+					last: req.body.authorlastname
 				},
-				email: req.body.authoremail,
-				personal_website: req.body.authorwebsite,
-			},
-			socialmedia: {
-				facebook: req.body.facebookurl,
-				twitter: req.body.twitterurl,
-				github: req.body.githuburl,
-				linkedin: req.body.linkeninurl
-			},
-			imageName: upprofilepic
-		}};
+				about: {
+					short_description: req.body.authorshortdesc,
+					full_description: req.body.authorfulldesc
+				},
+				contact: {
+					phoneNumber: {
+						mobile: req.body.mobilenumber,
+						work: req.body.worknumber
+					},
+					email: req.body.authoremail,
+					personal_website: req.body.authorwebsite,
+				},
+				socialmedia: {
+					facebook: req.body.facebookurl,
+					twitter: req.body.twitterurl,
+					github: req.body.githuburl,
+					linkedin: req.body.linkeninurl
+				},
+				imageName: upprofilepic
+			}};
 
-		await Author.findOneAndUpdate(update_filter, update_authorz, {
-			new: true,
-			upsert: true,
-			rawResult: true,
-			runValidators: true
-		});
+			await Author.findOneAndUpdate(update_filter, update_authorz, {
+				new: true,
+				upsert: true,
+				rawResult: true,
+				runValidators: true
+			});
 
-		//delete image from s3 bucket
-		const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
-			if (err){
-				console.log(err);
-			}
-			else if (updelresult) {
-				console.log("the object to delete is"+updelresult.imageName);
-				const delparams = {
-					Bucket: BUCKET_NAME,
-					Key: updelresult.imageName
+			//delete image from s3 bucket
+			const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
+				if (err){
+					console.log(err);
 				}
-				deletefroms3bucket(delparams);
-			}	
-		});
+				else if (updelresult) {
+					console.log("the object to delete is"+updelresult.imageName);
+					const delparams = {
+						Bucket: BUCKET_NAME,
+						Key: updelresult.imageName
+					}
+					deletefroms3bucket(delparams);
+				}	
+			});
 
-		//upload new image to S3
-		const updates3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: upfilebuffer,
-			Key: upprofilepic
-		};
-		//ContentType: 'image/jpeg'
-		await s3Client.send(new PutObjectCommand(updates3uploadparams));
-		console.log("Updated Successfully");
-		res.redirect("/website/author");
+			//upload new image to S3
+			const updates3uploadparams = {
+				Bucket: BUCKET_NAME,
+				Body: upfilebuffer,
+				Key: upprofilepic
+			};
+			//ContentType: 'image/jpeg'
+			await s3Client.send(new PutObjectCommand(updates3uploadparams));
+			console.log("Updated Successfully");
+			res.redirect("/website/author");
+		}
 	},
 ];

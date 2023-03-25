@@ -101,7 +101,7 @@ exports.demouserinfo = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
 };
 
-//Middleware for authorisation
+//Middleware for authentication
 exports.verifyToken = (req, res, next) => {
 	const cookietoken = req.cookies.jwtTokens;
 	const accessToken = cookietoken.jwt
@@ -123,6 +123,16 @@ exports.verifyToken = (req, res, next) => {
 			res.status(403).send({ message: 'Invalid Access Token' })
 		}
 	}
+}
+
+//Middleware for user authorisation
+exports.isauthorised = (req, res, next) => {
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	} 
 }
 
 //refresh user access token
