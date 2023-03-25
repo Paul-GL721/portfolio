@@ -1,8 +1,19 @@
 
 const Author = require("../models/author"); //author model
 const Project = require("../models/project"); //project model
-const jwt = require("jsonwebtoken"); //
-const { AUTH_SECRET_KEY }  = require('../configs/config');
+const jwt = require("jsonwebtoken"); 
+const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, AUTH_SECRET_KEY } = require('../configs/config');
+
+//s3 bucket connection parameters
+const s3Client = new S3Client({
+	region: BUCKET_REGION,
+	credentials: {
+		accessKeyId: ACCESS_KEY,
+		secretAccessKey: SECRET_ACCESS_KEY
+	}
+});
 
 //Display login page
 exports.login = async (req, res, next) => {
@@ -17,7 +28,7 @@ exports.login_post = async (req, res, next) => {
 
 	//find the user in the database
 	const availuser = await Author.findOne({email: username, password:passwd })
-	.exec((err, availresult) => {
+	.exec(async (err, availresult) => {
 		if (err){
 			console.log(err);
 		}
@@ -27,9 +38,15 @@ exports.login_post = async (req, res, next) => {
 			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
 			//create a refresh token for the user
 			const refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
+			//create image signed Urls
+			availresult.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: availresult.imageName
+			}), { expiresIn: 3600})	
 			
 			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, {httpOnly: true});
-			res.json({ jwt_token, refresh_jwt_token });
+			//res.json({ availresult});
+			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult });
 		}
 		//else the user is not available: send an error response
 		else {

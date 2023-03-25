@@ -9,15 +9,15 @@
         <div class="row no-gutters">
             <div class="col-lg-12 text-center text-white order-lg-2">
                 <div>
-                    <h3 class="font-weight-bold text-dark">brandName You are now logged in!</h3><img class="rounded-circle img-fluid" src="/images/img/My%20project.png" style="text-align: center;" width="150px" height="150px">
+                    <h3 class="font-weight-bold text-dark">{{ admin_data.name.first }} {{ admin_data.name.last | default("brandName", true)  }} You are now logged in!</h3><img class="rounded-circle img-fluid" src="{{ admin_data.imageUrl | default("/images/img/My%20project.png", true) }}" style="text-align: center;" width="150px" height="150px">
                 </div>
             </div>
         </div>
     </section>
-    <section class="text-center bg-light features-icons" id="adminpages" style="background: rgb(248, 249, 250);padding-bottom: 0px;padding-top: 50px;">
+    <section class="text-center" id="adminpages" style="background: #ffffff;;padding-bottom: 0px;padding-top: 60px;">
         <div class="row">
             <div class="col">
-                <p style="text-align: left;font-size: 20px;">CREATE, READ, UPDATE and DELETE from the database</p>
+                <p style="text-align: left;font-size: 20px;">You can now CREATE, READ, UPDATE and DELETE from the database</p>
                 <div class="modal fade" role="dialog" tabindex="-1" id="loginout">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -38,8 +38,8 @@
                     <p class="lead text-left mb-0">CRUD operations on the skills in the database.</p>
                     <div>
                         <ul style="font-size: 20px;">
-                            <li class="text-left"><a href="#">Add a new skill.</a></li>
-                            <li class="text-left"><a href="#">View, Update, and Delete existing skill(s).</a></li>
+                            <li class="text-left"><a href="/website/skill/create">Add a new skill.</a></li>
+                            <li class="text-left"><a href="/website/skill">View, Update, and Delete existing skill(s).</a></li>
                         </ul>
                     </div>
                 </div>
@@ -51,8 +51,8 @@
                     <p class="lead text-left mb-0">CRUD operations on the specializations in the database.</p>
                     <div>
                         <ul style="font-size: 20px;">
-                            <li class="text-left"><a href="#">Add a new specialization.</a></li>
-                            <li class="text-left"><a href="#">View, Update, and Delete existing specialization(s).</a></li>
+                            <li class="text-left"><a href="/website/specialisation/create">Add a new specialization.</a></li>
+                            <li class="text-left"><a href="/website/specialisation">View, Update, and Delete existing specialization(s).</a></li>
                         </ul>
                     </div>
                 </div>
@@ -64,8 +64,8 @@
                     <p class="lead text-left mb-0">CRUD operations on the authors in the database.</p>
                     <div>
                         <ul style="font-size: 20px;">
-                            <li class="text-left"><a href="#">Add a new author.</a></li>
-                            <li class="text-left"><a href="#">View, Update, and Delete existing author(s).</a></li>
+                            <li class="text-left"><a href="/website/author/create">Add a new author.</a></li>
+                            <li class="text-left"><a href="/website/author">View, Update, and Delete existing author(s).</a></li>
                         </ul>
                     </div>
                 </div>
@@ -77,8 +77,8 @@
                     <p class="lead text-left mb-0">CRUD operations on projects in the database.</p>
                     <div>
                         <ul style="font-size: 20px;">
-                            <li class="text-left"><a href="#">Add a new project.</a></li>
-                            <li class="text-left"><a href="#">View, Update, and Delete existing project(s).</a></li>
+                            <li class="text-left"><a href="/website/project/create">Add a new project.</a></li>
+                            <li class="text-left"><a href="/website/project">View, Update, and Delete existing project(s).</a></li>
                         </ul>
                     </div>
                 </div>
