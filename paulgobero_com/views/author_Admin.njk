@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12">
                 <h3 style="text-align: center;">Author's Admin Table</h3>
-                <div id="toolbar"><button class="btn btn-secondary" id="authorbtnAdd" type="button" title="Add New Author" onclick="location.href='author/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="authorbtnDelete" type="button" title="Delete Selected  Author(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="authorbtnAdd" type="button" title="Add New Author" onclick="location.href='author/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="authorbtnDelete" type="button" title="Delete Selected  Author(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
                 <div class="table-responsive">
                     <table class="table table-striped" id="authortable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
@@ -23,12 +23,9 @@
                                 <th id="cellauthorlastname" data-field="namelast">Last Name</th>
                                 <th id="cellauthorshortdesc" data-field="shortdesc">Short Description</th>
                                 <th id="cellauthorlongdesc" data-field="longdesc">Long Description</th>
-                                <th id="cellmobilenumber" data-field="mobilenumber">Mobile Number</th>
-                                <th id="cellworknumber" data-field="worknumber">Work Number</th>
                                 <th id="cellauthoremail" data-field="authoremail">Email</th>
-                                <th id="cellauthorwebsite" data-field="authorwebsite">Profile website</th>
-                                <th id="cellfacebookurl" data-field="facebookurl">Facebook</th>
-                                <th id="celltwitterurl" data-field="twitterurl">Twitter</th>
+                                <th id="cellauthorStaus" data-field="authorStaus">Status</th>
+                                <th id="cellauthorRole" data-field="authorRole">Role</th>
                                 <th id="cellgithuburl" data-field="githuburl">Github</th>
                                 <th id="celllinkeninurl" data-field="linkeninurl">LinkedIn</th>
                                 <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
@@ -45,12 +42,10 @@
 	                                <td>{{ author.name.last }}</td>
                                     <td>{{ author.about.short_description }}</td>
                                     <td>{{ author.about.full_description }}</td>
-	                                <td>{{ author.contact.phoneNumber.mobile }}</td>
-	                                <td>{{ author.contact.phoneNumber.work }}</td>
-	                                <td>{{ author.contact.email }}</td>
-	                                <td>{{ author.contact.personal_website | urlize | safe }}</td>
-	                                <td>{{ author.socialmedia.facebook  | urlize | safe  }}</td>
-	                                <td>{{ author.socialmedia.twitter | urlize | safe }}</td>
+	                                <td>{{ author.brandName }}</td>
+	                                <td>{{ author.email }}</td>
+                                    <td>{{ author.authorStatus }}</td>
+                                    <td>{{ author.authorRole }}</td>
 	                                <td>{{ author.socialmedia.github | urlize | safe }}</td>
 	                                <td>{{ author.socialmedia.linkedin | urlize | safe }}</td>
 	                                <td><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
@@ -84,5 +79,4 @@
             </div>
         </div>
     </section>
-
 {% endblock %}
