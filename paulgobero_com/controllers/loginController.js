@@ -44,7 +44,7 @@ exports.login_post = async (req, res, next) => {
 				Key: availresult.imageName
 			}), { expiresIn: 3600})	
 			
-			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, {httpOnly: true});
+			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { httpOnly: true });
 			//res.json({ availresult});
 			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult });
 		}
@@ -93,7 +93,7 @@ exports.demouseravailablity = async (req, res, next) => {
 exports.logout = (req, res, next) => {
 	//'expires' attribute is set to a date in the past (January 1, 1970) which causes the cookie to expire immediately
 	res.cookie('jwtTokens', '', { expires: new Date(0) });
-	res.send("Succesfully Logout")
+	res.redirect("/website"); //redirect to home page
 }
 
 //Get login information for an existing demo user
@@ -106,8 +106,8 @@ exports.verifyToken = (req, res, next) => {
 	const cookietoken = req.cookies.jwtTokens;
 	const accessToken = cookietoken.jwt
 	
-	console.log("The token is");
-	console.log(cookietoken);
+	//console.log("The token is");
+	//console.log(cookietoken);
 	if (!accessToken) {
 		return res.status(401).json({ message: 'Unauthorised' });
 	} else {
@@ -130,8 +130,8 @@ exports.refreshToken = (req, res, next) => {
 	//get the refreshtoken from the request body
 	const cookietoken = req.cookies.jwtTokens;
 	const refreshToken = cookietoken.reftok;
-	console.log("refreshToken is");
-	console.log(refreshToken);
+	//console.log("refreshToken is");
+	//console.log(refreshToken);
 	
 	//verify the original token sent
 	//if valid, generate a new token with the same parameters.
