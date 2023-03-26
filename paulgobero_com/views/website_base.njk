@@ -33,15 +33,13 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.projects }}">Projects</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.contact }}">Contact</a></li>
                                 </ul>
-                                
-                                {% block createOwnerbutton %}          {% endblock %}
-
+                                {% block createOwnerbutton %}      {% endblock %}
                                 {% block loginbutton %}
                                     <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/website/login">login</a>
                                     <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/website/logout">Sign out</a>
                                 {% endblock %}
-
-                                {% block createDemoUserbutton %}      {% endblock %}
+                                {% block ownerloginbutton %}      {% endblock %}
+                                {% block createDemoUserbutton %}      {% endblock %}                     
                             </div>
                         </div>
                     </nav>
