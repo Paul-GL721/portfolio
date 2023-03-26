@@ -27,6 +27,28 @@ $(document).ready(function() {
 		}
 	});
 
+	/* Toggle login-logout buttons */
+	//check cookies available in the document and split them by ; separator
+	const cookies = document.cookie.split(';');
+	let jwt;
+	for (let i = 0; i < cookies.length; i++){
+		const cookie = cookies[i].trim();
+		if (cookie.startsWith('jwtTokens=')){
+			jwt = cookie.substring('jwtTokens='.length, cookie.length);
+			break;
+		}
+	}
+	if (jwt !== 'undefined'){
+		//show the logout button
+		$('#projectlogin').hide();
+		$('#projectlogout').show();
+	} else {
+		//show the login button
+		$('#projectlogin').show();
+		$('#projectlogout').hide();
+	}
+
+
 	//Get login details dor demouser and Toggle login demo button
     $('#loginbtn').click(function(){
         $.ajax({
