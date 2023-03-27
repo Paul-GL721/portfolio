@@ -27,26 +27,68 @@ $(document).ready(function() {
 		}
 	});
 
-	/* Toggle login-logout buttons */
-	//check cookies available in the document and split them by ; separator
-	const cookies = document.cookie.split(';');
-	let jwt;
-	for (let i = 0; i < cookies.length; i++){
-		const cookie = cookies[i].trim();
-		if (cookie.startsWith('jwtTokens=')){
-			jwt = cookie.substring('jwtTokens='.length, cookie.length);
-			break;
+	/* (1). Toggle login-logout buttons, (2) Show popup that prompts user to refresh session, 
+	(3) Check the status every 5 seconds */
+	setInterval(function(){
+		//check cookies available in the document and split them by ; separator
+		const cookies = document.cookie.split(';');
+		let jwtToken = null;
+		let refreshToken = null;
+
+		for (let i = 0; i < cookies.length; i++) {
+		const cookie = cookies[i].split('=');
+			if (cookie[0] === 'jwtTokens') {
+				//decode the url string
+				const urldecodedcookie = decodeURIComponent(cookie[1]);
+				//extract values from the second posit to the end; this removes the j
+				const cookieValue = JSON.parse(urldecodedcookie.substring(2));
+				jwtToken = cookieValue.jwt;
+				refreshToken = cookieValue.reftok;
+				break;
+			}
 		}
-	}
-	if (jwt !== 'undefined'){
-		//show the logout button
-		$('#projectlogin').hide();
-		$('#projectlogout').show();
-	} else {
-		//show the login button
-		$('#projectlogin').show();
-		$('#projectlogout').hide();
-	}
+		// Decode the jwt_token to extract the expiration time
+		const splittoken = jwtToken.split('.')
+		const decodedToken = JSON.parse(atob(splittoken[1]));
+		const exp = new Date(decodedToken.exp * 1000);
+		console.log(exp);
+		//check if the token is expired or if expiration time is less than one minute, else the token is valid
+		const currentTime = new Date();
+		const timeUntilExpiry = exp - currentTime;
+		if (timeUntilExpiry <= 0){
+			//token is expired: show the login button
+			$('#projectlogin').show();
+			$('#projectlogout').hide();
+		} else if (timeUntilExpiry < 60000){
+			//token is about to expire allow the user to refresh it and stay signed in
+			$('#loginout').modal('show');
+			//wait for 30 seconds, if no button is clicked log out the user anyway
+			setTimeout(function(){
+				if (!$('#loginout').data('clicked')) {
+					window.location.href = "/website/logout";
+				}
+			}, 30000);
+		} else {
+			// token is valid: show the logout button
+			$('#projectlogin').hide();
+			$('#projectlogout').show();
+		}
+	}, 5000);
+
+	//stay signed in 
+	$('#modalbtnstaysignedin').click(function(){
+        $.ajax({
+			type: "GET",
+			url: "/website/refreshlogin",
+			success: function(data){
+				console.log(data);
+				if (data.status == true){
+					//refreshed successfully
+					; //do nothing
+				}	
+			}
+		});
+    });
 
 
 	//Get login details dor demouser and Toggle login demo button
