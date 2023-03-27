@@ -19,7 +19,7 @@ const s3Client = new S3Client({
 exports.login = async (req, res, next) => {
 	res.render("login", { Title: "Login" });	
 };
-
+let refresh_jwt_token;
 //Post login page (authentication)
 exports.login_post = async (req, res, next) => {
 	//get the email and password from the login form
@@ -35,16 +35,16 @@ exports.login_post = async (req, res, next) => {
 		//if the user is available, generate a JWT, load the admin dashboard
 		else if (availresult) {
 			//create an access token for the user
-			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
+			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '3m' } );
 			//create a refresh token for the user
-			const refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
+			refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '2h' } );
 			//create image signed Urls
 			availresult.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
 				Key: availresult.imageName
 			}), { expiresIn: 3600})	
 			
-			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { httpOnly: true });
+			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { path: '/' });
 			//res.json({ availresult});
 			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult });
 		}
@@ -106,8 +106,8 @@ exports.verifyToken = (req, res, next) => {
 	const cookietoken = req.cookies.jwtTokens;
 	const accessToken = cookietoken.jwt
 	
-	//console.log("The token is");
-	//console.log(cookietoken);
+	//console.log("The accessToken token is");
+	//console.log(accessToken);
 	if (!accessToken) {
 		return res.status(401).json({ message: 'Unauthorised' });
 	} else {
@@ -130,8 +130,9 @@ exports.refreshToken = (req, res, next) => {
 	//get the refreshtoken from the request body
 	const cookietoken = req.cookies.jwtTokens;
 	const refreshToken = cookietoken.reftok;
-	//console.log("refreshToken is");
-	//console.log(refreshToken);
+	const accessToken = cookietoken.jwt
+	console.log("refreshToken is");
+	console.log(refreshToken);
 	
 	//verify the original token sent
 	//if valid, generate a new token with the same parameters.
@@ -141,14 +142,16 @@ exports.refreshToken = (req, res, next) => {
 		try {
 			//verifiy token using secret key
 			const decodedToken = jwt.verify(refreshToken, AUTH_SECRET_KEY);
+			console.log(decodedToken)
+			req.userinfo = decodedToken;
 			//create an access token for the user
-			const jwt_token = jwt.sign({ user:decodedToken.brandName, role:decodedToken.authorRole }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
+			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '3m' } );
 
-			res.cookie('jwtTokens',{ jwt:jwt_token }, {httpOnly: true});
-			res.send("REfreshed Token");
+			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, { path: '/', maxAge: 5 * 60 * 1000 });
+			res.json({sucess: true});
 		} catch (err) {
 			//return error if token is inalid
 			res.status(403).send({ message: 'Invalid Refresh Token' })
 		}
 	}
-}
+} 
