@@ -50,7 +50,7 @@ router.get("/login", login_controller.login);
 router.post("/login", login_controller.login_post);
 
 //Get request to refresh JWToken
-router.get("/refreshlogin", login_controller.refreshToken);
+router.post("/refreshlogin", login_controller.refreshToken);
 
 //Logout user
 router.get("/logout", login_controller.logout);
