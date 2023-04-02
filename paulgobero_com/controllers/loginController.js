@@ -34,17 +34,18 @@ exports.login_post = async (req, res, next) => {
 		}
 		//if the user is available, generate a JWT, load the admin dashboard
 		else if (availresult) {
+			const accessexpiry = new Date(Date.now() + 3 * 60 * 1000); //  3m from now
 			//create an access token for the user
 			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '3m' } );
 			//create a refresh token for the user
-			refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '2h' } );
+			refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
 			//create image signed Urls
 			availresult.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
 				Key: availresult.imageName
 			}), { expiresIn: 3600})	
 			
-			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { path: '/' });
+			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { expires: accessexpiry, path: '/' });
 			//res.json({ availresult});
 			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult });
 		}
@@ -128,13 +129,10 @@ exports.verifyToken = (req, res, next) => {
 //refresh user access token
 exports.refreshToken = (req, res, next) => {
 	//get the refreshtoken from the request body
-	const cookietoken = req.cookies.jwtTokens;
-	const refreshToken = cookietoken.reftok;
-	const accessToken = cookietoken.jwt
-	console.log("refreshToken is");
-	console.log(refreshToken);
+	const accessToken = req.body.accessToken;
+	const refreshToken = req.body.refreshToken;
 	
-	//verify the original token sent
+	//verify the original refresh token sent
 	//if valid, generate a new token with the same parameters.
 	if (!refreshToken) {
 		return res.status(401).json({ message: 'Unauthorised Refresh Token' });
@@ -142,13 +140,13 @@ exports.refreshToken = (req, res, next) => {
 		try {
 			//verifiy token using secret key
 			const decodedToken = jwt.verify(refreshToken, AUTH_SECRET_KEY);
-			console.log(decodedToken)
-			req.userinfo = decodedToken;
+			//req.userinfo = decodedToken;
 			//create an access token for the user
-			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '3m' } );
-
-			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, { path: '/', maxAge: 5 * 60 * 1000 });
-			res.json({sucess: true});
+			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '5m' } );
+			//create a refresh token for the user
+			refresh_jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '2h' } );
+			//res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, { path: '/' });
+			res.json({jwt:jwt_token, reftok:refresh_jwt_token });
 		} catch (err) {
 			//return error if token is inalid
 			res.status(403).send({ message: 'Invalid Refresh Token' })
