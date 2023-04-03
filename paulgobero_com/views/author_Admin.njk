@@ -14,41 +14,42 @@
                 <div class="table-responsive">
                     <table class="table table-striped" id="authortable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
-                            <tr>
-                                <th data-checkbox="true" data-field="state"></th>
-                                <th id="author_id" data-field="authoridz">id</th>
-                                <th id="cellprofilepic" data-field="imageUrl">Profile Picture</th>
-                                <th id="cellauthorfirstname" data-field="namefirst">First Name</th>
-                                <th id="cellauthormiddlename" data-field="namemiddle">Middle Name</th>
-                                <th id="cellauthorlastname" data-field="namelast">Last Name</th>
-                                <th id="cellauthorshortdesc" data-field="shortdesc">Short Description</th>
-                                <th id="cellauthorlongdesc" data-field="longdesc">Long Description</th>
-                                <th id="cellauthoremail" data-field="authoremail">Email</th>
-                                <th id="cellauthorStaus" data-field="authorStaus">Status</th>
-                                <th id="cellauthorRole" data-field="authorRole">Role</th>
-                                <th id="cellgithuburl" data-field="githuburl">Github</th>
-                                <th id="celllinkeninurl" data-field="linkeninurl">LinkedIn</th>
-                                <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
+                            <tr class="d-flex">
+                                <th class="w-5p" data-checkbox="true" data-field="state"></th>
+                                <th class="w-10p text-wrap text-break" id="author_id" data-field="authoridz">id</th>
+                                <th class="w-20p" id="cellprofilepic" data-field="imageUrl">Profile Picture</th>
+                                <th class="w-20p" id="cellauthorfirstname" data-field="namefirst">First Name</th>
+                                <th class="w-20p" id="cellauthormiddlename" data-field="namemiddle">Middle Name</th>
+                                <th class="w-20p" id="cellauthorlastname" data-field="namelast">Last Name</th>
+                                <th class="w-30p" id="cellauthorshortdesc" data-field="shortdesc">Short Description</th>
+                                <th class="w-60p" id="cellauthorlongdesc" data-field="longdesc">Long Description</th>
+                                <th class="w-10p" id="cellauthorbrand" data-field="authorbrand">BrandName</th>
+                                <th class="w-20p" id="cellauthoremail" data-field="authoremail">Email</th>
+                                <th class="w-10p" id="cellauthorStaus" data-field="authorStaus">Status</th>
+                                <th class="w-10p" id="cellauthorRole" data-field="authorRole">Role</th>
+                                <th class="w-20p" id="cellgithuburl" data-field="githuburl">Github</th>
+                                <th class="w-20p" id="celllinkeninurl" data-field="linkeninurl">LinkedIn</th>
+                                <th class="w-10p" id="cellactions" data-field="Actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
 	                        {% for author in abtauthor %}
-	                            <tr>
-	                                <td></td>
-	                                <td>{{ author._id }}</td>
-	                                <td><img class="rounded-circle img-fluid" src="{{ author.imageUrl }}" width="40" height="40"></td>
-	                                <td>{{ author.name.first }}</td>
-	                                <td>{{ author.name.middle }}</td>
-	                                <td>{{ author.name.last }}</td>
-                                    <td>{{ author.about.short_description }}</td>
-                                    <td>{{ author.about.full_description }}</td>
-	                                <td>{{ author.brandName }}</td>
-	                                <td>{{ author.email }}</td>
-                                    <td>{{ author.authorStatus }}</td>
-                                    <td>{{ author.authorRole }}</td>
-	                                <td>{{ author.socialmedia.github | urlize | safe }}</td>
-	                                <td>{{ author.socialmedia.linkedin | urlize | safe }}</td>
-	                                <td><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+	                            <tr class="d-flex">
+	                                <td class="w-5p"></td>
+	                                <td class="w-10p text-wrap text-break">{{ author._id }}</td>
+	                                <td class="w-20p"><img class="rounded-circle img-fluid" src="{{ author.imageUrl }}" width="70" height="70"></td>
+	                                <td class="w-20p">{{ author.name.first }}</td>
+	                                <td class="w-20p">{{ author.name.middle }}</td>
+	                                <td class="w-20p">{{ author.name.last }}</td>
+                                    <td class="w-30p">{{ author.about.short_description }}</td>
+                                    <td class="w-60p">{{ author.about.full_description }}</td>
+	                                <td class="w-10p">{{ author.brandName }}</td>
+	                                <td class="w-20p">{{ author.email }}</td>
+                                    <td class="w-10p">{{ author.authorStatus }}</td>
+                                    <td class="w-10p">{{ author.authorRole }}</td>
+	                                <td class="w-20p text-wrap text-break">{{ author.socialmedia.github | urlize | safe }}</td>
+	                                <td class="w-20p text-wrap text-break">{{ author.socialmedia.linkedin | urlize | safe }}</td>
+	                                <td class="w-10p"><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
 	                            </tr>
 	                        {% endfor %}
                         </tbody>

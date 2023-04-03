@@ -21,4 +21,19 @@
 .loginerrors {
   color: red;
 }
+.w-5p {
+  width: 50px;
+}
+.w-10p {
+  width: 100px;
+}
+.w-20p {
+  width: 200px;
+}
+.w-30p {
+  width: 300px;
+}
+.w-60p {
+  width: 600px;
+}
 

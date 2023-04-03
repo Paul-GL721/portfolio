@@ -59,6 +59,8 @@ Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
 	if (err){
 		console.log("ther was an error in retrieving the brand name");
 		console.log(err);
+	} else if(brand.brandName == null) {
+		brandname = brand.name.first + brand.name.last
 	} else {
 		//const ownerbrandname = brand.brandName;
 		//console.log(ownerbrandname);
