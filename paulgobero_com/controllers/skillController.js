@@ -1,5 +1,6 @@
 
 const Skill = require("../models/skill"); //skill model controller
+const Author = require("../models/author"); //author model
 const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
 const { body, validationResult } = require("express-validator"); //form validator
@@ -38,6 +39,18 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
+let brandname
+//find the brand name for the owner
+Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
+	if (err){
+		console.log("ther was an error in retrieving the brand name");
+		console.log(err);
+	} else {
+		//const ownerbrandname = brand.brandName;
+		//console.log(ownerbrandname);
+		brandname = brand.brandName;
+	}
+});
 
 //Display a list of all availabe skills
 exports.skill_list = async (req, res, next) => {
@@ -54,7 +67,7 @@ exports.skill_list = async (req, res, next) => {
 			}), { expiresIn: 3600})			
 		}
 		//res.json(list_skills);
-		res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills });
+		res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills, brandname });
 	});
 	
 };
@@ -80,7 +93,7 @@ exports.skill_detail = (req, res) => {
 
 //Display skill create form on Get
 exports.skill_create_get = (req, res, next) => { 
-	res.render("create_skill", { Title: "Create Skill" });
+	res.render("create_skill", { Title: "Create Skill", brandname });
 };
 
 

@@ -1,5 +1,19 @@
 //specialisation model controller
 const Specialisation = require("../models/specialisation");
+const Author = require("../models/author"); //author model
+
+let brandname
+//find the brand name for the owner
+Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
+	if (err){
+		console.log("ther was an error in retrieving the brand name");
+		console.log(err);
+	} else {
+		//const ownerbrandname = brand.brandName;
+		//console.log(ownerbrandname);
+		brandname = brand.brandName;
+	}
+});
 
 //validate form
 const { body, validationResult } = require("express-validator");
@@ -28,7 +42,7 @@ exports.specialisation_detail = (req, res) => {
 
 //Display specialisation create form on Get
 exports.specialisation_create_get = (req, res, next) => { 
-	res.render("create_specialisation", { Title: "Create Specialisation" });
+	res.render("create_specialisation", { Title: "Create Specialisation", brandname });
 };
 
 //Display specialisation create form on Post

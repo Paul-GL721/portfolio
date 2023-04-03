@@ -15,6 +15,19 @@ const s3Client = new S3Client({
 	}
 });
 
+let brandname
+//find the brand name for the owner
+Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
+	if (err){
+		console.log("ther was an error in retrieving the brand name");
+		console.log(err);
+	} else {
+		//const ownerbrandname = brand.brandName;
+		//console.log(ownerbrandname);
+		brandname = brand.brandName;
+	}
+});
+
 //Display login page
 exports.login = async (req, res, next) => {
 	res.render("login", { Title: "Login" });	
@@ -47,7 +60,7 @@ exports.login_post = async (req, res, next) => {
 			
 			res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { expires: accessexpiry, path: '/' });
 			//res.json({ availresult});
-			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult });
+			res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult, brandname });
 		}
 		//else the user is not available: send an error response
 		else {

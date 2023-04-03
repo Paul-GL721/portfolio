@@ -8,6 +8,8 @@ const { body, validationResult } = require("express-validator"); //form validato
 const { storage, fileFilter, uploadimg } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
 const nodemailer = require("nodemailer"); //send email from contact form
+var nunjucks = require('nunjucks');
+var env = new nunjucks.Environment(null);
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -50,6 +52,19 @@ const uploadtos3bucket = async (uploadParams) => {
 	  console.log("Error", err);
 	}
 };
+
+let brandname
+//find the brand name for the owner
+Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
+	if (err){
+		console.log("ther was an error in retrieving the brand name");
+		console.log(err);
+	} else {
+		//const ownerbrandname = brand.brandName;
+		//console.log(ownerbrandname);
+		brandname = brand.brandName;
+	}
+});
 
 
 //Display home website page
@@ -96,7 +111,7 @@ exports.index = async (req, res, next) => {
 							Key: projectz.mediaName.imageName
 						}), { expiresIn: 3600 })
 					}
-					res.render("website_index", { Title: "Portfolio", index_data: results});
+					res.render("website_index", { Title: "Portfolio", index_data: results, brandname });
 				}
 			);	
 		}
@@ -178,7 +193,7 @@ exports.author_list = async (req, res, next) => {
 				}), { expiresIn: 3600})			
 			}
 			//res.json(list_authors);
-			res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors });
+			res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors, brandname });
 		});	
 	}
 };
@@ -215,7 +230,7 @@ exports.author_create_get = (req, res, next) => {
 	if (Role !== 'admin') {
 	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 	} else {
-		res.render("create_author.njk", {Title: "Create author"});
+		res.render("create_author.njk", {Title: "Create author", brandname});
 	}
 }
 

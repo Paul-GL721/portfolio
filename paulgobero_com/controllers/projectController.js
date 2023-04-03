@@ -51,7 +51,18 @@ const uploadtos3bucket = async (uploadParams) => {
 	}
 };
 
-
+let brandname
+//find the brand name for the owner
+Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
+	if (err){
+		console.log("ther was an error in retrieving the brand name");
+		console.log(err);
+	} else {
+		//const ownerbrandname = brand.brandName;
+		//console.log(ownerbrandname);
+		brandname = brand.brandName;
+	}
+});
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
@@ -61,7 +72,7 @@ exports.project_create_get = async(req, res, next) => {
 		if (err) {
 			return next(err);
 		}
-		res.render("create_project", { Title: "Project Form", projectauthors: list_authors });
+		res.render("create_project", { Title: "Project Form", projectauthors: list_authors, brandname });
 	});
 };
 
@@ -363,7 +374,7 @@ exports.project_detail = async(req, res, next) => {
 		}), { expiresIn: 3600 })
 		
 		//res.json(details_projects);
-		res.render( "project_detail", { Title: "Project details", detailprojects: details_projects });
+		res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brandname });
 	});
 };
 
@@ -389,6 +400,6 @@ exports.project_list = async(req, res, next) => {
 			}), { expiresIn: 3600 })
 		}
 		//res.json(list_projects);
-		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects });
+		res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects, brandname });
 	});
 };
