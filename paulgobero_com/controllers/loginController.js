@@ -16,7 +16,7 @@ const s3Client = new S3Client({
 });
 
 let brandname
-//find the brand name for the owner
+//find the brand name for the owner: to have brand name in nav bar
 Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
 	if (err){
 		console.log("ther was an error in retrieving the brand name");
@@ -47,9 +47,9 @@ exports.login_post = async (req, res, next) => {
 		}
 		//if the user is available, generate a JWT, load the admin dashboard
 		else if (availresult) {
-			const accessexpiry = new Date(Date.now() + 3 * 60 * 1000); //  3m from now
+			const accessexpiry = new Date(Date.now() + 15 * 60 * 1000); //  10m from now
 			//create an access token for the user
-			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '3m' } );
+			const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '10m' } );
 			//create a refresh token for the user
 			refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
 			//create image signed Urls
@@ -155,7 +155,7 @@ exports.refreshToken = (req, res, next) => {
 			const decodedToken = jwt.verify(refreshToken, AUTH_SECRET_KEY);
 			//req.userinfo = decodedToken;
 			//create an access token for the user
-			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '5m' } );
+			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
 			//create a refresh token for the user
 			refresh_jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '2h' } );
 			//res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, { path: '/' });
