@@ -40,20 +40,28 @@ const generaterandomimgname = () => {
 }
 
 let brandname
-//find the brand name for the owner
-Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
-	if (err){
-		console.log("ther was an error in retrieving the brand name");
-		console.log(err);
-	} else {
-		//const ownerbrandname = brand.brandName;
-		//console.log(ownerbrandname);
-		brandname = brand.brandName;
-	}
-});
+function getBrandName(){
+	//find the brand name for the owner
+	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
+		if (err){
+			console.log("There was an error in retrieving the brand name");
+			console.log(err);
+		} else if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+	});
+	return brandname;
+}
 
 //Display a list of all availabe skills
 exports.skill_list = async (req, res, next) => {
+	getBrandName();
 	const allskills = await Skill.find({}, "_id name description imageName createdAt")
 	.sort({ createdAt: -1 })
 	.exec(async function (err, list_skills) {
@@ -93,6 +101,7 @@ exports.skill_detail = (req, res) => {
 
 //Display skill create form on Get
 exports.skill_create_get = (req, res, next) => { 
+	getBrandName();
 	res.render("create_skill", { Title: "Create Skill", brandname });
 };
 
@@ -277,6 +286,6 @@ exports.skill_update_post = [
 			runValidators: true
 		});
 		console.log("Updated Successfully");
-		res.redirect("/website/skill");
+		res.redirect("/portfolio/skill");
 	},
 ];

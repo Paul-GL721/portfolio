@@ -16,25 +16,34 @@ const s3Client = new S3Client({
 });
 
 let brandname
-//find the brand name for the owner: to have brand name in nav bar
-Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
-	if (err){
-		console.log("ther was an error in retrieving the brand name");
-		console.log(err);
-	} else {
-		//const ownerbrandname = brand.brandName;
-		//console.log(ownerbrandname);
-		brandname = brand.brandName;
-	}
-});
+function getBrandName(){
+	//find the brand name for the owner
+	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
+		if (err){
+			console.log("There was an error in retrieving the brand name");
+			console.log(err);
+		} else if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+	});
+	return brandname;
+}
 
 //Display login page
 exports.login = async (req, res, next) => {
 	res.render("login", { Title: "Login" });	
 };
+
 let refresh_jwt_token;
 //Post login page (authentication)
 exports.login_post = async (req, res, next) => {
+	getBrandName();
 	//get the email and password from the login form
 	const username = req.body.email;
 	const passwd = req.body.password;
@@ -107,7 +116,7 @@ exports.demouseravailablity = async (req, res, next) => {
 exports.logout = (req, res, next) => {
 	//'expires' attribute is set to a date in the past (January 1, 1970) which causes the cookie to expire immediately
 	res.cookie('jwtTokens', '', { expires: new Date(0) });
-	res.redirect("/website"); //redirect to home page
+	res.redirect("/portfolio"); //redirect to home page
 }
 
 //Get login information for an existing demo user

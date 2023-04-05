@@ -52,20 +52,28 @@ const uploadtos3bucket = async (uploadParams) => {
 };
 
 let brandname
-//find the brand name for the owner
-Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
-	if (err){
-		console.log("ther was an error in retrieving the brand name");
-		console.log(err);
-	} else {
-		//const ownerbrandname = brand.brandName;
-		//console.log(ownerbrandname);
-		brandname = brand.brandName;
-	}
-});
+function getBrandName(){
+	//find the brand name for the owner
+	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
+		if (err){
+			console.log("There was an error in retrieving the brand name");
+			console.log(err);
+		} else if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+	});
+	return brandname;
+}
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
+	getBrandName();
 	const allauthors = await Author.find({}, "_id name ")
 	.sort({ createdAt: -1 })
 	.exec(async function (err, list_authors) {
@@ -350,12 +358,13 @@ exports.project_update_post = [
 			uploadtos3bucket(s3projvideouploadparams);
 			console.log("Media in S3 updated sucessfully");
 		}
-		res.redirect("/website/project");
+		res.redirect("/portfolio/project");
 	},
 ];
 
 //On GET, show individual project
 exports.project_detail = async(req, res, next) => {
+	getBrandName();
 	const detailproject = await Project.findById(req.params.id, {})
 	.populate('author', 'name')
 	.populate('skill', 'name')
@@ -381,6 +390,7 @@ exports.project_detail = async(req, res, next) => {
 
 //On GET, dispaly all available projects
 exports.project_list = async(req, res, next) => {
+	getBrandName();
 	const allprojects = await Project.find({}).sort({ createdAt: -1 })
 	.populate('author', 'name')
 	.populate('skill', 'name')

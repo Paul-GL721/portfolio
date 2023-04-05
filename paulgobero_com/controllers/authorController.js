@@ -54,29 +54,34 @@ const uploadtos3bucket = async (uploadParams) => {
 };
 
 let brandname
-//find the brand name for the owner
-Author.findOne({ authorStatus: 'owner' }, function(err, brand) {
-	if (err){
-		console.log("ther was an error in retrieving the brand name");
-		console.log(err);
-	} else if(brand.brandName == null) {
-		brandname = brand.name.first + brand.name.last
-	} else {
-		//const ownerbrandname = brand.brandName;
-		//console.log(ownerbrandname);
-		brandname = brand.brandName;
-	}
-});
+function getBrandName(){
+	//find the brand name for the owner
+	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
+		if (err){
+			console.log("There was an error in retrieving the brand name");
+			console.log(err);
+		} else if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+	});
+	return brandname;
+}
 
-
-//Display home website page
+//Display home portfolio page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
+	getBrandName()
 	const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, available_owner) {
 		if (err) {
 			res.send("There was an error: while checking for your portfolio");
 		} else if (available_owner===null) { 
-			res.render("default_index", { Title: "Default Page" });
+			res.render("default_index", { Title: "Default Page", brandname });
 		} else {
 			const author_id = available_owner._id;
 			console.log(author_id)
@@ -113,7 +118,7 @@ exports.index = async (req, res, next) => {
 							Key: projectz.mediaName.imageName
 						}), { expiresIn: 3600 })
 					}
-					res.render("website_index", { Title: "Portfolio", index_data: results, brandname });
+					res.render("portfolio_index", { Title: "Portfolio", index_data: results, brandname });
 				}
 			);	
 		}
@@ -168,7 +173,7 @@ exports.index_post = [
 					res.jsonp({failed : true});
 				} else {
 					console.log("Email Sent");
-					res.redirect("/website#contact_section");
+					res.redirect("/portfolio#contact_section");
 				}
 			});
 		}
@@ -177,6 +182,7 @@ exports.index_post = [
 
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
+	getBrandName()
 	// Get role from decoded cookie token
 	const Role = req.userinfo.role; 
 	// If user is not an admin or normal user, return error
@@ -226,6 +232,7 @@ exports.author_detail = (req, res) => {
 
 //on GET request, display the author create form
 exports.author_create_get = (req, res, next) => {
+	getBrandName();
 	// Get role from decoded cookie token
 	const Role = req.userinfo.role; 
 	// If user is not an admin or normal user, return error
@@ -263,7 +270,7 @@ exports.author_create_post = [
 		} else {
 			const profilepic = "author"+generaterandomimgname();//image name
 			//resize the image file
-			const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
+			const filebuffer = await sharp(req.file.buffer).resize({ height: 667, width: 500, fit: "fill"}).toBuffer();
 
 			//upload images to S3
 			const s3uploadparams = {
@@ -316,6 +323,84 @@ exports.author_create_post = [
 				uploadtos3bucket(s3uploadparams);
 				res.redirect(Author.url);
 			}
+		}
+	},
+];
+
+//On post, send owners data to database
+exports.author_ownercreate_post = [
+	//multer upload image
+	uploadimg.single('photo1'),
+
+	//validate and sanitize the form fields
+	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
+	body("authormiddlename", "Middle name").trim().escape(),
+	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
+	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
+	body("githuburl", "Github url").isURL().trim().escape(),
+	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
+	body("authoremail", "Author email is required").isEmail().trim().escape(),
+
+	async (req, res, next) => {
+		const profilepic = "author"+generaterandomimgname();//image name
+		//resize the image file
+		const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
+
+		//upload images to S3
+		const s3uploadparams = {
+			Bucket: BUCKET_NAME,
+			Body: filebuffer,
+			Key: profilepic,
+			ContentType: filebuffer.mimetype
+		}
+		//ContentType: 'image/jpeg'
+
+		//extract error from request
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) { //if formdata has errors
+			console.log("Form Data has errors");
+			console.log(errors);
+			//render the author form with errors as values
+		} else {
+			//create an author object with escaped values
+			const authorz = new Author({
+				name: {
+					first: req.body.authorfirstname,
+					middle: req.body.authormiddlename,
+					last: req.body.authorlastname
+				},
+				about: {
+					short_description: req.body.authorshortdesc,
+					full_description: req.body.authorfulldesc
+				},
+				brandName: req.body.authorbrandname,
+				email: req.body.authoremail,
+				password: req.body.authorpassword,
+				authorStatus: req.body.authorstatus,
+				authorRole: req.body.authorRole,
+				socialmedia: {
+					github: req.body.githuburl,
+					linkedin: req.body.linkeninurl
+				},
+				imageName: profilepic 
+			});
+
+			//save author object to database
+			authorz.save( (err) => {
+				if (err) {
+					console.log("Errors when saving data" + err )
+					return next(err);
+				}
+				console.log("Successfully Saved to Database");
+			});
+			//upload the actual image to s3
+			//await s3Client.send(new PutObjectCommand(s3uploadparams));
+			uploadtos3bucket(s3uploadparams);
+			res.redirect("/portfolio");
 		}
 	},
 ];
@@ -394,84 +479,102 @@ exports.author_update_post = [
 	 //multer upload image
 	uploadimg.single('photo1'),
 
+	//validate and sanitize the form fields
+	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
+	body("authormiddlename", "Middle name").trim().escape(),
+	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
+	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
+	body("githuburl", "Github url").isURL().trim().escape(),
+	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
+	body("authoremail", "Author email is required").isEmail().trim().escape(),
+
+	
+
 	async (req, res, next) => {
 		// Get role from decoded cookie token
-		const Role = req.userinfo.role; 
-		// If user is not an admin or normal user, return error
-		if (Role !== 'admin') {
-		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		const Role = req.userinfo.role;
+		//check for validation errors
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) { //if formdata has errors
+			console.log("The data has errors");
+			console.log(errors);
+			//Re-render the project form with errors
+
 		} else {
-			const update_author_id = req.body.authorUpdateid;
-			console.log ("The author update id is"+ update_author_id);
-			const upprofilepic = "author"+generaterandomimgname();//image name
+			// If user is not an admin return error
+			if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+			} else {
+				const update_author_id = req.body.authorUpdateid;
+				console.log ("The author update id is"+ update_author_id);
+				const upprofilepic = "author"+generaterandomimgname();//image name
 
-			//resize the image file
-			const upfilebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
+				//resize the image file
+				const upfilebuffer = await sharp(req.file.buffer).resize({ height: 667, width: 567, fit: "fill"}).toBuffer();
+				//upload new image to S3
+				const updates3uploadparams = {
+					Bucket: BUCKET_NAME,
+					Body: upfilebuffer,
+					Key: upprofilepic,
+					ContentType: upfilebuffer.mimetype
+				};
 
-			//update object in database
-			const update_filter = {
-				_id: update_author_id 
-			};
-
-			const update_authorz = { $set: {
-				name: {
-					first: req.body.authorfirstname,
-					middle: req.body.authormiddlename,
-					last: req.body.authorlastname
-				},
-				about: {
-					short_description: req.body.authorshortdesc,
-					full_description: req.body.authorfulldesc
-				},
-				contact: {
-					phoneNumber: {
-						mobile: req.body.mobilenumber,
-						work: req.body.worknumber
-					},
-					email: req.body.authoremail,
-					personal_website: req.body.authorwebsite,
-				},
-				socialmedia: {
-					facebook: req.body.facebookurl,
-					twitter: req.body.twitterurl,
-					github: req.body.githuburl,
-					linkedin: req.body.linkeninurl
-				},
-				imageName: upprofilepic
-			}};
-
-			await Author.findOneAndUpdate(update_filter, update_authorz, {
-				new: true,
-				upsert: true,
-				rawResult: true,
-				runValidators: true
-			});
-
-			//delete image from s3 bucket
-			const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
-				if (err){
-					console.log(err);
-				}
-				else if (updelresult) {
-					console.log("the object to delete is"+updelresult.imageName);
-					const delparams = {
-						Bucket: BUCKET_NAME,
-						Key: updelresult.imageName
+				//1.delete image from s3 bucket
+				const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
+					if (err){
+						console.log(err);
 					}
-					deletefroms3bucket(delparams);
-				}	
-			});
+					else if (updelresult) {
+						console.log("the object to delete is"+updelresult.imageName);
+						const delparams = {
+							Bucket: BUCKET_NAME,
+							Key: updelresult.imageName
+						}
+						deletefroms3bucket(delparams);
+					}	
+				});
 
-			//upload new image to S3
-			const updates3uploadparams = {
-				Bucket: BUCKET_NAME,
-				Body: upfilebuffer,
-				Key: upprofilepic
-			};
-			//ContentType: 'image/jpeg'
-			await s3Client.send(new PutObjectCommand(updates3uploadparams));
-			console.log("Updated Successfully");
-			res.redirect("/website/author");
+				//2.update object in database
+				const update_filter = {
+					_id: update_author_id 
+				};
+				const update_authorz = { $set: {
+					name: {
+						first: req.body.authorfirstname,
+						middle: req.body.authormiddlename,
+						last: req.body.authorlastname
+					},
+					about: {
+						short_description: req.body.authorshortdesc,
+						full_description: req.body.authorfulldesc
+					},
+					brandName: req.body.authorbrandname,
+					email: req.body.authoremail,
+					password: req.body.authorpassword,
+					authorStatus: req.body.authorstatus,
+					authorRole: req.body.authorRole,
+					socialmedia: {
+						github: req.body.githuburl,
+						linkedin: req.body.linkeninurl
+					},
+					imageName: upprofilepic
+				}};
+				await Author.findOneAndUpdate(update_filter, update_authorz, {
+					new: true,
+					upsert: true,
+					rawResult: true,
+					runValidators: true
+				});
+
+				//3.upload to s3 bucket
+				uploadtos3bucket(updates3uploadparams);
+				console.log("Updated Successfully");
+				res.redirect("/portfolio/author");
+			}
 		}
 	},
 ];
