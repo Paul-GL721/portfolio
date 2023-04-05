@@ -11,11 +11,15 @@ $(document).ready(function(){
 					console.log(data);
 					$("#projectUpdateModal").modal('show');					
 					$("#projtitle").val(data.all_projs.ptitle);
-					$("#projproblem").val(data.all_projs.problemStatement);
-					$("#projsummary").val(data.all_projs.psummary);
-					$("#projsoln").val(data.all_projs.solution);
+					var originalprob = data.all_projs.problemStatement; //replace the "/" in the text
+					$("#projproblem").val(originalprob.replace(/&amp;#x2F;/g, '/'));
+					var originalsum = data.all_projs.psummary; //replace the "/" in the text
+					$("#projsummary").val(originalsum.replace(/&amp;#x2F;/g, '/'));
+					var originalsoln = data.all_projs.solution; //replace the "/" in the text
+					$("#projsoln").val(originalsoln.replace(/&amp;#x2F;/g, '/'));
 					$("#prorole").val(data.all_projs.role);
-					$("#progithub").val(data.all_projs.githubUrl);
+					var originalgitUrl = data.all_projs.githubUrl;
+					$("#progithub").val(originalgitUrl.replace(/&#x2F;/g, '/'));
 					$("#projcontibutor").val(data.all_projs.contributor);
 					$(`#proskills option[value='${data.authorzproj._id}']`).prop('selected', true);
 					//$("#proskills").val(data.skill);
