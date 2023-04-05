@@ -40,7 +40,7 @@
                                         <div class="row">
                                             <div class="col text-justify order-lg-2">
                                                 <ul class="text-wrap" >
-                                                    {% for proj in index_data %}
+                                                    {% for proj in index_data.author_projects %}
                                                         <p> <a href="{{ proj.url}}">{{ proj.ptitle | capitalize | urlize | safe }}</a> <br> {{ proj.psummary | capitalize | urlize | safe }}  </p>
                                                     {% endfor %}
                                                 </ul>
