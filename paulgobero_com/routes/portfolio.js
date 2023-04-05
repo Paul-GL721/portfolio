@@ -79,90 +79,90 @@ router.get("/demologin/availablity", login_controller.demouseravailablity);
 
 				//........PROJECT ROUTES.....//
 //Get request for creating project
-router.get("/project/create", project_controller.project_create_get);
+router.get("/project/create", login_controller.verifyToken, project_controller.project_create_get);
 
 //Post request for created project
-router.post("/project/create", project_controller.project_create_post);
+router.post("/project/create", login_controller.verifyToken, project_controller.project_create_post);
 
 //Get request for deleting project
-router.get("/project/delete", project_controller.project_delete_get);
+router.get("/project/delete", login_controller.verifyToken, project_controller.project_delete_get);
 
 //Post request for deleting project
-router.post("/project/delete", project_controller.project_delete_post);
+router.post("/project/delete", login_controller.verifyToken, project_controller.project_delete_post);
 
 //Get request for updating project
-router.get("/project/update", project_controller.project_update_get);
+router.get("/project/update", login_controller.verifyToken, project_controller.project_update_get);
 
 //Post request for updating project
-router.post("/project/update", project_controller.project_update_post);
+router.post("/project/update", login_controller.verifyToken, project_controller.project_update_post);
 
 //Get request for one project
-router.get("/project/:id", project_controller.project_detail);
+router.get("/project/:id", login_controller.verifyToken, project_controller.project_detail);
 
 //Get request for all projects
-router.get("/project", project_controller.project_list);
+router.get("/project", login_controller.verifyToken, project_controller.project_list);
 
 //Get request for all project skills
-router.get("/project/api/skills", skill_controller.project_skill);
+router.get("/project/api/skills", login_controller.verifyToken, skill_controller.project_skill);
 
 //Get request for all project skills
-router.get("/project/api/specialisations", specialisation_controller.project_specialisations);
+router.get("/project/api/specialisations", login_controller.verifyToken, specialisation_controller.project_specialisations);
 
 //Get request for all project authors
-router.get("/project/api/authors", author_controller.project_authors);
+router.get("/project/api/authors", login_controller.verifyToken, author_controller.project_authors);
 
 				//........BLOG ROUTES.....//
 
 
 				//........SPECILISATION ROUTES.....//
 //Get request for creating specialisation
-router.get("/specialisation/create", specialisation_controller.specialisation_create_get);
+router.get("/specialisation/create", login_controller.verifyToken, specialisation_controller.specialisation_create_get);
 
 //Post request for creating specialisation
-router.post("/specialisation/create", specialisation_controller.specialisation_create_post);
+router.post("/specialisation/create", login_controller.verifyToken, specialisation_controller.specialisation_create_post);
 
 //Get request for deleting specialisation
-router.get("/specialisation/:id/delete", specialisation_controller.specialisation_delete_get);
+router.get("/specialisation/:id/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_get);
 
 //Post request for deleting specialisation
-router.post("/specialisation/:id/delete", specialisation_controller.specialisation_delete_post);
+router.post("/specialisation/:id/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_post);
 
 //Get request for updating specialisation
-router.get("/specialisation/:id/update", specialisation_controller.specialisation_update_get);
+router.get("/specialisation/:id/update", login_controller.verifyToken, specialisation_controller.specialisation_update_get);
 
 //Post request for updating specialisation
-router.post("/specialisation/:id/update", specialisation_controller.specialisation_update_post);
+router.post("/specialisation/:id/update", login_controller.verifyToken, specialisation_controller.specialisation_update_post);
 
 //Get request for one specialisation
-router.get("/specialisation/:id", specialisation_controller.specialisation_detail);
+router.get("/specialisation/:id", login_controller.verifyToken, specialisation_controller.specialisation_detail);
 
 //Get request for all specialisations
-router.get("/specialisation", specialisation_controller.specialisation_list);
+router.get("/specialisation", login_controller.verifyToken, specialisation_controller.specialisation_list);
 
 
 				//........SKILLS ROUTES.....//
 //Get request for creating skill
-router.get("/skill/create", skill_controller.skill_create_get);
+router.get("/skill/create", login_controller.verifyToken, skill_controller.skill_create_get);
 
 //Post request for creating skill
-router.post("/skill/create", skill_controller.skill_create_post);
+router.post("/skill/create", login_controller.verifyToken, skill_controller.skill_create_post);
 
 //Get request for deleting skill
-router.get("/skill/delete", skill_controller.skill_delete_get);
+router.get("/skill/delete", login_controller.verifyToken, skill_controller.skill_delete_get);
 
 //Post request for deleting skill
-router.post("/skill/delete", skill_controller.skill_delete_post);
+router.post("/skill/delete", login_controller.verifyToken, skill_controller.skill_delete_post);
 
 //Get request for updating skill
-router.get("/skill/update", skill_controller.skill_update_get);
+router.get("/skill/update", login_controller.verifyToken, skill_controller.skill_update_get);
 
 //Post request for updating skill
-router.post("/skill/update", skill_controller.skill_update_post);
+router.post("/skill/update", login_controller.verifyToken, skill_controller.skill_update_post);
 
 //Get request for one skill
-router.get("/skill/:id", skill_controller.skill_detail);
+router.get("/skill/:id", login_controller.verifyToken, skill_controller.skill_detail);
 
 //Get request for all skills
-router.get("/skill", skill_controller.skill_list);
+router.get("/skill", login_controller.verifyToken, skill_controller.skill_list);
 
 module.exports = router;
