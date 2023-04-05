@@ -1,5 +1,5 @@
 
-{% extends "website_base.njk" %}
+{% extends "portfolio_base.njk" %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -16,7 +16,7 @@
                                 <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
                             </ul>
                             {% block createOwnerbutton %}
-                                <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/website/signup/owner">Create Owner</a>
+                                <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/portfolio/signup/owner">Create Owner</a>
                             {% endblock %}
                             {% block loginbutton %}   {% endblock %}
                             {% block createDemoUserbutton %}   {% endblock %}    

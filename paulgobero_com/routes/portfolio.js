@@ -1,4 +1,4 @@
-/*........ ROUTES FOR THE MAIN WEBSITE.....................*/
+/*........ ROUTES FOR THE MAIN portfolio.....................*/
 
 const express = require("express");
 const router = express.Router();
@@ -11,10 +11,10 @@ const project_controller = require("../controllers/projectController");
 const login_controller = require("../controllers/loginController");
 
 				//........AUTHOR ROUTES.....//
-//Get website home page
+//Get portfolio home page
 router.get("/", author_controller.index);
 
-//Post contact page from website home page
+//Post contact page from portfolio home page
 router.post("/", author_controller.index_post);
 
 //Get request for creating author
@@ -22,6 +22,9 @@ router.get("/author/create", login_controller.verifyToken, author_controller.aut
 
 //Post request for creating author
 router.post("/author/create", login_controller.verifyToken, author_controller.author_create_post);
+
+//Post request for creating owner author
+router.post("/author/ownercreate", author_controller.author_ownercreate_post);
 
 //Get request for deleting author
 router.get("/author/delete", login_controller.verifyToken, author_controller.author_delete_get);

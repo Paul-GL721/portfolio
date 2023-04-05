@@ -73,7 +73,7 @@ $(document).ready(function() {
 				$.ajax({
 					type: "POST",
 					data: { accessToken: accessToken, refreshToken: refreshToken },
-					url: "/website/refreshlogin",
+					url: "/portfolio/refreshlogin",
 					success: function(data){
 						// If the request is successful, update the cookie with the value sent from the server
 						var newjwt_token = data.jwt;
@@ -94,7 +94,7 @@ $(document).ready(function() {
 			//wait for 30 seconds, if no button is clicked and token is not refreshed log out the user
 			setTimeout(function(){
 				if (!$('#loginout').data('clicked') && !istokenRefreshed) {
-					window.location.href = "/website/logout";
+					window.location.href = "/portfolio/logout";
 				}
 			}, 30000);	
 		} else {

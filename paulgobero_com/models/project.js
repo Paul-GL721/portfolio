@@ -28,7 +28,7 @@ const ProjectSchema = new Schema({
 
 //Add virtual property
 ProjectSchema.virtual("url").get(function() {
-    return `/website/project/${this._id}`;
+    return `/portfolio/project/${this._id}`;
 });
 //make virtual properties querable
 ProjectSchema.set('toObject', { virtuals: true });

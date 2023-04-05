@@ -33,7 +33,7 @@ AuthorSchema.virtual('brand').get(function() {
     return this.name.first + ' ' + this.name.last;
 });
 AuthorSchema.virtual("url").get(function() {
-    return `/website/author/${this._id}`;
+    return `/portfolio/author/${this._id}`;
 });
 //make virtual properties querable
 AuthorSchema.set('toObject', { virtuals: true });

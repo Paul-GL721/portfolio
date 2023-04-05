@@ -14,16 +14,18 @@ $(document).ready(function(){
 					$("#authorlastname").val(data.name.last);
 					$("#authorshortdesc").val(data.about.short_description);
 					$("#authorfulldesc").val(data.about.full_description);
-					$("#mobilenumber").val(data.contact.phoneNumber.mobile);
-					$("#worknumber").val(data.contact.phoneNumber.work);
-					$("#authoremail").val(data.contact.email);
-					$("#authorwebsite").val(data.contact.personal_website);
-					$("#facebookurl").val(data.socialmedia.facebook);
-					$("#twitterurl").val(data.socialmedia.twitter);
-					$("#githuburl").val(data.socialmedia.github);
-					$("#linkeninurl").val(data.socialmedia.linkedin);
+					$("#authorbrandname").val(data.brandName);
+					$("#authoremail").val(data.email);
+					var originalgitUrl = data.socialmedia.github;
+					var originallinkUrl = data.socialmedia.linkedin;
+					$("#githuburl").val(originalgitUrl.replace(/&#x2F;/g, '/'));
+					$("#linkeninurl").val(originallinkUrl.replace(/&#x2F;/g, '/'));
 					$("#div1").attr("src", data.imageUrl);
 					$("#authorUpdateid").val(data._id);
+					$("#authorpassword").val(data.password);
+					$("#authorstatus").val(data.authorStatus);
+					$("#authorRole").val(data.authorRole);
+					
 					
 				}
 			});
