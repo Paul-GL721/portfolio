@@ -8,69 +8,68 @@
 {% block content %}
 	<section class="formsection">
         <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-sm-12 col-md-10">
+            <div class="col-sm-12 col-md-12">
                 <h3 style="text-align: center;">All Projects</h3>
-                <div id="toolbar"><button class="btn btn-secondary" id="projectbtnAdd" type="button" title="Add New Project" onclick="location.href='project/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="projectbtnDelete" type="button" title="Delete Selected  Project(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="projectbtnAdd" type="button" title="Add New Project" onclick="location.href='project/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="projectbtnDelete" type="button" title="Delete Selected  Project(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
                 <div class="table-responsive">
                     <table class="table table-striped" id="projecttable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
                         <thead>
                             <tr class="d-flex">
-                                <th class="w-5" data-checkbox="true" data-field="state"></th>
-                                <th id="project_id" class="w-5 hidden" data-field="projectidz">id</th>
-                                <th id="cellvideoid" class="w-6" data-field="videoUrl">Uploaded Video</th>
-                                <th id="cellprojpic" class="w-6 data-field="imageUrl">Images</th>
-                                <th id="cellprojecttitle" class="w-5" data-field="projecttitle">Title</th>
-                                <th id="cellprojectsummary" class="w-15" data-field="projectsummary">Summary</th>
-                                <th id="cellprojectproblem" class="w-15" data-field="problemstatement">Challenge Faced</th>
-                                <th id="cellprojectsolution" class="w-15" data-field="projectsolution">Solution</th>
-                                <th id="cellprojectrole" class="w-5" data-field="projectrole">Role Played</th>
-                                <th id="cellprojectgithuburl" class="w-6" data-field="projectgithuburl">Github link</th>
-                                <th id="cellprojectcontributors" class="w-5" data-field="projectcontributors">Contributors</th>
-                                <th id="cellprojectskill" class="w-5" data-field="projectskill">Skill(s) Gained</th>
-                                <th id="cellprojectauthors" class="w-5" data-field="projectauthors">Author(s)</th>
-                                <th id="cellprojectspecs" class="w-5" data-field="projectspecs">Specializations</th>
-                                <th id="cellactions" class="w-3" data-field="Actions">Actions</th>
+                                <th class="w-5p" data-checkbox="true" data-field="state"></th>
+                                <th class="w-10p text-wrap text-break" id="project_id" data-field="projectidz">id</th>
+                                <th class="w-20p text-wrap text-break" id="cellvideoid" data-field="videoUrl">Uploaded Video</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojpic" data-field="imageUrl">Images</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojecttitle" data-field="projecttitle">Title</th>
+                                <th class="w-30p" id="cellprojectsummary" data-field="projectsummary">Summary</th>
+                                <th class="w-60p" id="cellprojectproblem" data-field="problemstatement">Challenge Faced</th>
+                                <th class="w-60p" id="cellprojectsolution" data-field="projectsolution">Solution</th>
+                                <th class="w-30p" id="cellprojectrole" data-field="projectrole">Role Played</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojectgithuburl" data-field="projectgithuburl">Github link</th>
+                                <th class="w-20p" id="cellprojectcontributors" data-field="projectcontributors">Contributors</th>
+                                <th class="w-30p" id="cellprojectskill" data-field="projectskill">Skill(s) Gained</th>
+                                <th class="w-30p" id="cellprojectauthors" data-field="projectauthors">Author(s)</th>
+                                <th class="w-30p" id="cellprojectspecs" data-field="projectspecs">Specializations</th>
+                                <th class="w-10p" id="cellactions" data-field="Actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for project in abtprojects %}
                                 <tr class="d-flex">
-                                    <td></td>
-                                    <td class="hidden">{{ project._id }}</td>
-                                    <td>
+                                    <td class="w-5p"></td>
+                                    <td class="w-10p text-wrap text-break">{{ project._id }}</td>
+                                    <td class="w-20p text-wrap text-break">
                                         <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.mediaUrl.videoUrl }}" ></iframe></div>
                                     </td>
-                                    <td><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
-                                    <td>{{ project.ptitle | urlize | safe }}</td>
-                                    <td>{{ project.psummary | urlize | safe }}</td>
-                                    <td>{{ project.problemStatement | urlize | safe }}</td>
-                                    <td>{{ project.solution | urlize | safe }}</td>
-                                    <td>{{ project.role | urlize | safe }}</td>
-                                    <td>{{ project.githubUrl | urlize | safe }}</td>
-                                    <td>{{ project.contributor | urlize | safe }}</td>
-                                    <td>
+                                    <td class="w-20p text-wrap text-break"><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
+                                    <td class="w-20p text-wrap text-break">{{ project.ptitle | replace('&amp;#x2F;', '/') | urlize | safe}}</td>
+                                    <td class="w-30p">{{ project.psummary | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-60p">{{ project.problemStatement | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-60p">{{ project.solution | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-30p">{{ project.role | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-20p text-wrap text-break">{{ project.githubUrl | urlize | safe }}</td>
+                                    <td class="w-20p">{{ project.contributor | urlize | safe }}</td>
+                                    <td class="w-30p">
                                         <ul class="list-group">
                                             {% for skll in project.skill %} 
                                                 <li class="list-group-item border-0 bg-transparent"> {{ skll.name }} </li>
                                             {% endfor %}
                                         </ul>
                                     </td>
-                                    <td> 
+                                    <td class="w-30p"> 
                                         <ul class="list-group">
                                             {% for athor in project.author %} 
                                                 <li class="list-group-item border-0 bg-transparent"> {{ athor.name.first }} {{ athor.name.middle }} {{ athor.name.last }} </li>
                                             {% endfor %}
                                         </ul>
                                     </td>
-                                    <td> 
+                                    <td class="w-30p"> 
                                         <ul class="list-group">
                                             {% for spec in  project.specialisation %} 
                                                 <li class="list-group-item border-0 bg-transparent"> {{ spec.name }} </li>
                                             {% endfor %}
                                         </ul>
                                     </td>
-                                    <td><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+                                    <td class="w-10p"><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -99,7 +98,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-1"></div>
         </div>
     </section>
 
