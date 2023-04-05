@@ -97,7 +97,7 @@ router.get("/project/update", login_controller.verifyToken, project_controller.p
 router.post("/project/update", login_controller.verifyToken, project_controller.project_update_post);
 
 //Get request for one project
-router.get("/project/:id", login_controller.verifyToken, project_controller.project_detail);
+router.get("/project/:id", project_controller.project_detail);
 
 //Get request for all projects
 router.get("/project", login_controller.verifyToken, project_controller.project_list);

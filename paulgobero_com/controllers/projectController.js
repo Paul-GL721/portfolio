@@ -400,33 +400,26 @@ exports.project_update_post = [
 //On GET, show individual project
 exports.project_detail = async(req, res, next) => {
 	getBrandName();
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} else {
-		const detailproject = await Project.findById(req.params.id, {})
-		.populate('author', 'name')
-		.populate('skill', 'name')
-		.populate('specialisation', 'name')
-		.exec( async function (err, details_projects) {
-			if (err) {
-				return next(err);
-			}
-			details_projects.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: details_projects.mediaName.videoName
-			}), { expiresIn: 3600 })
-			details_projects.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: details_projects.mediaName.imageName
-			}), { expiresIn: 3600 })
-			
-			//res.json(details_projects);
-			res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brandname });
-		});
-	}
+	const detailproject = await Project.findById(req.params.id, {})
+	.populate('author', 'name')
+	.populate('skill', 'name')
+	.populate('specialisation', 'name')
+	.exec( async function (err, details_projects) {
+		if (err) {
+			return next(err);
+		}
+		details_projects.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: details_projects.mediaName.videoName
+		}), { expiresIn: 3600 })
+		details_projects.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: BUCKET_NAME,
+			Key: details_projects.mediaName.imageName
+		}), { expiresIn: 3600 })
+		
+		//res.json(details_projects);
+		res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brandname });
+	});
 };
 
 
