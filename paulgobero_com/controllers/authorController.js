@@ -118,6 +118,7 @@ exports.index = async (req, res, next) => {
 							Key: projectz.mediaName.imageName
 						}), { expiresIn: 3600 })
 					}
+					//res.json(results);
 					res.render("portfolio_index", { Title: "Portfolio", index_data: results, brandname });
 				}
 			);	
@@ -234,7 +235,7 @@ exports.author_detail = (req, res) => {
 exports.author_create_get = (req, res, next) => {
 	getBrandName();
 	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
+	const Role = req.userinfo.role;
 	// If user is not an admin or normal user, return error
 	if (Role !== 'admin') {
 	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
@@ -348,7 +349,7 @@ exports.author_ownercreate_post = [
 	async (req, res, next) => {
 		const profilepic = "author"+generaterandomimgname();//image name
 		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 500, width: 500, fit: "fill"}).toBuffer();
+		const filebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
 
 		//upload images to S3
 		const s3uploadparams = {
@@ -514,7 +515,7 @@ exports.author_update_post = [
 				const upprofilepic = "author"+generaterandomimgname();//image name
 
 				//resize the image file
-				const upfilebuffer = await sharp(req.file.buffer).resize({ height: 667, width: 567, fit: "fill"}).toBuffer();
+				const upfilebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
 				//upload new image to S3
 				const updates3uploadparams = {
 					Bucket: BUCKET_NAME,
