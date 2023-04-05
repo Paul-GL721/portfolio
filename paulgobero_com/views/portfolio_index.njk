@@ -62,8 +62,8 @@
                         <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
                             <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;" src="{{ dindex.mediaUrl.imageUrl }}"></div>
                             <h3>{{ dindex.ptitle }}</h3>
-                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }} <a href="#projectmodal" data-toggle="modal">Read more</a></p>
-                            <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal">
+                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }}<a href="#" class="project-modal-link" data-project-id="{{ dindex._id }}">Read more</a></p>
+                            <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-{{ dindex._id }}">
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -79,8 +79,11 @@
                                                                 {{ dindex.problemStatement | urlize | safe  }}.  
                                                             </p> 
                                                             <p class="lead mb-0">
-                                                                For a solution {{ dindex.solution | urlize | safe }}. My main role(s) included {{ dindex.role | urlize | safe }} and i gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
-                                                            </p>    
+                                                                For a solution {{ dindex.solution | urlize | safe }}.
+                                                            </p>
+                                                             <p class="lead mb-0" style="text-align: left;">
+                                                                My main role(s) included {{ dindex.role | urlize | safe }}. From this project I gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
+                                                            </p>     
                                                             <p class="lead mb-0" style="text-align: left; padding-top: 20px">
                                                                 You can <a href="{{ dindex.githubUrl | urlize | safe }}">test the live demo</a> or View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
                                                             </p>
