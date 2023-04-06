@@ -93,7 +93,9 @@ exports.index = async (req, res, next) => {
 					author_projects(callback) {
 						Project.find({ author: author_id }).sort({ createdAt: -1 })
 						.populate('author', 'name')
-						.populate('skill', 'name')
+						.populate({
+							path: 'skill',
+							select: ['name', 'imageName', 'imageUrl' ]})
 						.populate('specialisation', 'name')
 						.exec(callback);
 					},
@@ -117,6 +119,12 @@ exports.index = async (req, res, next) => {
 							Bucket: BUCKET_NAME,
 							Key: projectz.mediaName.imageName
 						}), { expiresIn: 3600 })
+						for (let skillz of projectz.skill) { //skills
+							skillz.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
+								Bucket: BUCKET_NAME,
+								Key: skillz.imageName
+							}), { expiresIn: 3600 })
+						}
 					}
 					//res.json(results);
 					res.render("portfolio_index", { Title: "Portfolio", index_data: results, brandname });

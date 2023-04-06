@@ -1,6 +1,6 @@
 
 {% extends "portfolio_base.njk" %}
-{% set navbarurl = {about: "#about_section", projects: "#project_section", contact: "#contact_section" } %}
+{% set navbarurl = {about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -62,7 +62,7 @@
                         <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
                             <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;" src="{{ dindex.mediaUrl.imageUrl }}"></div>
                             <h3>{{ dindex.ptitle }}</h3>
-                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }}<a href="#" class="project-modal-link" data-project-id="{{ dindex._id }}">Read more</a></p>
+                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }}<a href="#" class="project-modal-link" data-project-id="{{ dindex._id }}"> Read more</a></p>
                             <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-{{ dindex._id }}">
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                     <div class="modal-content">
@@ -73,22 +73,39 @@
                                             <section class="showcase">
                                                 <div class="container-fluid p-0">
                                                     <div class="row">
-                                                        <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 10px;" src="{{ dindex.mediaUrl.videoUrl }}"></video></div>
-                                                        <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
-                                                            <p class="lead mb-0" style="text-align: left; padding-bottom: 20px">
+                                                        <div class="col-lg-6" style="text-align: left;">
+                                                            <p class="lead">
                                                                 {{ dindex.problemStatement | urlize | safe  }}.  
-                                                            </p> 
-                                                            <p class="lead mb-0">
-                                                                For a solution {{ dindex.solution | urlize | safe }}.
                                                             </p>
-                                                             <p class="lead mb-0" style="text-align: left;">
-                                                                My main role(s) included {{ dindex.role | urlize | safe }}. From this project I gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
-                                                            </p>     
-                                                            <p class="lead mb-0" style="text-align: left; padding-top: 20px">
-                                                                You can <a href="{{ dindex.githubUrl | urlize | safe }}">test the live demo</a> or View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
+                                                        </div>
+                                                        <div class="col-lg-6" style="text-align: left;">
+                                                            <p class="lead">
+                                                                <b> For a solution: </b> {{ dindex.solution | urlize | safe }}.
                                                             </p>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-2"> </div>
+                                                        <div class="col-lg-8 text-white align-self-center">
+                                                            <video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 10px;" src="{{ dindex.mediaUrl.videoUrl }}"></video>
+                                                        </div>
+                                                        <div class="col-lg-2"> </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6" style="text-align: left;">
+                                                            <p class="lead">
+                                                                My main role(s) included {{ dindex.role | urlize | safe }}. 
+                                                            </p>
+                                                            <p class="lead"> 
+                                                                From this project I gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-lg-6" style="text-align: left;">
+                                                            <p class="lead">
+                                                                You can <a href="{{ dindex.githubUrl | urlize | safe }}">test the live demo</a> or View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
+                                                            </p>
+                                                        </div>
+                                                    </div>        
                                                 </div>
                                             </section>
                                         </div>
@@ -103,34 +120,70 @@
         </div>
     </section>
 
-    <section id="contact_section" class="py-4 py-xl-5">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <h2 class="font-weight-bold">Contact Me</h2>
-                    <p class="lead">You can leave a message; I try to reply as soon as possible</p>
+    <div class="row">
+        <div class="col-md-6">
+            <section id="skill_section" class="py-4 py-xl-5">
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col text-center">
+                            <h2 class="font-weight-bold">Skills</h2>
+                            <p class="lead"> This is the diverse skill set I have developed over the years that allows me to excel in various aspects of my work.</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {% set unique_skills = [] %}
+                        {% for pindex in index_data.author_projects %}
+                            {% for sindex in pindex.skill %}
+                                {% if sindex.name not in unique_skills %}
+                                    {% set unique_skills = unique_skills + [sindex.name] %}
+                                    <div class="col-lg-3">
+                                        <div class=" features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                                            <div class="lead mb-3 text-center">
+                                                <img class="img-thumbnail img-fluid bg-light border-0" style="width: 50px;height: 50px;" src="{{ sindex.imageUrl }}">
+                                                <p>{{ sindex.name }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>  
                 </div>
-            </div>
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-6 col-xl-4">
-                    <div>
-                        <form class="form-inline p-3 p-xl-4" id="contactForm" method="post" action=" ">
-                            <div class="mb-3">
-                                <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
+            </section>
+        </div>
+
+        <div class="col-md-6">
+            <section id="contact_section" class="py-4 py-xl-5">
+                <div class="container-fluid ">
+                    <div class="row mb-0">
+                        <div class="col-md-12 col-xl-12 text-center mx-3">
+                            <h2 class="font-weight-bold">Contact Me</h2>
+                            <p class="lead">Thank you for taking the time to review my portfolio. If you're interested in discussing how I can contribute to your team, I would love to hear from you. <P> 
+                            <P class="lead text-left">Please feel free to contact me to schedule a conversation and learn more about my experience and qualifications.</p>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-6 col-xl-6">
+                            <div>
+                                <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action=" ">
+                                    <div class="mb-3">
+                                        <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Your Email" required=""></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
+                                    </div>
+                                    <div><button class="btn btn-primary d-block w-100" type="submit">Send Message</button></div>
+                                </form>
                             </div>
-                            <div class="mb-3">
-                                <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Your Email" required=""></div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
-                            </div>
-                            <div><button class="btn btn-primary d-block w-100" type="submit">Send Message</button></div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>   
 {% endblock %}
 
 
