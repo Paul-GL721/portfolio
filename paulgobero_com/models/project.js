@@ -12,6 +12,7 @@ const ProjectSchema = new Schema({
     solution: { type: String },
     role: { type: String, required: true },
     githubUrl: { type: String },
+    livelinkUrl: { type: String },
     contributor: { type: String },
     skill: [{ type: Schema.Types.ObjectId, ref: "Skill", required: true }],
     author: [{ type: Schema.Types.ObjectId, ref: "Author" }],

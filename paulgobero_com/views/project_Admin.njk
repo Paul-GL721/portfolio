@@ -25,6 +25,7 @@
                                 <th class="w-60p" id="cellprojectsolution" data-field="projectsolution">Solution</th>
                                 <th class="w-30p" id="cellprojectrole" data-field="projectrole">Role Played</th>
                                 <th class="w-20p text-wrap text-break" id="cellprojectgithuburl" data-field="projectgithuburl">Github link</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojectlivelinkurl" data-field="projectlivelinkurl">Live link</th>
                                 <th class="w-20p" id="cellprojectcontributors" data-field="projectcontributors">Contributors</th>
                                 <th class="w-30p" id="cellprojectskill" data-field="projectskill">Skill(s) Gained</th>
                                 <th class="w-30p" id="cellprojectauthors" data-field="projectauthors">Author(s)</th>
@@ -47,6 +48,7 @@
                                     <td class="w-60p">{{ project.solution | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
                                     <td class="w-30p">{{ project.role | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
                                     <td class="w-20p text-wrap text-break">{{ project.githubUrl | urlize | safe }}</td>
+                                    <td class="w-20p text-wrap text-break">{{ project.livelinkUrl | urlize | safe }}</td>
                                     <td class="w-20p">{{ project.contributor | urlize | safe }}</td>
                                     <td class="w-30p">
                                         <ul class="list-group">
