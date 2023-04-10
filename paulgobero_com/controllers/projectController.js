@@ -102,11 +102,12 @@ exports.project_create_post = [
 	body("projproblem", "What problem was the project solving?").trim().isLength({ min:2 }).escape(),
 	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
 	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
-	body("progithub", "Project Github url").isURL().trim().escape(),
+	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
+	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
 	body("projspecialisation.*").escape(),
 	body("projauthor.*").escape(),
-	body("projcontibutor", "Any other authors").trim().escape(),
+	body("projcontibutor", "Any other authors").optional({ checkFalsy: true }),
 
 	async (req, res, next) => {
 		// Get role from decoded cookie token
@@ -158,6 +159,7 @@ exports.project_create_post = [
 					solution: req.body.projsoln,
 					role: req.body.prorole,
 					githubUrl: req.body.progithub,
+					livelinkUrl: req.body.prolivelink,
 					contributor: req.body.projcontibutor,
 					skill: req.body.proskills,
 					author: req.body.projauthor,
@@ -183,7 +185,9 @@ exports.project_create_post = [
 				console.log("uploaded to s3 sucessfully");
 
 				//redirect to individual project page
-				res.redirect(Project.url); 
+				//res.redirect(Project.url);
+				res.redirect(`/portfolio/project/${projz._id}`);
+				
 			}
 		}
 	},	
@@ -289,11 +293,12 @@ exports.project_update_post = [
 	body("projproblem", "What problem was the project solving?").trim().isLength({ min:2 }).escape(),
 	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
 	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
-	body("progithub", "Project Github url").isURL().trim().escape(),
+	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
+	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
 	body("projspecialisation.*").escape(),
 	body("projauthor.*").escape(),
-	body("projcontibutor", "Any other authors").trim().escape(),
+	body("projcontibutor", "Any other authors").optional({ checkFalsy: true }),
 
 	async (req, res, next) => {
 		// Get role from decoded cookie token
@@ -370,6 +375,7 @@ exports.project_update_post = [
 						solution: req.body.projsoln,
 						role: req.body.prorole,
 						githubUrl: req.body.progithub,
+						livelinkUrl: req.body.prolivelink,
 						contributor: req.body.projcontibutor,
 						skill: req.body.proskills,
 						author: req.body.projauthor,
