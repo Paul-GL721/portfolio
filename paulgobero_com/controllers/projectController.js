@@ -7,70 +7,12 @@ const { body, validationResult } = require("express-validator"); //form validato
 const { storage, fileFilter, uploadimg, uploadvideo, videofileFilter  } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
 //s3 file upload
-const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
-const project = require("../models/project");
-const { stringify } = require("querystring");
+const { BUCKET_NAME } = require('../configs/config');
+const { s3Client, generaterandomvidname, deletefroms3bucket, uploadtos3bucket, getBrandName } = require('../utils/utils.js');
 
-//s3 bucket connection parameters
-const s3Client = new S3Client({
-	region: BUCKET_REGION,
-	credentials: {
-		accessKeyId: ACCESS_KEY,
-		secretAccessKey: SECRET_ACCESS_KEY
-	}
-});
-
-//generate random videofile name
-const generaterandomvidname = () => {
-	const randomvideofilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
-	const projfilename = randomvideofilename();
-	return projfilename
-}
-
-//function to delete from s3 bucket
-const deletefroms3bucket = async (delparams) => {
-	try {
-	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
-	  console.log("Success. Object deleted.", data);
-	  return data; // For unit tests.
-	} catch (err) {
-	  console.log("Error when deleting images", err);
-	}
-};
-
-//function to upload to s3
-const uploadtos3bucket = async (uploadParams) => {
-	try {
-		const data = await s3Client.send(new PutObjectCommand(uploadParams));
-		console.log("Success. Object uploaded", data);
-		return data; // For unit tests.
-	} catch (err) {
-	  console.log("Error", err);
-	}
-};
-
-let brandname
-function getBrandName(){
-	//find the brand name for the owner
-	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
-		if (err){
-			console.log("There was an error in retrieving the brand name");
-			console.log(err);
-		} else if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-	});
-	return brandname;
-}
-
+let brandname;
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
 	getBrandName();
