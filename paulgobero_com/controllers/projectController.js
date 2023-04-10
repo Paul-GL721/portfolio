@@ -10,7 +10,7 @@ const async = require("async"); //run async functions
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME } = require('../configs/config');
-const { s3Client, generaterandomvidname, deletefroms3bucket, uploadtos3bucket, getBrandName } = require('../utils/utils.js');
+const { s3Client, generaterandomvidname, deletefroms3bucket, uploadtos3bucket, getBrandName } = require('../utils/controllerUtils.js');
 
 let brandname;
 //On GET, display project form
