@@ -10,5 +10,10 @@ const SpecialisationSchema = new Schema({
 
 }, {timestamps: true} );
 
+// Virtual for specialisation's URL
+SpecialisationSchema.virtual('url').get(function () {
+    return '/specialisation/' + this._id;
+  });
+
 //export model
 module.exports = mongoose.model("Specialisation", SpecialisationSchema);
