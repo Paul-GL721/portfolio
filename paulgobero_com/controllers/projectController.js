@@ -10,9 +10,59 @@ const async = require("async"); //run async functions
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME } = require('../configs/config');
-const { s3Client, generaterandomvidname, deletefroms3bucket, uploadtos3bucket, getBrandName } = require('../utils/controllerUtils.js');
+const { s3Client, deletefroms3bucket, uploadtos3bucket } = require('../utils/controllerUtils.js');
 
-let brandname;
+//generate random videofile name
+const generaterandomvidname = () => {
+	const randomvideofilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+	const projfilename = randomvideofilename();
+	return projfilename
+}
+
+let brandname
+async function getBrandName() {
+	Author.findOne({ authorStatus: 'owner' })
+	  .then(brand => {
+		// Do something with the brand
+		
+			if (err){
+				console.log("There was an error in retrieving the brand name");
+				console.log(err);
+			} else if (!brand) {
+				console.log("No brand");
+			} else if(brand.brandName === null || brand.brandName === undefined) {
+				console.log("No brand name");
+				brandname = brand.name.first + brand.name.last;
+			} else {
+				console.log("brand name available");
+				brandname = brand.brandName;
+			}
+		
+	  })
+	  .catch(err => {
+		console.log("There was an error in retrieving the brand name");
+		console.log(err);
+	  });
+  }
+/*function getBrandName(){
+	//find the brand name for the owner
+	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
+		if (err){
+			console.log("There was an error in retrieving the brand name");
+			console.log(err);
+		} else if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+	});
+	return brandname;
+}*/
+
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
 	getBrandName();

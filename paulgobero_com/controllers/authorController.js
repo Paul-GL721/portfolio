@@ -13,16 +13,17 @@ var env = new nunjucks.Environment(null);
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, EMAIL_USER, EMAIL_PASSWORD } = require('../configs/config');
+const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST  } = require('../configs/config');
+const controllerUtils = require("../utils/controllerUtils");
 
-//s3 bucket connection parameters
+/*//s3 bucket connection parameters
 const s3Client = new S3Client({
 	region: BUCKET_REGION,
 	credentials: {
 		accessKeyId: ACCESS_KEY,
 		secretAccessKey: SECRET_ACCESS_KEY
 	}
-});
+});*/
 
 //generate random imagefile name
 const generaterandomimgname = () => {
@@ -31,7 +32,7 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
-//function to delete from s3 bucket
+/*//function to delete from s3 bucket
 const deletefroms3bucket = async (delparams) => {
 	try {
 	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
@@ -51,10 +52,56 @@ const uploadtos3bucket = async (uploadParams) => {
 	} catch (err) {
 	  console.log("Error", err);
 	}
-};
+};*/
 
-let brandname
-function getBrandName(){
+let brandname;
+let brand;
+/*async function getBrandName() {
+	Author.findOne({ authorStatus: 'owner' })
+	  .then(brand => {
+		// Do something with the brand
+		
+			if (err){
+				console.log("There was an error in retrieving the brand name");
+				console.log(err);
+			} else if (!brand) {
+				console.log("No brand");
+			} else if(brand.brandName === null || brand.brandName === undefined) {
+				console.log("No brand name");
+				brandname = brand.name.first + brand.name.last;
+			} else {
+				console.log("brand name available");
+				brandname = brand.brandName;
+			}
+		
+	  })
+	  .catch(err => {
+		console.log("There was an error in retrieving the brand name");
+		console.log(err);
+	  });
+  }
+async function getBrandName() {
+	try {
+		const brand = await Author.findOne({ authorStatus: 'owner' });
+		console.log('brand is');
+		console.log(brand);
+		// Do something with the brand
+		if (!brand) {
+			console.log("No brand");
+		} else if(brand.brandName === null || brand.brandName === undefined) {
+			console.log("No brand name");
+			brandname = brand.name.first + brand.name.last;
+		} else {
+			console.log("brand name available");
+			brandname = brand.brandName;
+		}
+		return brandname;
+	} catch (err) {
+		console.log("There was an error in retrieving the brand name");
+		console.log(err);
+	}
+}*/
+/*function getBrandName(){
 	//find the brand name for the owner
 	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
 		if (err){
@@ -71,67 +118,72 @@ function getBrandName(){
 		}
 	});
 	return brandname;
-}
+}*/
 
 //Display home portfolio page
 /* Get projects per individual author */
 exports.index = async (req, res, next) => {
-	getBrandName()
-	const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, available_owner) {
-		if (err) {
-			res.send("There was an error: while checking for your portfolio");
-		} else if (available_owner===null) { 
-			res.render("default_index", { Title: "Default Page", brandname });
-		} else {
-			const author_id = available_owner._id;
-			console.log(author_id)
-			async.parallel(
-				{
-					author(callback) {
-						Author.findById(author_id).exec(callback);
+	try {
+        brand = await controllerUtils.getBrandName();
+        //console.log("Brand name is: ", brand);
+		const checkauthors = Author.exists({ authorStatus: 'owner' }, function(err, available_owner) {
+			if (err) {
+				res.send("There was an error: while checking for your portfolio");
+			} else if (available_owner===null) { 
+				res.render("default_index", { Title: "Default Page", brandname:'brandname' });
+			} else {
+				const author_id = available_owner._id;
+				console.log(author_id)
+				async.parallel(
+					{
+						author(callback) {
+							Author.findById(author_id).exec(callback);
+						},
+						author_projects(callback) {
+							Project.find({ author: author_id }).sort({ createdAt: -1 })
+							.populate('author', 'name')
+							.populate({
+								path: 'skill',
+								select: ['name', 'imageName', 'imageUrl' ]})
+							.populate('specialisation', 'name')
+							.exec(callback);
+						},
 					},
-					author_projects(callback) {
-						Project.find({ author: author_id }).sort({ createdAt: -1 })
-						.populate('author', 'name')
-						.populate({
-							path: 'skill',
-							select: ['name', 'imageName', 'imageUrl' ]})
-						.populate('specialisation', 'name')
-						.exec(callback);
-					},
-				},
-				async (err, results) => {
-					if (err) {
-						return next(err);
-					}
-					//console.log(results);
-					//create video and image signed Urls
-					results.author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-						Bucket: BUCKET_NAME,
-						Key: results.author.imageName
-					}), { expiresIn: 3600})	
-					for (let projectz of results.author_projects) {
-						projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-							Bucket: BUCKET_NAME,
-							Key: projectz.mediaName.videoName
-						}), { expiresIn: 3600 })
-						projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-							Bucket: BUCKET_NAME,
-							Key: projectz.mediaName.imageName
-						}), { expiresIn: 3600 })
-						for (let skillz of projectz.skill) { //skills
-							skillz.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-								Bucket: BUCKET_NAME,
-								Key: skillz.imageName
-							}), { expiresIn: 3600 })
+					async (err, results) => {
+						if (err) {
+							return next(err);
 						}
+						//console.log(results);
+						//create video and image signed Urls
+						results.author.imageUrl = await  getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
+							Bucket: BUCKET_NAME,
+							Key: results.author.imageName
+						}), { expiresIn: 3600})	
+						for (let projectz of results.author_projects) {
+							projectz.mediaUrl.videoUrl = await getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
+								Bucket: BUCKET_NAME,
+								Key: projectz.mediaName.videoName
+							}), { expiresIn: 3600 })
+							projectz.mediaUrl.imageUrl = await getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
+								Bucket: BUCKET_NAME,
+								Key: projectz.mediaName.imageName
+							}), { expiresIn: 3600 })
+							for (let skillz of projectz.skill) { //skills
+								skillz.imageUrl = await getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
+									Bucket: BUCKET_NAME,
+									Key: skillz.imageName
+								}), { expiresIn: 3600 })
+							}
+						}
+						//res.json(results);
+						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
 					}
-					//res.json(results);
-					res.render("portfolio_index", { Title: "Portfolio", index_data: results, brandname });
-				}
-			);	
-		}
-	});
+				);	
+			}
+		});
+    } catch (err) {
+        console.log("Error occurred: ", err);
+    }
 };
 
 //Send email from contact form
@@ -154,8 +206,8 @@ exports.index_post = [
 			//console.log(req.body);
 			
 			const transporter = nodemailer.createTransport({
-				host: "mail.paulgobero.com",
-				port: 465,
+				host: EMAIL_HOST,
+				port: EMAIL_PORT,
 				secure: true,
 				auth: {
 					type: "login",
@@ -179,10 +231,13 @@ exports.index_post = [
 				if (error) {
 					console.log(error);
 					//res.send(error);
-					res.jsonp({failed : true});
+					//res.jsonp({failed : true});
+					return res.status(500).json({ failed: true });	
 				} else {
 					console.log("Email Sent");
-					res.redirect("/portfolio#contact_section");
+					//res.redirect("/portfolio#contact_section");
+					return res.status(200).json({ success: true });
+
 				}
 			});
 		}
@@ -191,27 +246,32 @@ exports.index_post = [
 
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
-	getBrandName()
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} else {
-		const allauthors = await Author.find({}).sort({ createdAt: -1 })
-		.exec( async function (err, list_authors) {
-			if (err) {
-				return next(err);
-			}
-			for (let authors of list_authors) {		
-				authors.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: authors.imageName
-				}), { expiresIn: 3600})			
-			}
-			//res.json(list_authors);
-			res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors, brandname });
-		});	
+	try {
+		brandname = controllerUtils.getBrandName();
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			const allauthors = await Author.find({}).sort({ createdAt: -1 })
+			.exec( async function (err, list_authors) {
+				if (err) {
+					return next(err);
+				}
+				for (let authors of list_authors) {		
+					authors.imageUrl = await  getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
+						Bucket: BUCKET_NAME,
+						Key: authors.imageName
+					}), { expiresIn: 3600})			
+				}
+				//res.json(list_authors);
+				res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors, brandname });
+			});	
+		}
+	} catch (err) {
+		console.log("There was an error in the brand name");
+		console.log(err);
 	}
 };
 

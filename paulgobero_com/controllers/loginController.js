@@ -16,7 +16,31 @@ const s3Client = new S3Client({
 });
 
 let brandname
-function getBrandName(){
+async function getBrandName() {
+	Author.findOne({ authorStatus: 'owner' })
+	  .then(brand => {
+		// Do something with the brand
+		
+			if (err){
+				console.log("There was an error in retrieving the brand name");
+				console.log(err);
+			} else if (!brand) {
+				console.log("No brand");
+			} else if(brand.brandName === null || brand.brandName === undefined) {
+				console.log("No brand name");
+				brandname = brand.name.first + brand.name.last;
+			} else {
+				console.log("brand name available");
+				brandname = brand.brandName;
+			}
+		
+	  })
+	  .catch(err => {
+		console.log("There was an error in retrieving the brand name");
+		console.log(err);
+	  });
+  }
+/*function getBrandName(){
 	//find the brand name for the owner
 	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
 		if (err){
@@ -33,7 +57,7 @@ function getBrandName(){
 		}
 	});
 	return brandname;
-}
+}*/
 
 //Display login page
 exports.login = async (req, res, next) => {

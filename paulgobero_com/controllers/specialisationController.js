@@ -1,9 +1,50 @@
 //specialisation model controller
 const Specialisation = require("../models/specialisation");
 const Author = require("../models/author"); //author model
+const async = require("async"); //run async functions
+//validate form
+const { body, validationResult } = require("express-validator");
+const database_connection = require('../configs/loadb');
+
 
 let brandname
-function getBrandName(){
+async function getBrandName() {
+	Author.findOne({ authorStatus: 'owner' })
+	  .then(brand => {
+		// Do something with the brand
+		
+			if (err){
+				console.log("There was an error in retrieving the brand name");
+				console.log(err);
+			} else if (!brand) {
+				console.log("No brand");
+			} else if(brand.brandName === null || brand.brandName === undefined) {
+				console.log("No brand name");
+				brandname = brand.name.first + brand.name.last;
+			} else {
+				console.log("brand name available");
+				brandname = brand.brandName;
+			}
+		
+	  })
+	  .catch(err => {
+		console.log("There was an error in retrieving the brand name");
+		console.log(err);
+	  });
+  }
+
+  /*async function getBrandName() {
+	try {
+	  const brand = await Author.findOne({ authorStatus: 'owner' });
+	  // Do something with the brand
+	} catch (err) {
+	  console.log("There was an error in retrieving the brand name");
+	  console.log(err);
+	}
+  }*/
+  
+  
+/*function getBrandName(){
 	//find the brand name for the owner
 	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
 		if (err){
@@ -20,14 +61,20 @@ function getBrandName(){
 		}
 	});
 	return brandname;
-}
+}*/
 
-//validate form
-const { body, validationResult } = require("express-validator");
+
 
 //Display a list of specialisations
 exports.specialisation_list = (req, res) => {
-	res.send("NOT IMPLEMENTED: Specialisation list");
+	// Get role from decoded cookie token
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+	  return res.status(401).send({ message: 'Unauthorized User Trying to Login' });
+	} else {
+		res.status(200).send("NOT IMPLEMENTED: Specialisation list");
+	}
 };
 
 //API for all available specialisations
@@ -103,6 +150,8 @@ exports.specialisation_create_post = [
 	},
 
 ];
+
+
 
 //Display specialisation delete form on Get
 exports.specialisation_delete_get = (req, res) => {
