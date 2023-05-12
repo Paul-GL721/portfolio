@@ -165,7 +165,7 @@
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-6 col-xl-6">
                             <div>
-                                <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action=" ">
+                                <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action="/">
                                     <div class="mb-3">
                                         <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
                                     </div>
@@ -175,8 +175,30 @@
                                     <div class="mb-3">
                                         <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
                                     </div>
-                                    <div><button class="btn btn-primary d-block w-100" type="submit">Send Message</button></div>
+                                    <div><button class="btn btn-primary d-block w-100" id="contactsubmitbtn" type="submit">Send Message</button></div>
                                 </form>
+                                <div class="modal fade" role="dialog" tabindex="-1" id="contactmodal">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Submission Success</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <section class="showcase">
+                                                    <div class="container-fluid p-0">
+                                                        <div class="row">
+                                                            <div class="col text-justify order-lg-2">
+                                                                <P class="lead text-left">Thank you!</p>
+                                                                <P class="lead text-left">Your message has been Successfully sent</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
