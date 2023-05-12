@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col">
                     <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
-                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brandname | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brand1.brandName | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                             <div class="collapse navbar-collapse" id="navcol-1">
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.about }}">About</a></li>
@@ -61,12 +61,12 @@
                                 <li class="list-inline-item"><a href="{{ navbarurl.contact }}">Contact</a></li>
                                 <li class="list-inline-item"><span>⋅</span></li>
                             </ul>
-                            <p class="text-muted small mb-4 mb-lg-0">© {{ brandname | default("brandName", true) }} 2022. All Rights Reserved.</p>
+                            <p class="text-muted small mb-4 mb-lg-0">© {{ brand1.brandName | default("brandName", true) }} 2022. All Rights Reserved.</p>
                         </div>
                         <div class="col-lg-6 text-center text-lg-right my-auto h-100">
                         <ul class="list-inline mb-0">
-                            <li class="list-inline-item"><a href="#"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
-                            <li class="list-inline-item"><a href="#"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.github | default('#') | urlize | safe }}"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.linkedin| default('#')  | urlize | safe }}"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
                         </ul>
                     </div>
                     </div>
