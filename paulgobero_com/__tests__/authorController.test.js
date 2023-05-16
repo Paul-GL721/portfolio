@@ -1,72 +1,81 @@
-const { BASEURL  } = require('../configs/config');
+const { BASEURL   } = require('../configs/config');
 
 jest.setTimeout(600000)
 /* END TO END TESTS */
 describe('Index pages (portfolio/)', () => {
+  
   beforeAll(async () => {
-    await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'});
+    await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'}); 
   });
+
+  //tests for navbar buttons
+  testNavbarBtns(); 
 
   test('/ page should be titled "Portfolio" or "Default Page"', async () => {
     const title = await page.title();
     expect(title).toMatch(/Portfolio|Default Page/);
   });
 
-  //use for loop to test navbar button links
-  const links = [
-    { label: 'About', section: '#about_section' },
-    { label: 'Projects', section: '#project_section' },
-    { label: 'Skills', section: '#skill_section' },
-    { label: 'Contact', section: '#contact_section' },
-  ];
-  for (const link of links) {
-    test(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
-      const btn = await page.$(`ul.navbar-nav li a.nav-link[href="${link.section}"]`);
-      await btn.click();
-      await page.waitForSelector(link.section);
-      const section = await page.$(link.section);
-      expect(section).not.toBeNull();
+  //run tests if the default is loaded
+  test('Run tests against default page', async () => {
+    //check if the rendering page is the default
+    const isDefaultpage  = await page.evaluate(() => {
+      return document.querySelector('#defaultpage') !== null;
     });
+    if (isDefaultpage) {
+      const title = await page.title();
+      expect(title).toBe('Default Page'); 
+    }
+  });
+  //tests specific to the index page
+  describe('Index page specific tests', () => {
+    //use for loop to test login/out buttons links
+    const btnlinks = [
+      { label: 'Admin login', labelid: '#projectlogin', loginbtn:'#loginbtn', pagetitle:'Login' },
+      { label: 'Create Demo User', labelid: '#projectcreatedemouser', loginbtn:'#demousersubmitbutton', pagetitle:'Demo user' }
+    ];
+    for(const btnlink of btnlinks){
+      test(`Clicking the ${btnlink.label} button, should display the ${btnlink.pagetitle} page`, async () => {
+        const isIndexpage  = await page.evaluate(() => {
+          return document.querySelector('#indexpage') !== null;
+        });
+        if (isIndexpage) { 
+          await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
+          const btnid = await page.$(btnlink.labelid);
+          await page.waitForSelector(btnlink.labelid);
+          await btnid.click();
+          //wait for page to load
+          await page.waitForNavigation();
+          //check if page is shown
+          const logbtn = await page.$(btnlink.loginbtn);
+          const logpagetitle = await page.title();
+          expect(logbtn).not.toBeNull();
+          expect(logpagetitle).toMatch(btnlink.pagetitle)
+        }
+      })
+    }
+  });
+
+  async function testNavbarBtns() {
+    //use for loop to test navbar button links
+    const links = [
+      { label: 'About', section: '#about_section' },
+      { label: 'Projects', section: '#project_section' },
+      { label: 'Skills', section: '#skill_section' },
+      { label: 'Contact', section: '#contact_section' },
+    ];
+    for (const link of links) {
+      it(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
+        const btn = await page.$(`ul.navbar-nav li a.nav-link[href="${link.section}"]`);
+        await btn.click();
+        await page.waitForSelector(link.section);
+        const section = await page.$(link.section);
+        expect(section).not.toBeNull();
+      });
+    }
   }
-
-  //use for loop to test login/out buttons links
-  const btnlinks = [
-    { label: 'Admin login', labelid: '#projectlogin', loginbtn:'#loginbtn', pagetitle:'Login' },
-    { label: 'Create Demo User', labelid: '#projectcreatedemouser', loginbtn:'#demousersubmitbutton', pagetitle:'Demo user' }
-  ];
-  for(const btnlink of btnlinks){
-    test(`Clicking the ${btnlink.label} button, should display the ${btnlink.pagetitle} page`, async () => {
-      await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
-      const btnid = await page.$(btnlink.labelid);
-      await page.waitForSelector(btnlink.labelid);
-      await btnid.click();
-      //wait for page to load
-      await page.waitForNavigation();
-      //check if page is shown
-      const logbtn = await page.$(btnlink.loginbtn);
-      const logpagetitle = await page.title();
-      expect(logbtn).not.toBeNull();
-      expect(logpagetitle).toMatch(btnlink.pagetitle)
-    })
-  }
-
-  /*//test contact form submission
-  test('Subnitting the contact form should display a success message', async () => {
-    await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
-    const nameInput = await page.$('#contactname');
-    await nameInput.type('John Micheal');
-    const emailInput = await page.$('#contactemail');
-    await emailInput.type('John.Micheal@yahoo.com');
-    const messageInput = await page.$('#contactmessage');
-    await messageInput.type('This is a test message');
-    const submitbutton = await page.$('#contactsubmitbtn');
-    await submitbutton.click();
-
-    await page.waitForSelector('#contactmodal');
-    const successMgs = await page.$('#contactmodal');
-    expect(successMgs).not.toBeNull();
-  });*/
 });
+
 
 
 

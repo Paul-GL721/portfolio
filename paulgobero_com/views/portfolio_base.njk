@@ -23,7 +23,7 @@
 <body>
     <div class="container-fluid">
         {% block navabar %}
-            <div class="row">
+            <div class="row" id="{{ navbarurl.id | default("navid", true) }}">
                 <div class="col">
                     <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
                         <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brand1.brandName | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
