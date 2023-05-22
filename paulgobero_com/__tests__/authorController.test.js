@@ -1,34 +1,42 @@
 const { BASEURL   } = require('../configs/config');
 
-jest.setTimeout(600000)
+jest.setTimeout(600000);
+
 /* END TO END TESTS */
 describe('Index pages (portfolio/)', () => {
-  
   beforeAll(async () => {
     await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'}); 
   });
-
-  //tests for navbar buttons
-  testNavbarBtns(); 
 
   test('/ page should be titled "Portfolio" or "Default Page"', async () => {
     const title = await page.title();
     expect(title).toMatch(/Portfolio|Default Page/);
   });
 
-  //run tests if the default is loaded
-  test('Run tests against default page', async () => {
-    //check if the rendering page is the default
-    const isDefaultpage  = await page.evaluate(() => {
-      return document.querySelector('#defaultpage') !== null;
+  //tests specific to the index page
+  describe('Default page specific tests', () => { 
+    //tests for navbar buttons
+    testNavbarBtns(); 
+    //run tests if the default is loaded
+    test('Run tests against default page', async () => {
+      //check if the rendering page is the default
+      await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
+      //const isDefaultpage = await page.$('#defaultpage');
+      const isDefaultpage  = await page.evaluate(() => {
+        return document.querySelector('#defaultpage') !== null;
+      });
+      console.log('isdefaultpage', isDefaultpage);
+      if (isDefaultpage) {
+        const title = await page.title();
+        expect(title).toBe('Default Page'); 
+      }
     });
-    if (isDefaultpage) {
-      const title = await page.title();
-      expect(title).toBe('Default Page'); 
-    }
   });
+
   //tests specific to the index page
   describe('Index page specific tests', () => {
+    //tests for navbar buttons
+    testNavbarBtns(); 
     //use for loop to test login/out buttons links
     const btnlinks = [
       { label: 'Admin login', labelid: '#projectlogin', loginbtn:'#loginbtn', pagetitle:'Login' },
@@ -37,8 +45,9 @@ describe('Index pages (portfolio/)', () => {
     for(const btnlink of btnlinks){
       test(`Clicking the ${btnlink.label} button, should display the ${btnlink.pagetitle} page`, async () => {
         const isIndexpage  = await page.evaluate(() => {
-          return document.querySelector('#indexpage') !== null;
+          return document.querySelector('#indexpage') == true;
         });
+        console.log('isIndexpage', isIndexpage);
         if (isIndexpage) { 
           await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
           const btnid = await page.$(btnlink.labelid);
