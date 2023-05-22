@@ -301,7 +301,7 @@ exports.author_detail = (req, res) => {
 
 //on GET request, display the author create form
 exports.author_create_get = (req, res, next) => {
-	getBrandName();
+	brandname = controllerUtils.getBrandName();
 	// Get role from decoded cookie token
 	const Role = req.userinfo.role;
 	// If user is not an admin or normal user, return error
@@ -415,62 +415,71 @@ exports.author_ownercreate_post = [
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
-		const profilepic = "author"+generaterandomimgname();//image name
-		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
+		const checkauthors = Author.exists({ authorStatus: 'owner' }, async function(err, available_owner) {
+			if (err) {
+				res.send("There was an error: while checking for your if the owner portfolio exists");
+			} else if (available_owner===null) { 
+				const profilepic = "author"+generaterandomimgname();//image name
+				//resize the image file
+				const filebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
 
-		//upload images to S3
-		const s3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: filebuffer,
-			Key: profilepic,
-			ContentType: filebuffer.mimetype
-		}
-		//ContentType: 'image/jpeg'
-
-		//extract error from request
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) { //if formdata has errors
-			console.log("Form Data has errors");
-			console.log(errors);
-			//render the author form with errors as values
-		} else {
-			//create an author object with escaped values
-			const authorz = new Author({
-				name: {
-					first: req.body.authorfirstname,
-					middle: req.body.authormiddlename,
-					last: req.body.authorlastname
-				},
-				about: {
-					short_description: req.body.authorshortdesc,
-					full_description: req.body.authorfulldesc
-				},
-				brandName: req.body.authorbrandname,
-				email: req.body.authoremail,
-				password: req.body.authorpassword,
-				authorStatus: req.body.authorstatus,
-				authorRole: req.body.authorRole,
-				socialmedia: {
-					github: req.body.githuburl,
-					linkedin: req.body.linkeninurl
-				},
-				imageName: profilepic 
-			});
-
-			//save author object to database
-			authorz.save( (err) => {
-				if (err) {
-					console.log("Errors when saving data" + err )
-					return next(err);
+				//upload images to S3
+				const s3uploadparams = {
+					Bucket: BUCKET_NAME,
+					Body: filebuffer,
+					Key: profilepic,
+					ContentType: filebuffer.mimetype
 				}
-				console.log("Successfully Saved to Database");
-			});
-			//upload the actual image to s3
-			//await s3Client.send(new PutObjectCommand(s3uploadparams));
-			uploadtos3bucket(s3uploadparams);
-			res.redirect("/portfolio");
-		}
+				//ContentType: 'image/jpeg'
+
+				//extract error from request
+				const errors = validationResult(req);
+				if (!errors.isEmpty()) { //if formdata has errors
+					console.log("Form Data has errors");
+					console.log(errors);
+					//render the author form with errors as values
+				} else {
+					//create an author object with escaped values
+					const authorz = new Author({
+						name: {
+							first: req.body.authorfirstname,
+							middle: req.body.authormiddlename,
+							last: req.body.authorlastname
+						},
+						about: {
+							short_description: req.body.authorshortdesc,
+							full_description: req.body.authorfulldesc
+						},
+						brandName: req.body.authorbrandname,
+						email: req.body.authoremail,
+						password: req.body.authorpassword,
+						authorStatus: req.body.authorstatus,
+						authorRole: req.body.authorRole,
+						socialmedia: {
+							github: req.body.githuburl,
+							linkedin: req.body.linkeninurl
+						},
+						imageName: profilepic 
+					});
+
+					//save author object to database
+					authorz.save( (err) => {
+						if (err) {
+							console.log("Errors when saving data" + err )
+							return next(err);
+						}
+						console.log("Successfully Saved to Database");
+					});
+					//upload the actual image to s3
+					//await s3Client.send(new PutObjectCommand(s3uploadparams));
+					controllerUtils.uploadtos3bucket(s3uploadparams);
+					return res.status(302).location("/portfolio").json({ success: true });
+					//res.redirect("/portfolio/");
+				}
+			} else {
+				console.log("Owner already exists");
+			}
+		});	
 	},
 ];
 
