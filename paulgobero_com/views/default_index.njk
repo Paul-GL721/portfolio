@@ -1,31 +1,16 @@
 
 {% extends "portfolio_base.njk" %}
+{% set navbarurl = {id: "defaultpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
+{% block createOwnerbutton %}
+    <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/portfolio/signup/owner">Create Owner</a>
+{% endblock %}
+{% block loginbutton %}   {% endblock %}
+{% block createDemoUserbutton %}   {% endblock %} 
 
 {% block content %}
-    {% block navabar %}
-        <div class="row" id="defaultpage">
-            <div class="col">
-                <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
-                    <div class="container-fluid"><a class="navbar-brand" href="#">Brand Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-                        <div class="collapse navbar-collapse" id="navcol-1">
-                            <ul class="navbar-nav ml-auto">
-                                <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
-                            </ul>
-                            {% block createOwnerbutton %}
-                                <a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="/portfolio/signup/owner">Create Owner</a>
-                            {% endblock %}
-                            {% block loginbutton %}   {% endblock %}
-                            {% block createDemoUserbutton %}   {% endblock %}    
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    {% endblock %}
+    
     <section id="about_section" class="showcase" style="padding-top: 80px;">
         <div class="row no-gutters">
             <div class="col-lg-4 text-white order-lg-2">
