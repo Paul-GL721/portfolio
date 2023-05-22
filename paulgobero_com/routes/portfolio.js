@@ -42,7 +42,7 @@ router.post("/author/update", login_controller.verifyToken, author_controller.au
 router.get("/author/:id", login_controller.verifyToken, author_controller.author_detail);
 
 //Get request for all authors
-router.get("/author", author_controller.author_list);
+router.get("/author", login_controller.verifyToken, author_controller.author_list);
 
 
 				//........LOGIN ROUTES.....//
