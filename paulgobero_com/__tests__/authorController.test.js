@@ -1,4 +1,10 @@
-const { BASEURL   } = require('../configs/config');
+const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
+const Author = require("../models/author"); //author model
+const  database_connection = require('../configs/loadb'); //testdb module
+const path = require('path');
+const mongoose = require('mongoose');
+const request = require('supertest');
+const app = require('../app');
 
 jest.setTimeout(600000);
 
@@ -83,6 +89,92 @@ describe('Index pages (portfolio/)', () => {
       });
     }
   }
+});
+
+describe('Test CRUD operations on the Author model', () => {
+  let isConnected;
+  beforeAll( async () => {
+    isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
+    console.log('Author testing, Is the database connected?', isConnected);
+  });
+  /*afterAll(async () => {
+    // Drop the database
+    await mongoose.connection.dropDatabase();
+    // Close the Mongoose connection
+    await mongoose.connection.close();
+  });*/
+
+  const authoremail = "test@gmail.com";
+  const authorpassword = "test567";
+  const loginAndNavigate = async () => {
+    await page.goto(`${BASEURL}/portfolio/login`, {waitUntil: 'domcontentloaded'});
+    const emailInput = await page.$('#loginemail');
+    const passwdInput = await page.$('#loginpasswd');
+    const loginbtn = await page.$('#loginbtn');
+    await emailInput.type(authoremail);
+    await passwdInput.type(authorpassword);
+    await loginbtn.click();
+    await page.waitForNavigation();
+    // Assert if the JWT token cookie exists
+    const jwtTokenCookie = await page.evaluate(() => {
+        return document.cookie.includes('jwtTokens');
+    });
+    if (jwtTokenCookie) {
+      console.log('authors jwt token is available ', jwtTokenCookie);
+    }
+  }
+
+  test('Gets the author create form', async () => {
+    if (isConnected) {
+      await loginAndNavigate();
+      await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
+      const getauthorpage = await page.title();
+      expect(getauthorpage).toMatch('Create author');
+    }
+  });
+
+  test('Test that form data is posted to database', async () => {
+    if (isConnected) {
+      await loginAndNavigate();
+      await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
+      //fill in the owner registration form
+      await page.type('#authorfirstname', 'Johnny');
+      await page.type('#authormiddlename', 'Mitc');
+      await page.type('#authorlastname', 'Longly');
+      await page.type('#authorshortdesc', 'test brief description');
+      await page.type('#authorfulldesc', 'test full description');
+      await page.type('#authorbrandname', 'Johnny');
+      await page.type('#authoremail', 'johnny@getMax.com');
+      await page.type('#authorpassword', 'jhony675#');
+      await page.type('#githuburl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
+      await page.type('#linkeninurl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
+      //upload images 
+      console.log("imageInput");
+      const imageInput = await page.$('#photo1');
+      const imagePath = path.resolve(__dirname, '../public/images/img/project1.jpg');
+      await imageInput.uploadFile(imagePath);
+      console.log(imagePath);
+      //submit form
+      await page.click('#authorsubmitbutton');
+      // Wait for the form submission to complete
+      await page.waitForFunction(() => {
+        return document.querySelector('#createAuthormodal') !== null;
+      });
+      // Assert that the success message or modal is displayed
+      const successElement = await page.$('#createAuthormodal');
+      expect(successElement).toBeTruthy();
+      /*
+      //await page.waitForSelector('#project_section');
+      //await page.waitForTimeout(8000);
+      console.log('author form imagepath is',imagePath);
+      // Wait for the redirect to complete
+      await page.waitForNavigation();
+
+      // Assert that the URL after the redirect is correct
+      expect(await page.url()).toMatch(`${BASEURL}/portfolio/`);*/
+    }
+  });
+
 });
 
 
