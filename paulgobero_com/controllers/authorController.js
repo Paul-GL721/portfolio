@@ -539,10 +539,10 @@ exports.author_delete_post = async (req, res, next) => {
 					Bucket: BUCKET_NAME,
 					Key: delresult.imageName
 				}
-				deletefroms3bucket(delparams);
+				controllerUtils.deletefroms3bucket(delparams);
 			}	
 		});
-		res.json({sucess: "Successfully Deleted"});
+		res.json({success: "Successfully Deleted"});
 	}
 }
 
