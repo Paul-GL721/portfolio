@@ -1,8 +1,13 @@
 
 $(document).ready(function() {
+	//show delete confirmation modal on clicking delete button
+	$('#authorbtnDelete').on('click', function() {
+		$('#deleteConfirmationModal').modal('show');
+	});
+
 	// body...
 	var $table = $('#authortable')
-	var $button = $('#authorbtnDelete')
+	var $button = $('#confirmDeleteButton') 
 
 	$button.click(function(){
 		var authordel = $.map($table.bootstrapTable('getSelections'), function (row){
@@ -14,6 +19,7 @@ $(document).ready(function() {
 				data: {authorid:authorid},
 				success: function(data) {
 					alert('Successfully Deleted from Table!');
+					$('#deleteConfirmationModal').modal('hide');
 				},
 			});
 			return row.authoridz;
