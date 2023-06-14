@@ -16,15 +16,6 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME, EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST  } = require('../configs/config');
 const controllerUtils = require("../utils/controllerUtils");
 
-/*//s3 bucket connection parameters
-const s3Client = new S3Client({
-	region: BUCKET_REGION,
-	credentials: {
-		accessKeyId: ACCESS_KEY,
-		secretAccessKey: SECRET_ACCESS_KEY
-	}
-});*/
-
 //generate random imagefile name
 const generaterandomimgname = () => {
 	const randomimagefilename = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
@@ -32,93 +23,8 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
-/*//function to delete from s3 bucket
-const deletefroms3bucket = async (delparams) => {
-	try {
-	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
-	  console.log("Success. Object deleted.", data);
-	  return data; // For unit tests.
-	} catch (err) {
-	  console.log("Error when deleting images", err);
-	}
-};
-
-//function to upload to s3
-const uploadtos3bucket = async (uploadParams) => {
-	try {
-		const data = await s3Client.send(new PutObjectCommand(uploadParams));
-		console.log("Success. Object uploaded", data);
-		return data; // For unit tests.
-	} catch (err) {
-	  console.log("Error", err);
-	}
-};*/
-
 let brandname;
 let brand;
-/*async function getBrandName() {
-	Author.findOne({ authorStatus: 'owner' })
-	  .then(brand => {
-		// Do something with the brand
-		
-			if (err){
-				console.log("There was an error in retrieving the brand name");
-				console.log(err);
-			} else if (!brand) {
-				console.log("No brand");
-			} else if(brand.brandName === null || brand.brandName === undefined) {
-				console.log("No brand name");
-				brandname = brand.name.first + brand.name.last;
-			} else {
-				console.log("brand name available");
-				brandname = brand.brandName;
-			}
-		
-	  })
-	  .catch(err => {
-		console.log("There was an error in retrieving the brand name");
-		console.log(err);
-	  });
-  }
-async function getBrandName() {
-	try {
-		const brand = await Author.findOne({ authorStatus: 'owner' });
-		console.log('brand is');
-		console.log(brand);
-		// Do something with the brand
-		if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-		return brandname;
-	} catch (err) {
-		console.log("There was an error in retrieving the brand name");
-		console.log(err);
-	}
-}*/
-/*function getBrandName(){
-	//find the brand name for the owner
-	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
-		if (err){
-			console.log("There was an error in retrieving the brand name");
-			console.log(err);
-		} else if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-	});
-	return brandname;
-}*/
 
 //Display home portfolio page
 /* Get projects per individual author */
@@ -247,7 +153,7 @@ exports.index_post = [
 //Display a list of all authors
 exports.author_list = async (req, res, next) => {
 	try {
-		brandname = controllerUtils.getBrandName();
+		brand = await controllerUtils.getBrandName();
 		// Get role from decoded cookie token
 		const Role = req.userinfo.role; 
 		// If user is not an admin or normal user, return error
@@ -266,7 +172,7 @@ exports.author_list = async (req, res, next) => {
 					}), { expiresIn: 3600})			
 				}
 				//res.json(list_authors);
-				res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors, brandname });
+				res.render("author_Admin", { Title: "Admin Author", abtauthor: list_authors, brand1: brand });
 			});	
 		}
 	} catch (err) {
@@ -300,15 +206,20 @@ exports.author_detail = (req, res) => {
 }
 
 //on GET request, display the author create form
-exports.author_create_get = (req, res, next) => {
-	brandname = controllerUtils.getBrandName();
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role;
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} else {
-		res.render("create_author.njk", {Title: "Create author", brandname});
+exports.author_create_get = async (req, res, next) => {
+	try {
+		brand = await controllerUtils.getBrandName();
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role;
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			res.render("create_author.njk", {Title: "Create author", brand1: brand });
+		}
+	} catch {
+		console.log("There was an error in the brand name");
+		console.log(err);
 	}
 }
 
