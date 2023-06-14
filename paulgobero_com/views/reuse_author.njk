@@ -1,6 +1,6 @@
 
 
-<form id="{{ posturl.formid }}" name="Authorform" enctype="multipart/form-data" >
+<form id="{{ posturl.formid }}" name="Authorform" action="{{ posturl.submiturl }}" method="post" enctype="multipart/form-data" >
     <div class="form-group row">
         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorfirstname"><strong>First Name:</strong></label></div>
         <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorfirstname" name="authorfirstname" placeholder="Enter First Name" required=""></div>
