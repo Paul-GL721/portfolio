@@ -44,7 +44,7 @@ const uploadtos3bucket = async (uploadParams) => {
 //function to get a signed url
 const signedurl = async (bucketName, keyName, expiryTime) => {
 	try {
-		await  getSignedUrl(s3Client, new GetObjectCommand({
+		return await  getSignedUrl(s3Client, new GetObjectCommand({
 			Bucket: bucketName,
 			Key: keyName
 		}), { expiresIn: expiryTime})
