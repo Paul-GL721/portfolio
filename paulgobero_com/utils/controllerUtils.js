@@ -6,6 +6,7 @@ const async = require("async"); //run async functions
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 let brandname
 
@@ -40,6 +41,19 @@ const uploadtos3bucket = async (uploadParams) => {
 	}
 };
 
+//function to get a signed url
+const signedurl = async (bucketName, keyName, expiryTime) => {
+	try {
+		await  getSignedUrl(s3Client, new GetObjectCommand({
+			Bucket: bucketName,
+			Key: keyName
+		}), { expiresIn: expiryTime})
+
+	} catch (err) {
+		console.log("Signed url Error", err);
+	}
+}
+
 async function getBrandName() {
 	try {
 		const brand = await Author.findOne({ authorStatus: 'owner' });
@@ -63,4 +77,4 @@ async function getBrandName() {
 	}
 }
 
-module.exports = { s3Client, deletefroms3bucket, uploadtos3bucket, getBrandName }
+module.exports = { s3Client, deletefroms3bucket, uploadtos3bucket, getBrandName, signedurl }

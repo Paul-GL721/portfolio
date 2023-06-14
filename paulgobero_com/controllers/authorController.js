@@ -13,7 +13,7 @@ var env = new nunjucks.Environment(null);
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST  } = require('../configs/config');
+const { BUCKET_NAME, EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST  } = require('../configs/config');
 const controllerUtils = require("../utils/controllerUtils");
 
 /*//s3 bucket connection parameters
@@ -563,13 +563,14 @@ exports.author_update_get = async (req, res, next) => {
 			if (err) {
 				return next(err);
 			}
-			update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
+			update_author.imageUrl = controllerUtils.signedurl( BUCKET_NAME, update_author.imageName, 3600 );
+			/*update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
 				Bucket: BUCKET_NAME,
 				Key: update_author.imageName
-			}), { expiresIn: 3600})
+			}), { expiresIn: 3600})*/
 
 			res.json(update_author);
-		});
+		}); 
 	}
 }
 
@@ -636,7 +637,7 @@ exports.author_update_post = [
 							Bucket: BUCKET_NAME,
 							Key: updelresult.imageName
 						}
-						deletefroms3bucket(delparams);
+						controllerUtils.deletefroms3bucket(delparams);
 					}	
 				});
 
@@ -673,7 +674,7 @@ exports.author_update_post = [
 				});
 
 				//3.upload to s3 bucket
-				uploadtos3bucket(updates3uploadparams);
+				controllerUtils.uploadtos3bucket(updates3uploadparams);
 				console.log("Updated Successfully");
 				res.redirect("/portfolio/author");
 			}
