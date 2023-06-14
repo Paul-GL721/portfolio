@@ -7,10 +7,8 @@ const { body, validationResult } = require("express-validator"); //form validato
 const { storage, fileFilter, uploadimg, uploadvideo, videofileFilter  } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
 //s3 file upload
-const { GetObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { BUCKET_NAME } = require('../configs/config');
-const { s3Client, deletefroms3bucket, uploadtos3bucket } = require('../utils/controllerUtils.js');
+const controllerUtils = require("../utils/controllerUtils");
 
 //generate random videofile name
 const generaterandomvidname = () => {
@@ -19,68 +17,30 @@ const generaterandomvidname = () => {
 	return projfilename
 }
 
-let brandname
-async function getBrandName() {
-	Author.findOne({ authorStatus: 'owner' })
-	  .then(brand => {
-		// Do something with the brand
-		
-			if (err){
-				console.log("There was an error in retrieving the brand name");
-				console.log(err);
-			} else if (!brand) {
-				console.log("No brand");
-			} else if(brand.brandName === null || brand.brandName === undefined) {
-				console.log("No brand name");
-				brandname = brand.name.first + brand.name.last;
-			} else {
-				console.log("brand name available");
-				brandname = brand.brandName;
-			}
-		
-	  })
-	  .catch(err => {
-		console.log("There was an error in retrieving the brand name");
-		console.log(err);
-	  });
-  }
-/*function getBrandName(){
-	//find the brand name for the owner
-	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
-		if (err){
-			console.log("There was an error in retrieving the brand name");
-			console.log(err);
-		} else if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-	});
-	return brandname;
-}*/
+let brand
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
-	getBrandName();
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} else {
-		const allauthors = await Author.find({}, "_id name ")
-		.sort({ createdAt: -1 })
-		.exec(async function (err, list_authors) {
-			if (err) {
-				return next(err);
-			}
-			res.render("create_project", { Title: "Project Form", projectauthors: list_authors, brandname });
-		});
-	}
+	try {
+		brand = await controllerUtils.getBrandName();
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			const allauthors = await Author.find({}, "_id name ")
+			.sort({ createdAt: -1 })
+			.exec(async function (err, list_authors) {
+				if (err) {
+					return next(err);
+				}
+				res.render("create_project", { Title: "Project Form", projectauthors: list_authors, brand1: brand });
+			});
+		}
+	} catch {
+		console.log("Project Get Error occurred: ", err);
+	}	
 };
 
 //On POST, submit project formdata to database
@@ -172,8 +132,8 @@ exports.project_create_post = [
 				});
 				
 				//upload to s3 bucket
-				uploadtos3bucket(s3projimageuploadparams);
-				uploadtos3bucket(s3projvideouploadparams);
+				controllerUtils.uploadtos3bucket(s3projimageuploadparams);
+				controllerUtils.uploadtos3bucket(s3projvideouploadparams);
 				console.log("uploaded to s3 sucessfully");
 
 				//redirect to individual project page
@@ -213,7 +173,7 @@ exports.project_delete_post = async (req, res, next) => {
 				console.log(err);
 			}
 			else if (delresult) {
-				console.log("the object to delete is"+delresult.mediaName.videoName);
+				//console.log("the object to delete is"+delresult.mediaName.videoName);
 				const delvidparams = {
 					Bucket: BUCKET_NAME,
 					Key: delresult.mediaName.videoName
@@ -222,8 +182,8 @@ exports.project_delete_post = async (req, res, next) => {
 					Bucket: BUCKET_NAME,
 					Key: delresult.mediaName.imageName
 				}
-				deletefroms3bucket(delimgparams);
-				deletefroms3bucket(delvidparams);
+				controllerUtils.deletefroms3bucket(delimgparams);
+				controllerUtils.deletefroms3bucket(delvidparams);
 			}	
 		});
 		res.json({sucess: "Successfully Deleted"});
@@ -240,7 +200,7 @@ exports.project_update_get = async (req, res, next) => {
 	} else {
 		//find a document with the specified id
 		update_doc_id = req.query.updateid;
-		console.log("The id to update is" + update_doc_id);
+		//console.log("The id to update is" + update_doc_id);
 
 		//return all authors and projects in the same object
 		async.parallel({
@@ -254,17 +214,10 @@ exports.project_update_get = async (req, res, next) => {
 			if (err) {
 				return next(err);
 			}
-			console.log(results);
+			//console.log(results);
 			//create video and image signed Urls
-			results.all_projs.mediaUrl.videoUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: results.all_projs.mediaName.videoName
-			}), { expiresIn: 3600})
-
-			results.all_projs.mediaUrl.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: results.all_projs.mediaName.imageName
-			}), { expiresIn: 3600})
+			results.all_projs.mediaUrl.videoUrl = await controllerUtils.signedurl( BUCKET_NAME, results.all_projs.mediaName.videoName, 3600 );
+			results.all_projs.mediaUrl.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, results.all_projs.mediaName.imageName, 3600 );
 
 			res.json(results);
 		});
@@ -350,8 +303,8 @@ exports.project_update_post = [
 							Bucket: BUCKET_NAME,
 							Key: updelresult.mediaName.videoName
 						}
-						deletefroms3bucket(updelimgparams);
-						deletefroms3bucket(updelvidparams);
+						controllerUtils.deletefroms3bucket(updelimgparams);
+						controllerUtils.deletefroms3bucket(updelvidparams);
 					}	
 				});
 
@@ -386,8 +339,8 @@ exports.project_update_post = [
 				});
 
 				//upload to s3 bucket
-				uploadtos3bucket(s3projimageuploadparams);
-				uploadtos3bucket(s3projvideouploadparams);
+				controllerUtils.uploadtos3bucket(s3projimageuploadparams);
+				controllerUtils.uploadtos3bucket(s3projvideouploadparams);
 				console.log("Media in S3 updated sucessfully");
 			}
 			res.redirect("/portfolio/project");
@@ -397,59 +350,56 @@ exports.project_update_post = [
 
 //On GET, show individual project
 exports.project_detail = async(req, res, next) => {
-	getBrandName();
-	const detailproject = await Project.findById(req.params.id, {})
-	.populate('author', 'name')
-	.populate('skill', 'name')
-	.populate('specialisation', 'name')
-	.exec( async function (err, details_projects) {
-		if (err) {
-			return next(err);
-		}
-		details_projects.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-			Bucket: BUCKET_NAME,
-			Key: details_projects.mediaName.videoName
-		}), { expiresIn: 3600 })
-		details_projects.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-			Bucket: BUCKET_NAME,
-			Key: details_projects.mediaName.imageName
-		}), { expiresIn: 3600 })
-		
-		//res.json(details_projects);
-		res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brandname });
-	});
+	try {
+		brand = await controllerUtils.getBrandName();
+		const detailproject = await Project.findById(req.params.id, {})
+		.populate('author', 'name')
+		.populate('skill', 'name')
+		.populate('specialisation', 'name')
+		.exec( async function (err, details_projects) {
+			if (err) {
+				return next(err);
+			}
+			details_projects.mediaUrl.videoUrl = await controllerUtils.signedurl( BUCKET_NAME, details_projects.mediaName.videoName, 3600 );
+			details_projects.mediaUrl.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, details_projects.mediaName.imageName, 3600 );
+			
+			//res.json(details_projects);
+			res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brand1: brand });
+		});
+	} catch {
+		console.log("Project Detail Error occurred: ", err);	
+	}
+	
 };
 
 
 //On GET, dispaly all available projects
 exports.project_list = async(req, res, next) => {
-	getBrandName();
-	// Get role from decoded cookie token
-	const Role = req.userinfo.role; 
-	// If user is not an admin or normal user, return error
-	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
-	} else {
-		const allprojects = await Project.find({}).sort({ createdAt: -1 })
-		.populate('author', 'name')
-		.populate('skill', 'name')
-		.populate('specialisation', 'name')
-		.exec( async function (err, list_projects) {
-			if (err) {
-				return next(err);
-			}
-			for (let projectz of list_projects) {
-				projectz.mediaUrl.videoUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: projectz.mediaName.videoName
-				}), { expiresIn: 3600 })
-				projectz.mediaUrl.imageUrl = await getSignedUrl(s3Client, new GetObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: projectz.mediaName.imageName
-				}), { expiresIn: 3600 })
-			}
-			//res.json(list_projects);
-			res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects, brandname });
-		});
-	}
+	try {
+		brand = await controllerUtils.getBrandName();
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			const allprojects = await Project.find({}).sort({ createdAt: -1 })
+			.populate('author', 'name')
+			.populate('skill', 'name')
+			.populate('specialisation', 'name')
+			.exec( async function (err, list_projects) {
+				if (err) {
+					return next(err);
+				}
+				for (let projectz of list_projects) {
+					projectz.mediaUrl.videoUrl = await controllerUtils.signedurl( BUCKET_NAME, projectz.mediaName.videoName, 3600 );
+					projectz.mediaUrl.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, projectz.mediaName.imageName, 3600 );
+				}
+				//res.json(list_projects);
+				res.render( "project_Admin", { Title: "Admin Project", abtprojects: list_projects, brand1: brand });
+			});
+		}
+	} catch {
+		console.log("Project List Error occurred: ", err);
+	}	
 };
