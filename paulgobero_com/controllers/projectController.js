@@ -156,7 +156,7 @@ exports.project_delete_post = async (req, res, next) => {
 	const Role = req.userinfo.role; 
 	// If user is not an admin or normal user, return error
 	if (Role !== 'admin') {
-	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+	  return res.status(403).send({ message: 'Unauthorized User: You cannot delete this resource' });
 	} else {
 
 		//delete from database
