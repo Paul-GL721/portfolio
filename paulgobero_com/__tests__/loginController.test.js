@@ -1,23 +1,14 @@
-const { cookie } = require('express-validator');
+
 const path = require('path');
-const { BASEURL, TEST_AUTH_SECRET_KEY } = require('../configs/config');
-const jwt = require("jsonwebtoken"); 
-const Author = require("../models/author"); //author model
-const  database_connection = require('../configs/loadb'); //testdb module
-const { TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
-const { link } = require('fs');
-const request = require('supertest');
-const app = require('../app');
+const { BASEURL } = require('../configs/config');
+
 
 jest.setTimeout(6000000);
 /* END TO END TEST */
 describe('Testing login functionality', () => {
     let isConnected;
-    beforeAll( async () => {
-        //await page.goto(`${BASEURL}/portfolio/login`, {waitUntil: 'domcontentloaded'});
-        isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-        console.log('Is the database connected?', isConnected);
-    });
+    /*beforeAll(testutils.beforeAllTests);
+    afterAll(testutils.afterAllTests);*/
 
     const authoremail = "test@gmail.com";
     const authorpassword = "test567"
