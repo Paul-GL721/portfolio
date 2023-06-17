@@ -1,6 +1,7 @@
 
 {% extends "portfolio_base.njk" %}
-{% set posturl = {submiturl: "project/update", skillurl: "project/api/skills", specurl: "project/api/specialisations", authorurl: "project/api/authors"  } %}
+{% set navbarurl = {id: "createProjpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
+{% set posturl = {submiturl: "project/update", skillurl: "project/api/skills", specurl: "project/api/specialisations", authorurl: "project/api/authors", deletemodalid: "projdeleteConfirmationModal", confirmdelete: "projconfirmDeleteButton"  } %}
 {% set objarray = data.authorzproj %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
@@ -93,11 +94,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="submit">Save changes</button></div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="projectUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
                                 </form>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col">
+                    {% include "reuse_deletemsg.njk" %}           
                 </div>
             </div>
         </div>

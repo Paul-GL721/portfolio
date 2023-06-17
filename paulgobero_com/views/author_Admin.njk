@@ -1,7 +1,7 @@
 
 {% extends "portfolio_base.njk" %}
-{% set posturl = {submiturl: "author/update", formid: "authorupdatecreateid" } %}
-{% set navbarurl = {about: "/#about_section", projects: "/#project_section", contact: "/#contact_section" } %}
+{% set posturl = {submiturl: "author/update", formid: "authorupdatecreateid", deletemodalid: "deleteConfirmationModal", confirmdelete: "confirmDeleteButton" } %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section",  skills: "/#skill_section", contact: "/#contact_section"  } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -92,27 +92,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="modal fade" role="dialog" tabindex="-1" id="deleteConfirmationModal">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Confirm Deletions</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <section class="showcase">
-                                    <div class="container-fluid p-0">
-                                        <div class="row">
-                                            <div class="col text-justify order-lg-2">
-                                                <P class="lead text-left">Are You sure you want to delete these records?</p>
-                                                <P class="lead text-left">Deleting will permanently remove the records from the database</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-                            </div>
-                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="confirmDeleteButton" class="btn btn-primary" type="submit">Delete Records</button></div>
-                        </div>
-                    </div>
+                    {% include "reuse_deletemsg.njk" %}           
                 </div>
             </div>
         </div>
