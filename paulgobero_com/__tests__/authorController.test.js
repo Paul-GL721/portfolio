@@ -1,20 +1,19 @@
-const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
-const Author = require("../models/author"); //author model
-const  database_connection = require('../configs/loadb'); //testdb module
-const path = require('path');
-const mongoose = require('mongoose');
-const request = require('supertest');
-const app = require('../app');
+const testutils = require('../utils/testUtils');
+const { BASEURL } = require('../configs/config');
 
 jest.setTimeout(600000);
 
 /* END TO END TESTS */
 describe('Index pages (portfolio/)', () => {
+  let isConnected;
   beforeAll(async () => {
-    await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'}); 
+    await testutils.beforeAllTests();
+    await page.goto(`${BASEURL}/`, { waitUntil: 'domcontentloaded' });
   });
+  afterAll(testutils.afterAllTests);
 
   test('/ page should be titled "Portfolio" or "Default Page"', async () => {
+    await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'});
     const title = await page.title();
     expect(title).toMatch(/Portfolio|Default Page/);
   });
@@ -22,7 +21,7 @@ describe('Index pages (portfolio/)', () => {
   //tests specific to the index page
   describe('Default page specific tests', () => { 
     //tests for navbar buttons
-    testNavbarBtns(); 
+    testNavbarBtns('#about_section', '#project_section', '#skill_section', '#contact_section', `${BASEURL}/` ); 
     //run tests if the default is loaded
     test('Run tests against default page', async () => {
       //check if the rendering page is the default
@@ -42,7 +41,7 @@ describe('Index pages (portfolio/)', () => {
   //tests specific to the index page
   describe('Index page specific tests', () => {
     //tests for navbar buttons
-    testNavbarBtns(); 
+    testNavbarBtns('#about_section', '#project_section', '#skill_section', '#contact_section', `${BASEURL}/` ); 
     //use for loop to test login/out buttons links
     const btnlinks = [
       { label: 'Admin login', labelid: '#projectlogin', loginbtn:'#loginbtn', pagetitle:'Login' },
@@ -70,63 +69,121 @@ describe('Index pages (portfolio/)', () => {
       })
     }
   });
-
-  async function testNavbarBtns() {
-    //use for loop to test navbar button links
-    const links = [
-      { label: 'About', section: '#about_section' },
-      { label: 'Projects', section: '#project_section' },
-      { label: 'Skills', section: '#skill_section' },
-      { label: 'Contact', section: '#contact_section' },
-    ];
-    for (const link of links) {
-      it(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
-        const btn = await page.$(`ul.navbar-nav li a.nav-link[href="${link.section}"]`);
-        await btn.click();
-        await page.waitForSelector(link.section);
-        const section = await page.$(link.section);
-        expect(section).not.toBeNull();
-      });
-    }
-  }
 });
 
-describe('Test CRUD operations on the Author model', () => {
+async function testNavbarBtns(about, project, skill, contact, gotopage) {
+  //use for loop to test navbar button links
+  const links = [
+    { label: 'About', section: about },
+    { label: 'Projects', section: project },
+    { label: 'Skills', section: skill },
+    { label: 'Contact', section: contact },
+  ];
+  for (const link of links) {
+    it(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
+      await page.goto(gotopage, {waitUntil: 'domcontentloaded'});
+      const btn = await page.$(`ul.navbar-nav li a.nav-link[href="${link.section}"]`);
+      await btn.click();
+      await page.waitForSelector(link.section);
+      const section = await page.$(link.section);
+      expect(section).not.toBeNull();
+    });
+  }
+}
+
+
+
+
+
+describe('Test that links on Author Authenticated page work', () => {
   let isConnected;
-  beforeAll( async () => {
-    isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-    console.log('Author testing, Is the database connected?', isConnected);
-  });
-  /*afterAll(async () => {
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
-  });*/
 
   const authoremail = "test@gmail.com";
   const authorpassword = "test567";
-  const loginAndNavigate = async () => {
-    await page.goto(`${BASEURL}/portfolio/login`, {waitUntil: 'domcontentloaded'});
-    const emailInput = await page.$('#loginemail');
-    const passwdInput = await page.$('#loginpasswd');
-    const loginbtn = await page.$('#loginbtn');
-    await emailInput.type(authoremail);
-    await passwdInput.type(authorpassword);
-    await loginbtn.click();
-    await page.waitForNavigation();
-    // Assert if the JWT token cookie exists
-    const jwtTokenCookie = await page.evaluate(() => {
-        return document.cookie.includes('jwtTokens');
-    });
-    if (jwtTokenCookie) {
-      console.log('authors jwt token is available ', jwtTokenCookie);
+
+  async function testAuthLinkNavigation(about, project, skill, contact, gotopage) {
+    //use for loop to test navbar button links
+    const links = [
+      { label: 'About', section: about },
+      { label: 'Projects', section: project },
+      { label: 'Skills', section: skill },
+      { label: 'Contact', section: contact },
+    ];
+    for (const link of links) {
+      test(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
+        if(isConnected) {
+          const authoremail = "test@gmail.com";
+          const authorpassword = "test567";
+        
+          await testutils.loginAndNavigate(authoremail, authorpassword);
+          console.log('Testing links connection to db?', isConnected)
+          await page.goto(gotopage, { waitUntil: 'domcontentloaded' });
+          const linkbtn = await page.$(`a.nav-link[href="${link.section}"]`);
+          console.log('btn is', linkbtn);
+          await page.waitForSelector(linkbtn);
+          await linkbtn.click();
+          await page.waitForNavigation();
+          const getauthorpage = await page.title();
+          console.log('project test title', getauthorpage);
+          expect(getauthorpage).toBe('Portfolio');
+          const currentUrl = page.url();
+          expect(currentUrl.endsWith(link.section)).toBeTruthy();
+        }
+      });
+    }
+  }
+  
+  testAuthLinkNavigation('/#about_section', '/#project_section', '/#skill_section', '/#contact_section',  `${BASEURL}/portfolio/author/create`);
+
+});
+/*
+describe('Test that links on Author Authenticated page work', () => {
+  let isConnected;
+
+  const authoremail = "test@gmail.com";
+  const authorpassword = "test567";
+
+  async function testAuthLinkNavigation(label, section, goto) {
+    if (isConnected) {
+      testutils.loginAndNavigate;
+      await page.goto(goto, { waitUntil: 'domcontentloaded' });
+      const link = await page.$(`a.nav-link[href="${section}"]`);
+      await page.waitForSelector(link);
+      await link.click();
+      await page.waitForNavigation();
+      const currentUrl = page.url();
+      expect(currentUrl.endsWith(section)).toBeTruthy();
     }
   }
 
+  test('Clicking the About link should navigate to the About section', async () => {
+    await testAuthLinkNavigation('About', '/#about_section', `${BASEURL}/portfolio/author/create`);
+    await testAuthLinkNavigation('About', '/#about_section', `${BASEURL}/portfolio/author`);
+  });
+  test('Clicking the Projects link should navigate to the Projects section', async () => {
+    await testAuthLinkNavigation('Projects', '/#project_section', `${BASEURL}/portfolio/author/create`);
+    await testAuthLinkNavigation('Projects', '/#project_section', `${BASEURL}/portfolio/author`);
+  });
+  test('Clicking the Skills link should navigate to the Skills section', async () => {
+    await testAuthLinkNavigation('Skills', '/#skill_section', `${BASEURL}/portfolio/author/create`);
+    await testAuthLinkNavigation('Skills', '/#skill_section', `${BASEURL}/portfolio/author`);
+  });
+  test('Clicking the Contact link should navigate to the Contact section', async () => {
+    await testAuthLinkNavigation('Contact', '/#contact_section', `${BASEURL}/portfolio/author/create`);
+    await testAuthLinkNavigation('Contact', '/#contact_section', `${BASEURL}/portfolio/author`);
+  });
+
+});*/
+
+describe('Test CRUD operations on the Author model', () => {
+  let isConnected;
+
+  const authoremail = "test@gmail.com";
+  const authorpassword = "test567";
+  
   test('Gets the author create form', async () => {
     if (isConnected) {
-      await loginAndNavigate();
+      await loginAndNavigate(authoremail, authorpassword);
       await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
       const getauthorpage = await page.title();
       expect(getauthorpage).toMatch('Create author');
@@ -135,7 +192,7 @@ describe('Test CRUD operations on the Author model', () => {
 
   test('Test that form data is posted to database', async () => {
     if (isConnected) {
-      await loginAndNavigate();
+      await loginAndNavigate(authoremail, authorpassword);
       await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
       //fill in the owner registration form
       await page.type('#authorfirstname', 'Johnny');
@@ -144,7 +201,7 @@ describe('Test CRUD operations on the Author model', () => {
       await page.type('#authorshortdesc', 'test brief description');
       await page.type('#authorfulldesc', 'test full description');
       await page.type('#authorbrandname', 'Johnny');
-      await page.type('#authoremail', 'johnny@getMax.com');
+      await page.type('#authoremail', 'johnny4@getMax.com');
       await page.type('#authorpassword', 'jhony675#');
       await page.type('#githuburl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
       await page.type('#linkeninurl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
@@ -175,8 +232,90 @@ describe('Test CRUD operations on the Author model', () => {
     }
   });
 
-});
+  test("Test that author is deleted from database", async () => {
+    if(isConnected){
+      await loginAndNavigate(authoremail, authorpassword)
+      await page.goto(`${BASEURL}/portfolio/author`, {waitUntil: 'domcontentloaded'});
 
+      //check the first-row first-column checkbox
+      const firstcheckboxselector = '#authortable input[type="checkbox"]:first-child';
+      //evaluate javascript code within the page context to check the checkbox
+      await page.evaluate((selector) => {
+        const firstcheckbox = document.querySelector(selector);
+        if (firstcheckbox) {
+          firstcheckbox.checked = true;
+        }
+      }, firstcheckboxselector);
+
+      //click the delete button to remove the checked record
+      await page.click('#authorbtnDelete');
+
+      // Wait for the confirmation dialog to appear
+      await page.waitForSelector('#deleteConfirmationModal', { visible: true });
+
+      // Click the delete button on the confirmation dialog
+      await page.click('#confirmDeleteButton');
+
+      const serverResponse = await page.evaluate(async (baseUrl) => {
+        const response = await fetch(`${baseUrl}/portfolio/author/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+      
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        } else {
+          return null; // Return null for non-JSON responses
+        }
+      }, BASEURL);
+      console.log('6.response is', serverResponse);
+
+      // Assert that the server response is not null and contains the expected success message
+      expect(serverResponse).not.toBeNull();
+      expect(serverResponse.success).toBe('Successfully Deleted');
+    }
+  });
+
+  test('Test that you can update the author record', async () => {
+    if (isConnected) {
+      await loginAndNavigate(authoremail, authorpassword)
+      await page.goto(`${BASEURL}/portfolio/author`, {waitUntil: 'domcontentloaded'});
+
+      //click the update icon
+      await page.click('.authoredit')
+
+      //test that the update page is shown
+      await page.waitForSelector('#authorUpdateModal', { visible: true });
+      //fill in the owner registration form
+      await page.type('#authorfirstname', 'Johnny1');
+      await page.type('#authormiddlename', 'Mitc1');
+      await page.type('#authorlastname', 'Longly1');
+      await page.type('#authorshortdesc', 'update test brief description');
+      await page.type('#authorfulldesc', 'update test full description');
+      await page.type('#authorbrandname', 'Johnny1');
+      await page.type('#authoremail', 'johnny7@getMax.com');
+      await page.type('#authorpassword', 'jhony675#');
+      await page.type('#githuburl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
+      await page.type('#linkeninurl', 'https://chat.openai.com/?model=text-davinci-002-render-sha');
+      //upload images 
+      console.log("imageInput");
+      const imageInput = await page.$('#photo1');
+      const imagePath = path.resolve(__dirname, '../public/images/img/project2.jpg');
+      await imageInput.uploadFile(imagePath);
+      console.log('update author file path', imagePath);
+      
+      //clicking the submit button should post the data and redirect to all authors
+      await page.click('#authorUpdatebtn');
+      // Wait for the redirect to happen
+      //Sawait page.waitForNavigation();
+      // Get the current URL after the redirect
+      const currentUrl = page.url();
+      expect(currentUrl).toMatch('/portfolio/author');
+
+    }
+  });
+});
 
 
 
