@@ -1,8 +1,12 @@
 
 $(document).ready(function() {
+	//show delete confirmation modal on clicking delete button
+	$('#projectbtnDelete').on('click', function() {
+		$('#projdeleteConfirmationModal').modal('show');
+	});
 	// body...
 	var $table = $('#projecttable')
-	var $button = $('#projectbtnDelete')
+	var $button = $('#projconfirmDeleteButton')
 
 	$button.click(function(){
 		var projectdel = $.map($table.bootstrapTable('getSelections'), function (row){
@@ -14,6 +18,7 @@ $(document).ready(function() {
 				data: {projectid:projectid},
 				success: function(data) {
 					alert('Successfully Deleted from Table!');
+					$('#projdeleteConfirmationModal').modal('hide');
 				},
 			});
 			return row.projectidz;
