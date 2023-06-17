@@ -23,7 +23,6 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
-let brandname;
 let brand;
 
 //Display home portfolio page
@@ -474,12 +473,7 @@ exports.author_update_get = async (req, res, next) => {
 			if (err) {
 				return next(err);
 			}
-			update_author.imageUrl = controllerUtils.signedurl( BUCKET_NAME, update_author.imageName, 3600 );
-			/*update_author.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: update_author.imageName
-			}), { expiresIn: 3600})*/
-
+			update_author.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, update_author.imageName, 3600 );
 			res.json(update_author);
 		}); 
 	}
