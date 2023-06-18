@@ -20,14 +20,20 @@ $(document).ready(function() {
 				success: function(data) {
 					alert('Successfully Deleted from Table!');
 					$('#deleteConfirmationModal').modal('hide');
+					removeRowFromTable(authorid); // Remove the deleted row from the table
 				},
+				error: function(xhr, status, error) {
+                    alert('Error deleting row: ' + error); // Handle error case
+                }
 			});
-			return row.authoridz;
+			return authorid;
 		});
 
-		$table.bootstrapTable('remove', {
-			field: 'authoridz',
-			values: authordel
-		});
+		function removeRowFromTable(authorid) {
+			$table.bootstrapTable('remove', {
+				field: 'authoridz',
+				values: [authorid]
+			});
+		}
 	});
 });
