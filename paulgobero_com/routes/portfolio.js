@@ -122,16 +122,16 @@ router.get("/specialisation/create", login_controller.verifyToken, specialisatio
 router.post("/specialisation/create", login_controller.verifyToken, specialisation_controller.specialisation_create_post);
 
 //Get request for deleting specialisation
-router.get("/specialisation/:id/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_get);
+router.get("/specialisation/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_get);
 
 //Post request for deleting specialisation
-router.post("/specialisation/:id/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_post);
+router.post("/specialisation/delete", login_controller.verifyToken, specialisation_controller.specialisation_delete_post);
 
 //Get request for updating specialisation
-router.get("/specialisation/:id/update", login_controller.verifyToken, specialisation_controller.specialisation_update_get);
+router.get("/specialisation/update", login_controller.verifyToken, specialisation_controller.specialisation_update_get);
 
 //Post request for updating specialisation
-router.post("/specialisation/:id/update", login_controller.verifyToken, specialisation_controller.specialisation_update_post);
+router.post("/specialisation/update", login_controller.verifyToken, specialisation_controller.specialisation_update_post);
 
 //Get request for one specialisation
 router.get("/specialisation/:id", login_controller.verifyToken, specialisation_controller.specialisation_detail);
