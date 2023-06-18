@@ -5,65 +5,10 @@ const async = require("async"); //run async functions
 //validate form
 const { body, validationResult } = require("express-validator");
 const database_connection = require('../configs/loadb');
+const controllerUtils = require("../utils/controllerUtils");
 
 
-let brandname
-async function getBrandName() {
-	Author.findOne({ authorStatus: 'owner' })
-	  .then(brand => {
-		// Do something with the brand
-		
-			if (err){
-				console.log("There was an error in retrieving the brand name");
-				console.log(err);
-			} else if (!brand) {
-				console.log("No brand");
-			} else if(brand.brandName === null || brand.brandName === undefined) {
-				console.log("No brand name");
-				brandname = brand.name.first + brand.name.last;
-			} else {
-				console.log("brand name available");
-				brandname = brand.brandName;
-			}
-		
-	  })
-	  .catch(err => {
-		console.log("There was an error in retrieving the brand name");
-		console.log(err);
-	  });
-  }
-
-  /*async function getBrandName() {
-	try {
-	  const brand = await Author.findOne({ authorStatus: 'owner' });
-	  // Do something with the brand
-	} catch (err) {
-	  console.log("There was an error in retrieving the brand name");
-	  console.log(err);
-	}
-  }*/
-  
-  
-/*function getBrandName(){
-	//find the brand name for the owner
-	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
-		if (err){
-			console.log("There was an error in retrieving the brand name");
-			console.log(err);
-		} else if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-	});
-	return brandname;
-}*/
-
-
+let brand
 
 //Display a list of specialisations
 exports.specialisation_list = (req, res) => {
@@ -95,9 +40,21 @@ exports.specialisation_detail = (req, res) => {
 }
 
 //Display specialisation create form on Get
-exports.specialisation_create_get = (req, res, next) => { 
-	getBrandName();
-	res.render("create_specialisation", { Title: "Create Specialisation", brandname });
+exports.specialisation_create_get = async (req, res, next) => { 
+	try {
+		brand = await controllerUtils.getBrandName();
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role;
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+		} else {
+			res.render("create_specialisation", { Title: "Create Specialisation", brand1: brand });
+		}
+	} catch {
+		console.log("There was an error in the brand name");
+		console.log(err);
+	}
 };
 
 //Display specialisation create form on Post
@@ -107,44 +64,53 @@ exports.specialisation_create_post = [
 	body("specialisationdescription", "Please write a brief a description").trim().isLength({ min:5 }).escape(),
 
 	//process request after validation 
-	(req, res, next) => {
-		//extract validation errors from a request
-		const errors = validationResult(req);
-		
-		//create an object with trimed and escaped values
-		const spec = new Specialisation({
-			name: req.body.specialisationname,
-			description: req.body.specialisationdescription
-		});
-
-		if (!errors.isEmpty()) {
-			//if there errors, render the form with sanitized values/error messages
-			res.render("create_specialisation", {
-				Title: "Create Specialisation",
-				spec,
-				errors: errors.array(),
-			});
-			return;
+	async (req, res, next) => {
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role;
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			//return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+			return res.status(403).json({ message: 'You are unauthorised for this resource' });
 		} else {
-			//if data from the form is valid
-			//check that same name doesnot already exist
-			Specialisation.findOne({ name: req.body.specialisationname }).exec((err, found_name) => {
-				if (err) {
-					return next(err);
-				}
-
-				if (found_name) {
-					res.redirect(found_name.url);
-				} else {
-					spec.save((err) => {
-						if (err) {
-							return next(err);
-						}
-						res.redirect(spec.url);
-					});
-				}
+			//extract validation errors from a request
+			const errors = validationResult(req);
+			
+			//create an object with trimed and escaped values
+			const spec = new Specialisation({
+				name: req.body.specialisationname,
+				description: req.body.specialisationdescription
 			});
+			console.log('specialisation is', spec);
 
+			if (!errors.isEmpty()) {
+				//if there errors, render the form with sanitized values/error messages
+				res.render("create_specialisation", {
+					Title: "Create Specialisation",
+					spec,
+					errors: errors.array(),
+				});
+				return;
+			} else {
+				//if data from the form is valid
+				//check that same name doesnot already exist
+				Specialisation.findOne({ name: req.body.specialisationname }).exec((err, found_name) => {
+					if (err) {
+						return next(err);
+					}
+					if (found_name) {
+						console.log('The Spec name was already uploaded', found_name)
+						res.redirect(found_name.url);
+					} else {
+						spec.save((err) => {
+							if (err) {
+								return next(err);
+							}
+							res.redirect(spec.url);
+						});
+					}
+				});
+
+			}
 		}
 
 	},
