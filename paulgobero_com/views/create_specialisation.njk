@@ -1,5 +1,7 @@
 
 {% extends "portfolio_base.njk" %}
+{% set posturl = {submiturl: "create", formid: "speccreateid", subbtn: "specialisationsubmitbutton"  } %}
+{% set navbarurl = {id: "createSpecpage", about: "/#about_section", projects: "/#project_section", skills: "/#skill_section", contact: "/#contact_section" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -11,19 +13,7 @@
                 <div class="page-header">
                     <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Specialisation</span></em></h1>
                 </div>
-                <form id="Specialisationform" name="Specialisationform" action="" method="post" >
-                    <div class="form-group row">
-                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specialisationname"><strong>Specializations:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="specialisationname" name="specialisationname" placeholder="Enter Specialisation Name"></div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specialisationdescription"><strong>Description:</strong></label></div>
-                        <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="specialisationdescription" name="specialisationdescription" placeholder="Describe the Specialisation" rows="5" cols="10"></textarea></div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="specialisationsubmitbutton" name="specialisationsubmitbutton" type="submit">Submit</button></div>
-                    </div>
-                </form>
+                    {% include "reuse_specialisation.njk" %}
                 <div class="form-group row">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
                 </div>
