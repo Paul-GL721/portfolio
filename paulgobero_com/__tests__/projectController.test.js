@@ -4,7 +4,6 @@ const path = require('path');
 const { BASEURL } = require('../configs/config');
 
 jest.setTimeout(600000);
-
 describe('Test that links on Project Authenticated page work', () => {
     let isConnected;
     const authoremail = "test@gmail.com";
@@ -204,4 +203,4 @@ describe('Test CRUD operations on the Project model', () => {
     
         }
     });
-  });
+});
