@@ -49,9 +49,21 @@ exports.project_specialisations = async (req, res, next) => {
 };
 
 //Display details of specific specialisation
-exports.specialisation_detail = (req, res) => {
-	res.send(`NOT IMPLEMENTED: specialisation details: ${req.params.id}`);
-}
+exports.specialisation_detail = async(req, res, next) => {
+	try {
+		brand = await controllerUtils.getBrandName();
+		const detailspec = await Specialisation.findById(req.params.id, {})
+		.exec( async function (err, details_spec) {
+			if (err) {
+				return next(err);
+			}
+			//res.json(specialisation_detail);
+			res.render( "specialisation_detail", { Title: "Specialisation details", detailspec: details_spec, brand1: brand });
+		});
+	} catch {
+		console.log("Specialisation Detail Error occurred: ", err);	
+	}	
+};
 
 //Display specialisation create form on Get
 exports.specialisation_create_get = async (req, res, next) => { 
@@ -63,7 +75,7 @@ exports.specialisation_create_get = async (req, res, next) => {
 		if (Role !== 'admin') {
 			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 		} else {
-			res.render("create_specialisation", { Title: "Create Specialisation", brand1: brand });
+			res.render("create_specialisation", { Title: "Specialisation Form", brand1: brand });
 		}
 	} catch {
 		console.log("There was an error in the brand name");
