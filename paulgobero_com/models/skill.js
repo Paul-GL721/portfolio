@@ -13,5 +13,12 @@ const SkillSchema = new Schema({
     imageUrl: { type: String }
 }, {timestamps: true} );
 
+//define the virtual properties
+SkillSchema.virtual("url").get(function() {
+    return `/portfolio/skill/${this._id}`;
+});
+//make virtual properties querable
+SkillSchema.set('toObject', { virtuals: true });
+
 //export model
 module.exports = mongoose.model("Skill", SkillSchema);
