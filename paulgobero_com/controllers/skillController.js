@@ -7,30 +7,8 @@ const { body, validationResult } = require("express-validator"); //form validato
 const { storage, fileFilter, uploadimg } = require("../uploads/img_vid_upload"); //multer image upload
 const async = require("async"); //run async functions
 //s3 file upload
-const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY } = require('../configs/config');
-
-//s3 bucket connection parameters
-const s3Client = new S3Client({
-	region: BUCKET_REGION,
-	credentials: {
-		accessKeyId: ACCESS_KEY,
-		secretAccessKey: SECRET_ACCESS_KEY
-	}
-});
-
-//function to delete from s3 bucket
-const deletefroms3bucket = async (delparams) => {
-	try {
-	  const data = await s3Client.send(new DeleteObjectCommand(delparams));
-	  console.log("Success. Object deleted.", data);
-	  return data; // For unit tests.
-	} catch (err) {
-	  console.log("Error when deleting images", err);
-	}
-};
-
+const { BUCKET_NAME } = require('../configs/config');
+const controllerUtils = require("../utils/controllerUtils");
 
 //generate random imagefile name
 const generaterandomimgname = () => {
@@ -39,69 +17,34 @@ const generaterandomimgname = () => {
 	return imgfilename
 }
 
-let brandname
-async function getBrandName() {
-	Author.findOne({ authorStatus: 'owner' })
-	  .then(brand => {
-		// Do something with the brand
-		
-			if (err){
-				console.log("There was an error in retrieving the brand name");
-				console.log(err);
-			} else if (!brand) {
-				console.log("No brand");
-			} else if(brand.brandName === null || brand.brandName === undefined) {
-				console.log("No brand name");
-				brandname = brand.name.first + brand.name.last;
-			} else {
-				console.log("brand name available");
-				brandname = brand.brandName;
-			}
-		
-	  })
-	  .catch(err => {
-		console.log("There was an error in retrieving the brand name");
-		console.log(err);
-	  });
-  }
-/*function getBrandName(){
-	//find the brand name for the owner
-	Author.findOne({ authorStatus: 'owner' }, function await(err, brand) {
-		if (err){
-			console.log("There was an error in retrieving the brand name");
-			console.log(err);
-		} else if (!brand) {
-			console.log("No brand");
-		} else if(brand.brandName === null || brand.brandName === undefined) {
-			console.log("No brand name");
-			brandname = brand.name.first + brand.name.last;
-		} else {
-			console.log("brand name available");
-			brandname = brand.brandName;
-		}
-	});
-	return brandname;
-}*/
+let brand
 
 //Display a list of all availabe skills
 exports.skill_list = async (req, res, next) => {
-	getBrandName();
-	const allskills = await Skill.find({}, "_id name description imageName createdAt")
-	.sort({ createdAt: -1 })
-	.exec(async function (err, list_skills) {
-		if (err) {
-			return next(err);
+	try {
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User For this page' });
+		} else {
+			brand = await controllerUtils.getBrandName();
+			const allskills = await Skill.find({}, "_id name description imageName createdAt")
+			.sort({ createdAt: -1 })
+			.exec(async function (err, list_skills) {
+				if (err) {
+					return next(err);
+				}
+				for (let skills of list_skills) {		
+					skills.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, skills.imageName, 3600 );		
+				}
+				//res.json(list_skills);
+				res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills, brand1: brand });
+			});
 		}
-		for (let skills of list_skills) {		
-			skills.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-				Bucket: BUCKET_NAME,
-				Key: skills.imageName
-			}), { expiresIn: 3600})			
-		}
-		//res.json(list_skills);
-		res.render("skills_Admin", { Title: "Admin Skill", abtskills: list_skills, brandname });
-	});
-	
+	} catch {
+		console.log("Skill list Error occurred: ", err);
+	}
 };
 
 //API for all available skills
@@ -118,15 +61,42 @@ exports.project_skill = async (req, res, next) => {
 
 
 //Display details of specific skill
-exports.skill_detail = (req, res) => {
-	res.send(`NOT IMPLEMENTED: skill details: ${req.params.id}`);
-}
+exports.skill_detail = async(req, res, next) => {
+	try {
+		brand = await controllerUtils.getBrandName();
+		const detailskill = await Skill.findById(req.params.id, {})
+		.exec( async function (err, details_skills) {
+			if (err) {
+				return next(err);
+			}
+			details_skills.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, details_skills.imageName, 3600 );
+			
+			//res.json(details_projects);
+			res.render( "skill_detail", { Title: "Skill details", detailskills: details_skills, brand1: brand });
+		});
+	} catch {
+		console.log("Skill Detail Error occurred: ", err);	
+	}
+	
+};
 
 
 //Display skill create form on Get
-exports.skill_create_get = (req, res, next) => { 
-	getBrandName();
-	res.render("create_skill", { Title: "Create Skill", brandname });
+exports.skill_create_get = async (req, res, next) => {
+	try {
+		// Get role from decoded cookie token
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User For this page' });
+		} else {
+			brand = await controllerUtils.getBrandName();
+			res.render("create_skill", { Title: "Create Skill", brand1: brand }); 
+		}
+	} catch {
+		console.log("Skill Get Error occurred: ", err);
+
+	}
 };
 
 
@@ -139,62 +109,67 @@ exports.skill_create_post = [
 		
 	//process request after validation 
 	async (req, res, next) => {
-		//extract validation errors from a request
-		const errors = validationResult(req);
-		
-		//resize the image file
-		const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
-
-		const createimgfilename = generaterandomimgname();
-		//upload images to S3
-		const s3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: filebuffer,
-			Key: createimgfilename 
-		}
-		//ContentType: 'image/jpeg'
-
-		//send the upload to s3
-		await s3Client.send(new PutObjectCommand(s3uploadparams));
-		
-		//create an object with trimed and escaped values
-		const skillz = new Skill({
-			name: req.body.skillname,
-			description: req.body.skilldescription,
-			imageName: createimgfilename 
-		});
-
-		if (!errors.isEmpty()) {
-			console.log("There errors");
-			console.log(errors);
-			//if there errors, render the form with sanitized values/error messages
-			res.render("create_skill", {
-				Title: "Create Skill",
-				skillz,
-				errors: errors.array()
-			});
-			return;
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User For this page' });
 		} else {
-			//if data from the form is valid
-			//check that same name doesnot already exist
-			Skill.findOne({ name: req.body.skillname }).exec((err, found_name) => {
-				if (err) {
-					console.log(err);
-					return next(err);
-				}
+			//extract validation errors from a request
+			const errors = validationResult(req);
+			
+			//resize the image file
+			const filebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
 
-				if (found_name) {
-					res.redirect(found_name.url);
-				} else {
-					skillz.save((err) => {
-						if (err) {
-							return next(err);
-						}
-						console.log("Saved successfully");
-						res.redirect(skillz.url);
-					});
-				}
+			const createimgfilename = generaterandomimgname();
+			//upload images to S3
+			const s3uploadparams = {
+				Bucket: BUCKET_NAME,
+				Body: filebuffer,
+				Key: createimgfilename ,
+				ContentType: filebuffer.mimetype
+			}
+			
+			//create an object with trimed and escaped values
+			const skillz = new Skill({
+				name: req.body.skillname,
+				description: req.body.skilldescription,
+				imageName: createimgfilename 
 			});
+
+			if (!errors.isEmpty()) {
+				console.log("There errors");
+				console.log(errors);
+				//if there errors, render the form with sanitized values/error messages
+				res.render("create_skill", {
+					Title: "Create Skill",
+					skillz,
+					errors: errors.array()
+				});
+				return;
+			} else {
+				//if data from the form is valid
+				//check that same name doesnot already exist
+				Skill.findOne({ name: req.body.skillname }).exec((err, found_name) => {
+					if (err) {
+						console.log(err);
+						return next(err);
+					}
+
+					if (found_name) {
+						res.redirect(found_name.url);
+					} else {
+						skillz.save((err) => {
+							if (err) {
+								return next(err);
+							}
+							console.log("Saved successfully");
+						});
+						//send the upload to s3
+						controllerUtils.uploadtos3bucket(s3uploadparams);
+						res.redirect(skillz.url);
+					}
+				});
+			}
 		}
 	},
 ];
@@ -208,49 +183,56 @@ exports.skill_delete_get = (req, res) => {
 
 //With post delete skill
 exports.skill_delete_post = async (req, res, next) => {
-
-	//delete from database
-	const id = req.body.skilid
-	Skill.findByIdAndDelete(id, (err) => {
-		if (err){
-			return next(err);
-		}
-	});
-	//delete from s3 bucket
-	const delskill = await Skill.findOne({_id: id}, 'imageName').exec((err, delresult) => {
-		if (err){
-			console.log(err);
-		}
-		else if (delresult) {
-			console.log("the object to delete is"+delresult.imageName);
-			const delparams = {
-				Bucket: BUCKET_NAME,
-				Key: delresult.imageName
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User For this page' });
+	} else {
+		//delete from database
+		const id = req.body.skilid
+		Skill.findByIdAndDelete(id, (err) => {
+			if (err){
+				return next(err);
 			}
-			deletefroms3bucket(delparams);
-		}	
-	});
-	res.json({sucess: "Successfully Deleted"});
+		});
+		//delete from s3 bucket
+		const delskill = await Skill.findOne({_id: id}, 'imageName').exec((err, delresult) => {
+			if (err){
+				console.log(err);
+			}
+			else if (delresult) {
+				console.log("the object to delete is"+delresult.imageName);
+				const delparams = {
+					Bucket: BUCKET_NAME,
+					Key: delresult.imageName
+				}
+				controllerUtils.deletefroms3bucket(delparams);
+			}	
+		});
+		res.json({sucess: "Successfully Deleted"});
+	}
 }
 
 //Using GET, return information on a skill to update
 exports.skill_update_get = async (req, res, next) => {
-	//find a document with the specified id
-	update_doc_id = req.query.updateid;
-	console.log("The id to update is" + update_doc_id);
+	const Role = req.userinfo.role; 
+	// If user is not an admin or normal user, return error
+	if (Role !== 'admin') {
+		return res.status(403).send({ message: 'Unauthorized User For this page' });
+	} else {
+		//find a document with the specified id
+		update_doc_id = req.query.updateid;
+		console.log("The id to update is" + update_doc_id);
 
-	const updateskills = await Skill.findOne({ _id: update_doc_id }, "_id name description imageName ")
-	.exec(async function (err, update_skill) {
-		if (err) {
-			return next(err);
-		}
-		update_skill.imageUrl = await  getSignedUrl(s3Client, new GetObjectCommand({
-			Bucket: BUCKET_NAME,
-			Key: update_skill.imageName
-		}), { expiresIn: 3600})
-
-		res.json(update_skill);
-	});
+		const updateskills = await Skill.findOne({ _id: update_doc_id }, "_id name description imageName ")
+		.exec(async function (err, update_skill) {
+			if (err) {
+				return next(err);
+			}
+			update_skill.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, update_skill.imageName, 3600 );
+			res.json(update_skill);
+		});
+	}
 }
 
 
@@ -264,52 +246,58 @@ exports.skill_update_post = [
 
 	//process request after validation 
 	async (req, res, next) => {
-		const update_skil_id = req.body.skillUpdateid;
-		const updateimgfilename = generaterandomimgname();
-		
-		//resize the image file
-		const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
+		const Role = req.userinfo.role; 
+		// If user is not an admin or normal user, return error
+		if (Role !== 'admin') {
+			return res.status(403).send({ message: 'Unauthorized User For this page' });
+		} else {
+			const update_skil_id = req.body.skillUpdateid;
+			const updateimgfilename = generaterandomimgname();
+			
+			//resize the image file
+			const upfilebuffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "fill"}).toBuffer();
 
-		//delete from s3 bucket
-		const delupskill = await Skill.findOne({_id: update_skil_id }, 'imageName').exec((err, upresult) => {
-			if (err){
-				console.log(err);
-			}
-			else if (upresult) {
-				console.log("the object to delete is"+upresult.imageName);
-				const delparams = {
-					Bucket: BUCKET_NAME,
-					Key: upresult.imageName
+			//1. delete from s3 bucket
+			const delupskill = await Skill.findOne({_id: update_skil_id }, 'imageName').exec((err, upresult) => {
+				if (err){
+					console.log(err);
 				}
-				deletefroms3bucket(delparams);
-			}	
-		});
+				else if (upresult) {
+					console.log("the object to delete is"+upresult.imageName);
+					const delparams = {
+						Bucket: BUCKET_NAME,
+						Key: upresult.imageName
+					}
+					controllerUtils.deletefroms3bucket(delparams);
+				}	
+			});
 
-		//upload new image to s3Bucket
-		const updates3uploadparams = {
-			Bucket: BUCKET_NAME,
-			Body: upfilebuffer,
-			Key: updateimgfilename 
+			//2. update object in database
+			const update_filter = {
+				_id: update_skil_id 
+			};
+			const update_skillz = { $set: {
+				name: req.body.skillname,
+				description: req.body.skilldescription,
+				imageName: updateimgfilename
+			}};
+			await Skill.findOneAndUpdate(update_filter, update_skillz, {
+				new: true,
+				upsert: true,
+				rawResult: true,
+				runValidators: true
+			});
+
+			//3.upload to s3 bucket
+			//upload new image to s3Bucket
+			const updates3uploadparams = {
+				Bucket: BUCKET_NAME,
+				Body: upfilebuffer,
+				Key: updateimgfilename 
+			}
+			controllerUtils.uploadtos3bucket(updates3uploadparams);
+			console.log("Updated Successfully");
+			res.redirect("/portfolio/skill");
 		}
-		//ContentType: 'image/jpeg'
-		await s3Client.send(new PutObjectCommand(updates3uploadparams));
-
-		//update object in database
-		const update_filter = {
-			_id: update_skil_id 
-		};
-		const update_skillz = { $set: {
-			name: req.body.skillname,
-			description: req.body.skilldescription,
-			imageName: updateimgfilename
-		}};
-		await Skill.findOneAndUpdate(update_filter, update_skillz, {
-			new: true,
-			upsert: true,
-			rawResult: true,
-			runValidators: true
-		});
-		console.log("Updated Successfully");
-		res.redirect("/portfolio/skill");
 	},
 ];
