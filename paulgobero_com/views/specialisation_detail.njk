@@ -1,0 +1,29 @@
+
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {about: "/#about_section", skills: "/#skill_section", projects: "/#project_section", contact: "/#contact_section" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 style="text-align: center;">Specialisation Detail</h3>
+                <section class="showcase">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
+                                <p class="lead mb-0" style="text-align: left; padding-bottom: 20px">
+                                    Specialisation title: {{ detailspec.name }}.  
+                                </p> 
+                                <p class="lead mb-0">
+                                    Specialisation description: {{ detailspec.description }}.
+                                </p>    
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+            </div>
+        </div>
+    </section>
+{% endblock %}

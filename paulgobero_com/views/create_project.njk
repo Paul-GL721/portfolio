@@ -1,0 +1,31 @@
+
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {id: "createProjpage", about: "/#about_section", projects: "/#project_section", skills: "/#skill_section", contact: "/#contact_section" } %}
+{% set posturl = { submiturl: "create", skillurl: "api/skills", specurl: "api/specialisations", authorurl: "api/authors" } %}
+{% set objarray = projectauthors %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+    <section class="formsection">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-12 col-sm-12 col-md-8" id="main_div">
+                <div class="page-header">
+                    <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Project</span></em></h1>
+                </div>
+                {% include "reuse_project.njk" %}
+                    <div class="form-group row">
+                        <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="projsubmitbutton" name="projsubmitbutton" type="submit">Submit</button></div>
+                    </div>
+                </form>
+                <div class="form-group row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </section>
+{% endblock %}
+
+
