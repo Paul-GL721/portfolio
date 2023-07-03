@@ -233,7 +233,7 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-			//Execute if its the production branch
+			///Execute if its the production branch
 			when {
 				branch 'master'
 			}

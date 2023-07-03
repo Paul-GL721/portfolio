@@ -1,0 +1,68 @@
+
+{% extends "portfolio_base.njk" %}
+{% set posturl = {submiturl: "specialisation/update", formid: "specupdatecreateid", subbtn: "specUpdatesubmitbutton",  deletemodalid: "SpecdeleteConfirmationModal", confirmdelete: "SpecconfirmDeleteButton" } %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section",  skills: "/#skill_section", contact: "/#contact_section"  } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+    <section class="formsection">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-sm-12 col-md-10">
+                <h3 style="text-align: center;">Specialisation Admin Form</h3>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="specbtnAdd" type="button" title="Add New Specialisation" onclick="location.href='specialisation/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="specbtnDelete" type="button" title="Delete Selected  Row(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div class="table-responsive">
+                    <table id="spectable" class="table table-striped" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true">
+                        <thead>
+                            <tr>
+                                <th data-checkbox="true" data-field="state"></th>
+                                <th id="spec_id" class="tableid" data-field="spec_id" >id</th>
+                                <th id="cellskillname" data-field="specName">Specialisation Name</th>
+                                <th id="cellskilldesc" data-field="Description">Specialisation Description</th>
+                                <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for spec in abtspecs %}
+                            <tr>
+                                <td></td>
+                                <td>{{ spec._id }}</td>
+                                <td>{{ spec.name }}</td>
+                                <td>{{ spec.description }}</td>
+                                <td><a title="Edit Row"><i class="icon-pencil tableicons specedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="SpecUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Specialisation</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_specialisation.njk" %}
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="specUpdateid"><strong>Specialisation Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="specUpdateid" name="specUpdateid" readonly="" placeholder="Spec Update Id"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="specUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                {% include "reuse_deletemsg.njk" %}           
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </section>
+{% endblock %}
