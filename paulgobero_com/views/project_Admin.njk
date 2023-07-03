@@ -1,0 +1,110 @@
+
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {id: "createProjpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
+{% set posturl = {submiturl: "project/update", skillurl: "project/api/skills", specurl: "project/api/specialisations", authorurl: "project/api/authors", deletemodalid: "projdeleteConfirmationModal", confirmdelete: "projconfirmDeleteButton"  } %}
+{% set objarray = data.authorzproj %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <h3 style="text-align: center;">All Projects</h3>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="projectbtnAdd" type="button" title="Add New Project" onclick="location.href='project/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="projectbtnDelete" type="button" title="Delete Selected  Project(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="projecttable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
+                        <thead>
+                            <tr class="d-flex">
+                                <th class="w-5p" data-checkbox="true" data-field="state"></th>
+                                <th class="w-10p text-wrap text-break" id="project_id" data-field="projectidz">id</th>
+                                <th class="w-20p text-wrap text-break" id="cellvideoid" data-field="videoUrl">Uploaded Video</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojpic" data-field="imageUrl">Images</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojecttitle" data-field="projecttitle">Title</th>
+                                <th class="w-30p" id="cellprojectsummary" data-field="projectsummary">Summary</th>
+                                <th class="w-60p" id="cellprojectproblem" data-field="problemstatement">Challenge Faced</th>
+                                <th class="w-60p" id="cellprojectsolution" data-field="projectsolution">Solution</th>
+                                <th class="w-30p" id="cellprojectrole" data-field="projectrole">Role Played</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojectgithuburl" data-field="projectgithuburl">Github link</th>
+                                <th class="w-20p text-wrap text-break" id="cellprojectlivelinkurl" data-field="projectlivelinkurl">Live link</th>
+                                <th class="w-20p" id="cellprojectcontributors" data-field="projectcontributors">Contributors</th>
+                                <th class="w-30p" id="cellprojectskill" data-field="projectskill">Skill(s) Gained</th>
+                                <th class="w-30p" id="cellprojectauthors" data-field="projectauthors">Author(s)</th>
+                                <th class="w-30p" id="cellprojectspecs" data-field="projectspecs">Specializations</th>
+                                <th class="w-10p" id="cellactions" data-field="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in abtprojects %}
+                                <tr class="d-flex">
+                                    <td class="w-5p"></td>
+                                    <td class="w-10p text-wrap text-break">{{ project._id }}</td>
+                                    <td class="w-20p text-wrap text-break">
+                                        <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.mediaUrl.videoUrl }}" ></iframe></div>
+                                    </td>
+                                    <td class="w-20p text-wrap text-break"><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
+                                    <td class="w-20p text-wrap text-break">{{ project.ptitle | replace('&amp;#x2F;', '/') | urlize | safe}}</td>
+                                    <td class="w-30p">{{ project.psummary | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-60p">{{ project.problemStatement | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-60p">{{ project.solution | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-30p">{{ project.role | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+                                    <td class="w-20p text-wrap text-break">{{ project.githubUrl | urlize | safe }}</td>
+                                    <td class="w-20p text-wrap text-break">{{ project.livelinkUrl | urlize | safe }}</td>
+                                    <td class="w-20p">{{ project.contributor | urlize | safe }}</td>
+                                    <td class="w-30p">
+                                        <ul class="list-group">
+                                            {% for skll in project.skill %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ skll.name }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="w-30p"> 
+                                        <ul class="list-group">
+                                            {% for athor in project.author %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ athor.name.first }} {{ athor.name.middle }} {{ athor.name.last }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="w-30p"> 
+                                        <ul class="list-group">
+                                            {% for spec in  project.specialisation %} 
+                                                <li class="list-group-item border-0 bg-transparent"> {{ spec.name }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="w-10p"><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="projectUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Project Details</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_project.njk" %}
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projectUpdateid"><strong>Project Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="projectUpdateid" name="projectUpdateid" readonly="" placeholder="Project Update Id"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="projectUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    {% include "reuse_deletemsg.njk" %}           
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

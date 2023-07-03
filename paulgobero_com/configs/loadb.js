@@ -1,19 +1,30 @@
 //####### Connect mongodb to nodejs #####
 
-var database_connection = function () {
-   //import required modules and variables
-   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = require('./config');
-   const mongoose = require('mongoose');
+//import required modules
+const mongoose = require('mongoose');
+let db = null;
+
+const database_connection = async (db_name, db_user, db_passwd, db_host, db_port) => {
+    // Set mongoose connection options
+   const options = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      connectTimeoutMS: 60000, // Increase the timeout to 6000 seconds (adjust as needed)
+   };
 
    //set mongoose connection
-   const mongoDB = "mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin";
-   mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
-
-   //make the connection
-   const db = mongoose.connection;
-
-   //handle errors
-   db.on("error", console.error.bind(console, "MongoDB connection error:"));
+   const mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+   try {
+      if (!db) {
+         db = await mongoose.connect(mongoDBurl, options); 
+      }
+      console.log('SUCCESSFULLY CONNECTED TO MONGODB');
+      return true; // Connection successful
+   } catch (error) {
+      console.error('FAILED TO CONNECT');
+      console.error('Error connecting to MongoDB', error);
+      return false; // Connection failed
+   }
 };
-module.exports = database_connection
+module.exports = database_connection;
 

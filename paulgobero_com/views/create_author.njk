@@ -1,0 +1,72 @@
+
+{% extends "portfolio_base.njk" %}
+{% set posturl = {submiturl: "create", formid: "authorcreateid"  } %}
+{% set navbarurl = {id: "createAuthorpage", about: "/#about_section", projects: "/#project_section", skills: "/#skill_section", contact: "/#contact_section" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+    <section class="formsection">
+    	<div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-12 col-sm-12 col-md-8" id="main_div">
+                <div class="page-header">
+                    <h1 class="text-center projheading"><em><span style="text-decoration: underline;">About the Author</span></em></h1>
+                </div>
+
+                {% include "reuse_author.njk" %}
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorpassword"><strong>Password:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="password" id="authorpassword" placeholder="Type your password" name="authorpassword" required=""></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorstatus" for="authorstatus"><strong>Author Status:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorstatus" name="authorstatus" readonly="" value="normaluser"></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorRole" for="authorRole"><strong>Author Role:</strong></label></div>
+                        <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorRole" name="authorRole" readonly="" value="member"></div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="authorsubmitbutton" name="authorsubmitbutton" type="submit">Submit</button></div>
+                    </div>
+
+                    <div class="modal fade" role="dialog" tabindex="-1" id="createAuthormodal">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Submission Success</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <section class="showcase">
+                                    <div class="container-fluid p-0">
+                                        <div class="row">
+                                            <div class="col text-justify order-lg-2">
+                                                <P class="lead text-left">Thank you!</p>
+                                                <P class="lead text-left">Form data has been Successfully added to the database</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+                
+
+                <div class="form-group row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </section>
+{% endblock %}
+
+

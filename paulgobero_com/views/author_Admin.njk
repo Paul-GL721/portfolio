@@ -1,0 +1,100 @@
+
+{% extends "portfolio_base.njk" %}
+{% set posturl = {submiturl: "author/update", formid: "authorupdatecreateid", deletemodalid: "deleteConfirmationModal", confirmdelete: "confirmDeleteButton" } %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section",  skills: "/#skill_section", contact: "/#contact_section"  } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <h3 style="text-align: center;">Author's Admin Table</h3>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="authorbtnAdd" type="button" title="Add New Author" onclick="location.href='author/create'"><i class="icon-plus tableicons"></i>Add</button><button class="btn btn-danger" id="authorbtnDelete" type="button" title="Delete Selected  Author(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="authortable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
+                        <thead>
+                            <tr class="d-flex">
+                                <th class="w-5p" data-checkbox="true" data-field="state"></th>
+                                <th class="w-10p text-wrap text-break" id="author_id" data-field="authoridz">id</th>
+                                <th class="w-20p" id="cellprofilepic" data-field="imageUrl">Profile Picture</th>
+                                <th class="w-20p" id="cellauthorfirstname" data-field="namefirst">First Name</th>
+                                <th class="w-20p" id="cellauthormiddlename" data-field="namemiddle">Middle Name</th>
+                                <th class="w-20p" id="cellauthorlastname" data-field="namelast">Last Name</th>
+                                <th class="w-30p" id="cellauthorshortdesc" data-field="shortdesc">Short Description</th>
+                                <th class="w-60p" id="cellauthorlongdesc" data-field="longdesc">Long Description</th>
+                                <th class="w-10p" id="cellauthorbrand" data-field="authorbrand">BrandName</th>
+                                <th class="w-20p" id="cellauthoremail" data-field="authoremail">Email</th>
+                                <th class="w-10p" id="cellauthorStaus" data-field="authorStaus">Status</th>
+                                <th class="w-10p" id="cellauthorRole" data-field="authorRole">Role</th>
+                                <th class="w-20p" id="cellgithuburl" data-field="githuburl">Github</th>
+                                <th class="w-20p" id="celllinkeninurl" data-field="linkeninurl">LinkedIn</th>
+                                <th class="w-10p" id="cellactions" data-field="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+	                        {% for author in abtauthor %}
+	                            <tr class="d-flex">
+	                                <td class="w-5p"></td>
+	                                <td class="w-10p text-wrap text-break">{{ author._id }}</td>
+	                                <td class="w-20p"><img class="rounded-circle img-fluid" src="{{ author.imageUrl }}" width="70" height="70"></td>
+	                                <td class="w-20p">{{ author.name.first }}</td>
+	                                <td class="w-20p">{{ author.name.middle }}</td>
+	                                <td class="w-20p">{{ author.name.last }}</td>
+                                    <td class="w-30p">{{ author.about.short_description }}</td>
+                                    <td class="w-60p">{{ author.about.full_description }}</td>
+	                                <td class="w-10p">{{ author.brandName }}</td>
+	                                <td class="w-20p">{{ author.email }}</td>
+                                    <td class="w-10p">{{ author.authorStatus }}</td>
+                                    <td class="w-10p">{{ author.authorRole }}</td>
+	                                <td class="w-20p text-wrap text-break">{{ author.socialmedia.github | urlize | safe }}</td>
+	                                <td class="w-20p text-wrap text-break">{{ author.socialmedia.linkedin | urlize | safe }}</td>
+	                                <td class="w-10p"><a title="Edit Row"><i class="icon-pencil tableicons authoredit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+	                            </tr>
+	                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="authorUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Author Details</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_author.njk" %}
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorUpdateid"><strong>Author Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorUpdateid" name="authorUpdateid" readonly="" placeholder="Author Update Id"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorpassword"><strong>Password:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="password" id="authorpassword" placeholder="Type your password" name="authorpassword" readonly="" required=""></div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorstatus" for="authorstatus"><strong>Author Status:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorstatus" name="authorstatus" readonly=""></div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorRole" for="authorRole"><strong>Author Role:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorRole" name="authorRole" readonly=""></div>
+                                        </div>    
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="authorUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    {% include "reuse_deletemsg.njk" %}           
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

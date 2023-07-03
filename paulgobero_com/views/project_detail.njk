@@ -1,0 +1,34 @@
+
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section", contact: "/#contact_section" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 style="text-align: center;">About the {{ detailprojects.ptitle }}</h3>
+                <section class="showcase">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <div class="col-lg-6 text-white align-self-center order-lg-2"><video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 10px;" src="{{ detailprojects.mediaUrl.videoUrl }}"></video></div>
+                            <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
+                                <p class="lead mb-0" style="text-align: left; padding-bottom: 20px">
+                                    {{ detailprojects.problemStatement | urlize | safe  }}.  
+                                </p> 
+                                <p class="lead mb-0">
+                                    For a solution {{ detailprojects.solution | urlize | safe }}. My main role(s) included {{ detailprojects.role | urlize | safe }} and i gained skills in {% for skll in detailprojects.skill %} {{ skll.name }} {% endfor %}
+                                </p>    
+                                <p class="lead mb-0" style="text-align: left; padding-top: 20px">
+                                    View the code at this <a href="{{ detailprojects.githubUrl | urlize | safe }}">Github link</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
