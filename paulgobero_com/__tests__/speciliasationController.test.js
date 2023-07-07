@@ -3,30 +3,32 @@ const request = require('supertest');
 const app = require('../app');
 const jwt = require('jsonwebtoken');
 const testutils = require('../utils/testUtils');
-const path = require('path');
 const { BASEURL } = require('../configs/config');
 
+
 jest.setTimeout(600000);
+let isConnected;
+const authoremail = "test@gmail.com";
+const authorpassword = "test567";
 
 describe('Test that links on Specialisation Authenticated page work', () => {
-    let isConnected;
-    const authoremail = "test@gmail.com";
-    const authorpassword = "test567";
   
-    async function testAuthLinkNavigation(label, section, goto) {
-      if (isConnected) {
-        await testutils.loginAndNavigate(page);
-        await page.goto(goto, { waitUntil: 'domcontentloaded' });
-        const link = await page.$(`ul.navbar-nav li a.nav-link[href="${section}"]`);
-        await page.waitForSelector(link);
-        await link.click();
-        await page.waitForNavigation();
-        const getauthorpage = await page.title();
-        console.log('specialisation test title', getauthorpage);
-        expect(getauthorpage).toBe('Portfolio');
-        const currentUrl = page.url();
-        expect(currentUrl.endsWith(section)).toBeTruthy();
-      }
+    async function testAuthLinkNavigation(label, section, goto) {        
+        if (isConnected) {
+            console.log("spec db connection")
+            await testutils.loginAndNavigate(authoremail, authorpassword);
+            await page.goto(goto, { waitUntil: 'domcontentloaded' });
+            const link = await page.$(`ul.navbar-nav li a.nav-link[href="${section}"]`);
+            await page.waitForSelector(link);
+            await link.click();
+            await page.waitForNavigation();
+            const getauthorpage = await page.title();
+            console.log('specialisation test title', getauthorpage);
+            expect(getauthorpage).toBe('Portfolio');
+            expect("#skill_section").toBeNull();
+            const currentUrl = page.url();
+            expect(currentUrl.endsWith(section)).toBeTruthy();
+        }
     }
   
     test('Clicking the About link should navigate to the About section', async () => {
@@ -51,17 +53,9 @@ describe('Test that links on Specialisation Authenticated page work', () => {
 
 /* END TO END CRUD TESTS */
 describe('Test CRUD operations on the Specialisation model', () => {
-    let isConnected;
-    /*beforeAll(testutils.beforeAllTests);
-    afterAll(testutils.afterAllTests);*/
-  
-    const authoremail = "test@gmail.com";
-    const authorpassword = "test567";
-    testutils.loginAndNavigate;
-  
     test('Gets the specialisation create form', async () => {
         if (isConnected) {
-            await loginAndNavigate();
+            await testutils.loginAndNavigate(authoremail, authorpassword);
             await page.goto(`${BASEURL}/portfolio/specialisation/create`, {waitUntil: 'domcontentloaded'});
             const getauthorpage = await page.title();
             expect(getauthorpage).toMatch('Specialisation Form');
@@ -82,7 +76,7 @@ describe('Test CRUD operations on the Specialisation model', () => {
       
     test('Test that specialisation form data is posted to database', async () => {
         if (isConnected) {
-            await loginAndNavigate();
+            await testutils.loginAndNavigate(authoremail, authorpassword);
             await page.goto(`${BASEURL}/portfolio/specialisation/create`, {waitUntil: 'domcontentloaded'});
             await expect(page).toMatchElement('#specialisationname');
             //fill in the specialisation form
@@ -100,7 +94,7 @@ describe('Test CRUD operations on the Specialisation model', () => {
   
     test("Test that a specialisation can be deleted from database", async () => {
         if(isConnected){
-            await loginAndNavigate()
+            await testutils.loginAndNavigate(authoremail, authorpassword);
             await page.goto(`${BASEURL}/portfolio/specialisation`, {waitUntil: 'domcontentloaded'});
     
             //check the first-row first-column checkbox
@@ -145,7 +139,7 @@ describe('Test CRUD operations on the Specialisation model', () => {
   
     test('Test that you can update the specialisation document', async () => {
         if (isConnected) {
-            await loginAndNavigate()
+            await testutils.loginAndNavigate(authoremail, authorpassword);
             await page.goto(`${BASEURL}/portfolio/specialisation`, {waitUntil: 'domcontentloaded'});
             //click the update icon
             await page.click('.specedit')

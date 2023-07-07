@@ -1,18 +1,16 @@
 
 const path = require('path');
-const { BASEURL } = require('../configs/config');
+const { BASEURL} = require('../configs/config');
+const testutils = require('../utils/testUtils');
 
 
 jest.setTimeout(6000000);
 /* END TO END TEST */
 describe('Testing login functionality', () => {
     let isConnected;
-    /*beforeAll(testutils.beforeAllTests);
-    afterAll(testutils.afterAllTests);*/
-
+    console.log(isConnected);
     const authoremail = "test@gmail.com";
     const authorpassword = "test567"
-
 
     test('Saves a user with owner status to the database', async () => {  
         if (isConnected) {
