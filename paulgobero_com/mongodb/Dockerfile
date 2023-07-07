@@ -3,3 +3,6 @@
 
 FROM mongo:6
 COPY mongod.conf.orig /etc
+
+#Add new user
+COPY MongoUser.js /docker-entrypoint-initdb.d
