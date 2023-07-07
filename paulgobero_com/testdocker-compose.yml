@@ -4,7 +4,7 @@ services:
     app:
         image: paulgl721/testnodejs-portfolio
         env_file:
-            - /configs/.env.dev
+            - ./configs/.env.dev
         build:
             context: .
             dockerfile: testdockerfile
@@ -12,6 +12,9 @@ services:
             - "3001:3001"
         depends_on:
             - mongo 
+        command: bash -c "sleep 20 && ./wait-for mongo:27017 --timeout=600 -- npm run devstart"
+        networks:
+            - testnetwork
 
     #mongodb database service
     mongo:
@@ -20,23 +23,31 @@ services:
             context: ./mongodb
             dockerfile: Dockerfile
         env_file:
-            - /configs/.env.dev
+            - ./configs/.env.dev
         ports:
             - "27017:27017"
+        restart: always
         volumes:
-            - stagedatabase:/data/db
+            - stagedatabase:/data/db     
+        networks:
+            - testnetwork
     
     #web-based mongoDB admin interface
     mongodbadmin:
         image: mongo-express:latest
+        restart: always
         ports:
             - "8081:8081"
         env_file:
-            - /configs/.env.dev
+            - ./configs/.env.dev
         depends_on:
             - mongo
+        networks:
+            - testnetwork
 
 volumes:
     stagedatabase:
+networks:
+    testnetwork:
 
       
