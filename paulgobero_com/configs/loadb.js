@@ -13,7 +13,9 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
    };
 
    //set mongoose connection
-   const mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+   //const mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+   //connection to mongo container
+   const mongoDBurl = `mongodb://${db_user}:${db_passwd}@mongo:${db_port}/${db_name}?authSource=admin`;
    try {
       if (!db) {
          db = await mongoose.connect(mongoDBurl, options); 

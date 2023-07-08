@@ -6,7 +6,7 @@
     "start": "NODE_ENV=production node ./bin/www",
     "devstart": "nodemon --require dotenv/config -L ./bin/www",
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
-    "test": "jest --watchAll --coverage"
+    "test": "jest --watchAll --coverage --verbose"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.254.0",

@@ -10,10 +10,17 @@ const path = require('path');
 const mongoose = require('mongoose');
 const async = require("async"); //run async functions
 
+async function testconnection() {
+    try {
+        const isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
+        console.log('Is Test database connected?', isConnected);
+        return isConnected;
+    } catch {
+        console.log('Cannot connect to test database');
+    }   
+}
 
 async function beforeAllTests() {
-    const isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-    console.log('Is database connected?', isConnected);
     function imageToString(filepath) {
         //read image file
         const imagePath = path.resolve(__dirname, filepath);
@@ -22,6 +29,7 @@ async function beforeAllTests() {
         const imageString = imageData.toString('base64');
         return imageString;
     }
+    isConnected = await testconnection();
 
     //create two specilisation documents
     await Spec.create([
@@ -82,11 +90,11 @@ async function beforeAllTests() {
 };
 
 async function afterAllTests() {
-    /*//drop collections after
-    await mongoose.connection.dropCollection(Spec);
-    await mongoose.connection.dropCollection(Skill);
-    await mongoose.connection.dropCollection(Author);
-    await mongoose.connection.dropCollection(Project);*/
+    //drop collections after
+   // await mongoose.connection.dropCollection(Spec);
+   // await mongoose.connection.dropCollection(Skill);
+    //await Author.collection.drop(); 
+    //await mongoose.connection.dropCollection(Project);
 
     // Drop the database
     await mongoose.connection.dropDatabase();
@@ -95,13 +103,13 @@ async function afterAllTests() {
    
 };
 
-const loginAndNavigate = async (authoremail, authorpassword) => {
+const loginAndNavigate = async (email, password) => {
     await page.goto(`${BASEURL}/portfolio/login`, {waitUntil: 'domcontentloaded'});
     const emailInput = await page.$('#loginemail');
     const passwdInput = await page.$('#loginpasswd');
     const loginbtn = await page.$('#loginbtn');
-    await emailInput.type(authoremail);
-    await passwdInput.type(authorpassword);
+    await emailInput.type(email);
+    await passwdInput.type(password);
     await loginbtn.click();
     await page.waitForNavigation();
     // Assert if the JWT token cookie exists
@@ -113,4 +121,4 @@ const loginAndNavigate = async (authoremail, authorpassword) => {
     }
 }
 
-module.exports = { beforeAllTests, afterAllTests, loginAndNavigate };
+module.exports = { beforeAllTests, afterAllTests, loginAndNavigate, testconnection };

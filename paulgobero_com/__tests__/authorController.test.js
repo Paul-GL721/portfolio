@@ -1,16 +1,53 @@
 const testutils = require('../utils/testUtils');
-const { BASEURL } = require('../configs/config');
+const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
+const Skill = require('../models/skill'); 
+const Spec = require('../models/specialisation'); 
+const Author = require('../models/author'); 
+const Project = require('../models/project');
+const  database_connection = require('../configs/loadb'); //testdb module
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose');
+const async = require("async"); //run async functions
 
 jest.setTimeout(600000);
+let isConnected;
+const authoremail = "test@gmail.com";
+const authorpassword = "test567";
+
 
 /* END TO END TESTS */
 describe('Index pages (portfolio/)', () => {
-  let isConnected;
   beforeAll(async () => {
     await testutils.beforeAllTests();
     await page.goto(`${BASEURL}/`, { waitUntil: 'domcontentloaded' });
   });
-  afterAll(testutils.afterAllTests);
+  
+  afterAll(
+    testutils.afterAllTests
+  );
+
+  /*/ After all tests
+  afterAll(async () => {
+    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for 500ms (adjust as needed)
+    try {
+      await dropDatabase();
+    } catch (error) {
+      throw new Error(`Failed to drop database: ${error}`);
+    }
+    await mongoose.connection.close();
+  });
+
+  // Helper function to drop the database
+  async function dropDatabase() {
+    try {
+      await mongoose.connection.dropDatabase();
+    } catch (error) {
+      throw new Error(`Failed to drop database: ${error}`);
+    }
+  }*/
+
+
 
   test('/ page should be titled "Portfolio" or "Default Page"', async () => {
     await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'});
@@ -92,10 +129,7 @@ async function testNavbarBtns(about, project, skill, contact, gotopage) {
 }
 
 
-
-
-
-describe('Test that links on Author Authenticated page work', () => {
+/*describe('Test that links on Author Authenticated page work', () => {
   let isConnected;
 
   const authoremail = "test@gmail.com";
@@ -128,24 +162,20 @@ describe('Test that links on Author Authenticated page work', () => {
           expect(getauthorpage).toBe('Portfolio');
           const currentUrl = page.url();
           expect(currentUrl.endsWith(link.section)).toBeTruthy();
-        }
+
+        }      
       });
     }
   }
   
   testAuthLinkNavigation('/#about_section', '/#project_section', '/#skill_section', '/#contact_section',  `${BASEURL}/portfolio/author/create`);
 
-});
-/*
+});*/
+
 describe('Test that links on Author Authenticated page work', () => {
-  let isConnected;
-
-  const authoremail = "test@gmail.com";
-  const authorpassword = "test567";
-
-  async function testAuthLinkNavigation(label, section, goto) {
+  async function testAuthLinkNavigation(section, goto) {
     if (isConnected) {
-      testutils.loginAndNavigate;
+      await testutils.loginAndNavigate(authoremail, authorpassword);
       await page.goto(goto, { waitUntil: 'domcontentloaded' });
       const link = await page.$(`a.nav-link[href="${section}"]`);
       await page.waitForSelector(link);
@@ -153,47 +183,112 @@ describe('Test that links on Author Authenticated page work', () => {
       await page.waitForNavigation();
       const currentUrl = page.url();
       expect(currentUrl.endsWith(section)).toBeTruthy();
+      const isSectionLoaded = await page.$(`#${section}`);
+      expect(isSectionLoaded).toBeNull();
+      const getauthorpage = await page.title();
+      console.log('Author test title', getauthorpage);
+      expect(getauthorpage).toBe('Portfolio');
     }
   }
 
   test('Clicking the About link should navigate to the About section', async () => {
-    await testAuthLinkNavigation('About', '/#about_section', `${BASEURL}/portfolio/author/create`);
-    await testAuthLinkNavigation('About', '/#about_section', `${BASEURL}/portfolio/author`);
+    testAuthLinkNavigation('about_section', `${BASEURL}/portfolio/author/create`);
+    testAuthLinkNavigation('/#about_section', `${BASEURL}/portfolio/author`);
   });
   test('Clicking the Projects link should navigate to the Projects section', async () => {
-    await testAuthLinkNavigation('Projects', '/#project_section', `${BASEURL}/portfolio/author/create`);
-    await testAuthLinkNavigation('Projects', '/#project_section', `${BASEURL}/portfolio/author`);
+    testAuthLinkNavigation('/#project_section', `${BASEURL}/portfolio/author/create`);
+    testAuthLinkNavigation('/#project_section', `${BASEURL}/portfolio/author`);
   });
   test('Clicking the Skills link should navigate to the Skills section', async () => {
-    await testAuthLinkNavigation('Skills', '/#skill_section', `${BASEURL}/portfolio/author/create`);
-    await testAuthLinkNavigation('Skills', '/#skill_section', `${BASEURL}/portfolio/author`);
+    testAuthLinkNavigation('/#skill_section', `${BASEURL}/portfolio/author/create`);
+    testAuthLinkNavigation('/#skill_section', `${BASEURL}/portfolio/author`);
   });
   test('Clicking the Contact link should navigate to the Contact section', async () => {
-    await testAuthLinkNavigation('Contact', '/#contact_section', `${BASEURL}/portfolio/author/create`);
-    await testAuthLinkNavigation('Contact', '/#contact_section', `${BASEURL}/portfolio/author`);
+    testAuthLinkNavigation('/#contact_section', `${BASEURL}/portfolio/author/create`);
+    testAuthLinkNavigation('/#contact_section', `${BASEURL}/portfolio/author`);
   });
 
-});*/
+});
 
 describe('Test CRUD operations on the Author model', () => {
-  let isConnected;
-
-  const authoremail = "test@gmail.com";
-  const authorpassword = "test567";
-  
+ 
   test('Gets the author create form', async () => {
+    
+    isConnected = await testutils.testconnection();
+    console.log('Am testing is connected', isConnected);
+
     if (isConnected) {
-      await loginAndNavigate(authoremail, authorpassword);
       await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
       const getauthorpage = await page.title();
-      expect(getauthorpage).toMatch('Create author');
+      console.log("getauthropages", getauthorpage);
+      expect(getauthorpage).toBe('Create au');
     }
+    
+    /*if (isConnected) {
+      await page.goto(`${BASEURL}/portfolio/login`, {waitUntil: 'domcontentloaded'});
+      const emailInput = await page.$('#loginemail');
+      const passwdInput = await page.$('#loginpasswd');
+      const loginbtn = await page.$('#loginbtn');
+      await emailInput.type(authoremail);
+      await passwdInput.type(authorpassword);
+      await loginbtn.click();
+      await page.waitForNavigation();
+      // Assert if the JWT token cookie exists
+      const jwtTokenCookie = await page.evaluate(() => {
+        console.log('the jwt after login is', jwtTokenCookie);
+        return document.cookie.includes('jwtTokens');
+      });
+      if (jwtTokenCookie) {
+        console.log('Projects jwt token is available ', jwtTokenCookie);
+        console.log('Author jwt token is available ', jwtTokenCookie);
+        console.log('TEsting isconnected const', isConnected)
+        await page.waitForSelector('#adminabout');
+        await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
+        const getauthorpage = await page.title();
+        console.log("getauthropages", getauthorpage);
+        expect(getauthorpage).toBe('Create au');  
+      } else {
+        console.log('Failed to obtain JWT token cookie.');
+        console.log('Is connected:', isConnected);
+        console.log('JWT token cookie:', jwtTokenCookie);
+        expect(isConnected && jwtTokenCookie).toBe(true); // Fails the test if the condition is not met
+      }
+    }*/
   });
+    
+      
+    /*if (isConnected) {
+      await page.goto(`${BASEURL}/portfolio/login`, { waitUntil: 'domcontentloaded' });
+      const emailInput = await page.$('#loginemail');
+      const passwdInput = await page.$('#loginpasswd');
+      const loginbtn = await page.$('#loginbtn');
+      await emailInput.type(authoremail);
+      await passwdInput.type(authorpassword);
+      await loginbtn.click();
+      await page.waitForNavigation();
+      // Assert if the JWT token cookie exists
+      const jwtTokenCookie = await page.evaluate(() => {
+          return document.cookie.includes('jwtTokens');
+      });
+      if (jwtTokenCookie) {
+        console.log('Author jwt token is available ', jwtTokenCookie);
+        console.log('TEsting isconnected const', isConnected)
+        await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
+        const getauthorpage = await page.title();
+        console.log("getauthropages", getauthorpage);
+        expect(getauthorpage).toBe('Create au');  
+      }
+    }
+    else {
+      console.log('failed authors1')
+      console.log('TEsting isconnected const', isConnected)
+      console.log('TEsting jwtTokenCookie const', jwtTokenCookie)
+    }*/
+  
 
   test('Test that form data is posted to database', async () => {
     if (isConnected) {
-      await loginAndNavigate(authoremail, authorpassword);
-      await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
+          await page.goto(`${BASEURL}/portfolio/author/create`, {waitUntil: 'domcontentloaded'});
       //fill in the owner registration form
       await page.type('#authorfirstname', 'Johnny');
       await page.type('#authormiddlename', 'Mitc');
@@ -210,7 +305,7 @@ describe('Test CRUD operations on the Author model', () => {
       const imageInput = await page.$('#photo1');
       const imagePath = path.resolve(__dirname, '../public/images/img/project1.jpg');
       await imageInput.uploadFile(imagePath);
-      console.log(imagePath);
+      console.log('autho2',imagePath);
       //submit form
       await page.click('#authorsubmitbutton');
       // Wait for the form submission to complete
@@ -218,7 +313,7 @@ describe('Test CRUD operations on the Author model', () => {
         return document.querySelector('#createAuthormodal') !== null;
       });
       // Assert that the success message or modal is displayed
-      const successElement = await page.$('#createAuthormodal');
+      const successElement = await page.$('#createAuhormodal');
       expect(successElement).toBeTruthy();
       /*
       //await page.waitForSelector('#project_section');
@@ -234,7 +329,6 @@ describe('Test CRUD operations on the Author model', () => {
 
   test("Test that author is deleted from database", async () => {
     if(isConnected){
-      await loginAndNavigate(authoremail, authorpassword)
       await page.goto(`${BASEURL}/portfolio/author`, {waitUntil: 'domcontentloaded'});
 
       //check the first-row first-column checkbox
@@ -279,7 +373,6 @@ describe('Test CRUD operations on the Author model', () => {
 
   test('Test that you can update the author record', async () => {
     if (isConnected) {
-      await loginAndNavigate(authoremail, authorpassword)
       await page.goto(`${BASEURL}/portfolio/author`, {waitUntil: 'domcontentloaded'});
 
       //click the update icon
