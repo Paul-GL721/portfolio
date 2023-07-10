@@ -67,16 +67,19 @@ pipeline {
 		stage('2. Run unit Tests') {
 			//Execute if its the staging branch
 			when {
-				branch 'staging'
+				branch 'development'
 			}
 			//execute the code on the testing machine
 			agent {
-				label 'testnode'
+				docker {
+					image 'browserless/chrome'
+				}
 			}
 			steps {
 				echo '..................Runing Tests................'
 				//test code
 				echo "Testing the code in the git repository"
+				sh 'npm run test'
 			}
 		}
 
