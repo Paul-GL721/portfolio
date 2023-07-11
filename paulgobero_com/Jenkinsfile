@@ -65,6 +65,24 @@ pipeline {
 		}
 
 		stage('2. Run unit Tests') {
+			//Execute if its the staging branch
+			when {
+				branch 'development'
+			}
+			//execute the code on the testing machine
+			agent {
+				label 'testnode'
+			}
+			steps {
+				echo '..................Runing Tests................'
+				//run tests on the code
+				echo "Testing the code in the git repository"
+				sh 'chmod +x ./jenkins-scripts/test-step.sh'
+				sh ''' ./jenkins-scripts/test-step.sh '''
+			}
+		}
+
+		/*stage('2. Run unit Tests') {
 			environment {
 				HOME = "${WORKSPACE}"
 			}
@@ -84,7 +102,7 @@ pipeline {
 				echo "Testing the code in the git repository"
 				sh 'npm run test'
 			}
-		}
+		}*/
 
 		stage('3. Build and taged staging image') {
 			//Execute if its the staging branch

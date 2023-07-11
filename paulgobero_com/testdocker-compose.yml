@@ -1,52 +1,52 @@
 version: '3.8'
 
 services:
-    app:
+    testapp:
         image: paulgl721/testnodejs-portfolio
         env_file:
-            - ./configs/.env.dev
+            - ./configs/.env.test
         build:
             context: .
             dockerfile: testdockerfile
         ports:
-            - "3001:3001"
+            - "3002:3002"
         depends_on:
-            - mongo 
-        command: bash -c "sleep 20 && ./wait-for mongo:27017 --timeout=600 -- npm run devstart"
+            - testmongodb 
+        command: bash -c "sleep 20 && ./wait-for testmongodb:27018 --timeout=600 -- npm run test"
         networks:
             - testnetwork
 
     #mongodb database service
-    mongo:
+    testmongodb:
         image: paulgl721/testmongo-portfolio
         build:
             context: ./mongodb
             dockerfile: Dockerfile
         env_file:
-            - ./configs/.env.dev
+            - ./configs/.env.test
         ports:
-            - "27017:27017"
+            - "27018:27017"
         restart: always
         volumes:
-            - stagedatabase:/data/db     
+            - testdatabase:/data/db     
         networks:
             - testnetwork
     
     #web-based mongoDB admin interface
-    mongodbadmin:
+    testmongodbadmin:
         image: mongo-express:latest
         restart: always
         ports:
-            - "8081:8081"
+            - "8082:8081"
         env_file:
-            - ./configs/.env.dev
+            - ./configs/.env.test
         depends_on:
-            - mongo
+            - testmongodb
         networks:
             - testnetwork
 
 volumes:
-    stagedatabase:
+    testdatabase:
 networks:
     testnetwork:
 
