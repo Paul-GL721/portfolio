@@ -77,7 +77,7 @@ pipeline {
 			}
 			steps {
 				echo '..................Runing Tests................'
-				//test code
+				//run tests on the code
 				echo "Testing the code in the git repository"
 				sh 'npm run test'
 			}
