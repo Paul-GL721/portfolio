@@ -82,7 +82,10 @@ pipeline {
 				echo '..................Runing Tests................'
 				//run tests on the code
 				echo "Testing the code in the git repository"
-				sh 'npm run test'
+				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
+				//sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
+				sh ''' cd ./${BASE_DIRECTORY} '''
+				sh 'npm run ./test'
 			}
 		}
 
