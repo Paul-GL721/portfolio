@@ -71,6 +71,7 @@ pipeline {
 			}
 			//execute the code on the testing machine
 			agent {
+				label 'testnode'
 				docker {
 					image 'paulgl721/jestpuppeteer:latest'
 				}
