@@ -65,6 +65,9 @@ pipeline {
 		}
 
 		stage('2. Run unit Tests') {
+			environment {
+				HOME = "${WORKSPACE}"
+			}
 			//Execute tests if its development branch
 			when {
 				branch 'development'
