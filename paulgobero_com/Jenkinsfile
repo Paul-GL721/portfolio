@@ -75,7 +75,7 @@ pipeline {
 			//execute the code on the testing machine
 			agent {
 				docker {
-					image 'paulgl721/jestpuppeteer:latest'
+					image 'paulgl721/jestpuppeteer:1.0'
 				}
 			}
 			steps {
@@ -85,7 +85,7 @@ pipeline {
 				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
 				//sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
 				//sh ''' cd ./${BASE_DIRECTORY} '''
-				sh 'npm install --include dev --prefix ./${BASE_DIRECTORY}'
+				//sh 'npm install --include dev --prefix ./${BASE_DIRECTORY}'
 				sh 'npm --prefix ./${BASE_DIRECTORY} run test '
 			}
 		}
