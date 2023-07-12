@@ -65,13 +65,15 @@ pipeline {
 		}
 
 		stage('2. Run unit Tests') {
+			environment {
+				HOME = "${WORKSPACE}"
+			}
 			//Execute tests if its development branch
 			when {
 				branch 'development'
 			}
 			//execute the code on the testing machine
 			agent {
-				label 'testnode'
 				docker {
 					image 'paulgl721/jestpuppeteer:latest'
 				}
