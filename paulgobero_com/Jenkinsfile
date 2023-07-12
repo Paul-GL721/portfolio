@@ -85,6 +85,7 @@ pipeline {
 				//sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
 				//sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
 				//sh ''' cd ./${BASE_DIRECTORY} '''
+				sh 'npm --prefix ./${BASE_DIRECTORY} run install '
 				sh 'npm --prefix ./${BASE_DIRECTORY} run test '
 			}
 		}
