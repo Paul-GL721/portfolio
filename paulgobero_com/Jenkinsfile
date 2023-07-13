@@ -64,7 +64,7 @@ pipeline {
 			}
 		}
 
-		stage('2. Run unit Tests') {
+		/*stage('2. Run unit Tests') {
 			environment {
 				HOME = "${WORKSPACE}"
 			}
@@ -88,9 +88,9 @@ pipeline {
 				//sh 'npm install --include dev --prefix ./${BASE_DIRECTORY}'
 				//sh 'npm --prefix ./${BASE_DIRECTORY} run test '
 			}
-		}
+		}*/
 
-		/*stage('2. Run unit Tests') {
+		stage('2. Run unit Tests') {
 			//Execute tests if its development branch
 			when {
 				branch 'development'
@@ -106,7 +106,7 @@ pipeline {
 				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
 				sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
 			}
-		}*/
+		}
 
 		/*stage('2. Run unit Tests') {
 			environment {
