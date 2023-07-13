@@ -1,5 +1,5 @@
 
-const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
+const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT, DBIMAGENAME } = require('../configs/config');
 const Skill = require('../models/skill'); 
 const Spec = require('../models/specialisation'); 
 const Author = require('../models/author'); 
@@ -14,6 +14,7 @@ async function testconnection() {
     try {
         const isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
         console.log('Is Test database connected?', isConnected);
+        console.log('Is connected to port', TEST_DB_PORT )
         return isConnected;
     } catch {
         console.log('Cannot connect to test database');

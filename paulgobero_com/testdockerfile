@@ -12,7 +12,7 @@ COPY package.json package-lock.json ./
 
 #4. Install all the dependencies
 #RUN npm install -g npm
-RUN npm install 
+RUN npm install --include dev
 
 #5. Copy all the code into the work directory
 COPY . ./
