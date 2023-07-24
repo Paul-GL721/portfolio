@@ -1,4 +1,239 @@
-//import required modules
+
+const request = require("supertest");
+const myApp = require("../app");
+const testutils = require("../utils/testUtils")
+const session = require('supertest-session');
+const Author = require('../models/author');
+const Specialisation = require('../models/specialisation'); 
+const specialisation_controller = require("../controllers/specialisationController");
+const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+const { test } = require("node:test");
+
+var testSession = null;
+let sampleSpecialisation;
+
+function imageToString(filepath) {
+    //read image file
+    const imagePath = path.resolve(__dirname, filepath);
+    const imageData = fs.readFileSync(imagePath);
+    //convert the imagedata to string
+    const imageString = imageData.toString('base64');
+    return imageString;
+}
+var authenticatedSession;
+    beforeAll(function (done) {
+        testutils.testconnection()
+        //create an owner author document
+        Author.create([
+            { name: {
+                first: 'Tommy',
+                middle: 'Long',
+                last: 'Sharu'
+                },
+                about: {
+                    short_description: 'Site Owner',
+                    full_description: 'This is the site owner'
+                },
+                brandName: 'TestOwner',
+                email: 'test@gmail.com',
+                password: 'test567',
+                authorStatus: 'owner',
+                authorRole: 'admin',
+                socialmedia: {
+                    github: 'https://jestjs.io/docs/mongodb',
+                    linkedin: 'https://jestjs.io/docs/mongodb'
+                },
+                imageName: imageToString('../public/images/img/project1.jpg')
+            },
+            { name: {
+                first: 'Johnny',
+                middle: 'Mitch',
+                last: 'Longly'
+                },
+                about: {
+                    short_description: 'Test user',
+                    full_description: 'User created to test select options'
+                },
+                brandName: 'Johnny',
+                email: 'mitch3@jonny.com',
+                password: 'jony67',
+                authorStatus: 'normaluser',
+                authorRole: 'member',
+                socialmedia: {
+                    github: 'https://jestjs.io/docs/mongodb',
+                    linkedin: 'https://jestjs.io/docs/mongodb'
+                },
+                imageName: imageToString('../public/images/img/project1.jpg')
+            }
+        ])
+        //1. Create a sample specialisation and save it to the database
+        sampleSpecialisation = new Specialisation({ name: 'PostFrontend', description: 'Ability to perform frontend designs' });
+        sampleSpecialisation.save();
+
+        testSession = session(myApp);
+        testSession.post('/portfolio/login')
+            .send({ email: "test@gmail.com", password: "test567" })
+            .expect(200)
+            .end(function (err) {
+                if (err) return done(err);
+                authenticatedSession = testSession;
+                return done();
+            })
+    });
+    
+    afterAll(async () => {
+        // Drop the database
+        await mongoose.connection.dropDatabase();
+        // Close the Mongoose connection
+        await mongoose.connection.close();
+    });
+
+describe('Acessing authenticated pages', function () {
+    it('Get the specialisation form', function (done) {
+        authenticatedSession.get('/portfolio/specialisation/create')
+            .expect(200)
+            .end(done)
+    });
+
+    it('Post data to the specialisation collection', function (done) {
+        authenticatedSession.post('/portfolio/specialisation/create')
+            .send({ specialisationname: 'Frontend', specialisationdescription: 'Ability to perform frontend designs' })
+            .expect(302)
+            .end(done)
+    });
+
+    it('Get a list of available specialisations', function (done) {
+        authenticatedSession.get('/portfolio/specialisation')
+            .expect(200)
+            .expect('Content-Type', /html/)
+            .end(done)
+
+    });
+
+    it('Should successfully update a GET specialisation in the portfolio', async () => {
+        //1. Create a sample specialisation and save it to the database
+        //const sampleSpecialisation = new Specialisation({ name: 'Frontend12', description: 'Ability to perform frontend designs' });
+        //await sampleSpecialisation.save();
+        //2. Update the specialisation name
+        const updatedName = 'Updated Specialisation';
+        sampleSpecialisation.name = updatedName;
+        await sampleSpecialisation.save();
+        //3. Convert the id to string to be used in the res.query
+        const upid = sampleSpecialisation._id.toString()
+        //4. Send the id to the given route
+        const response = await authenticatedSession
+            .get('/portfolio/specialisation/update')
+            .query({ updateid: upid  });
+        //5. Retrieve the updated specialisation from the database
+        const updatedSpecialisation = await Specialisation.findOne({ _id: upid }).exec();
+        //6. Format createdAt and updatedAt as ISO 8601 strings
+        const formatDateString = (date) => new Date(date).toISOString();
+        // Using the spread format create a new array with a 
+        //converted createdAt and updatedAt to formatted date strings
+        const expectedSpecialisation = {
+            ...updatedSpecialisation.toJSON(),
+            createdAt: formatDateString(updatedSpecialisation.createdAt),
+            updatedAt: formatDateString(updatedSpecialisation.updatedAt),
+            _id: updatedSpecialisation._id.toString(),
+        };
+        //7. Assert that the response contains the expected updated specialisation
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(expectedSpecialisation);
+    });
+    
+    it('Should successfully update a POST specialisation in the portfolio', async () => {    
+        //Convert the id to string to be used in the res.query
+        const upid = sampleSpecialisation._id.toString()
+        //Send the update date to the given route
+        const response = await authenticatedSession
+            .post('/portfolio/specialisation/update')
+            .send({ specUpdateid: upid, specialisationname:'Updated Specialisation Name', specialisationdescription:'Updated Specialisation Description',  });
+        //Retrieve the updated specialisation from the database
+        const updatedSpecialisation = await Specialisation.findOne({ _id: upid }).exec();
+        
+        //Assert that the response contains the expected updated specialisation
+        expect(response.status).toBe(302);
+        const redirectPath = response.headers.location;
+        expect(redirectPath).toBe('/portfolio/specialisation');
+        expect(updatedSpecialisation.name).toBe('Updated Specialisation Name');
+        expect(updatedSpecialisation.description).toBe('Updated Specialisation Description');
+    });
+
+    const geturls = [
+        '/portfolio/specialisation/create',
+        '/portfolio/specialisation',
+        '/portfolio/specialisation/update'
+    ];
+    const posturls = [
+        '/portfolio/specialisation/create',
+        '/portfolio/specialisation/update',
+        '/portfolio/specialisation/delete',
+    ];
+    
+    //Using the authenticated session data, make the request, should fail with a 403
+    for (const purl of posturls) {
+        it(`Should return 403 error for unauthorized user trying to POST UPDATE Specialisations @ ${purl}`, async () => {
+            //creates new session object
+            testSession = session(myApp);
+            //Simulate the login process
+            await testSession.post('/portfolio/login')
+                .send({ email: "mitch3@jonny.com", password: "jony67" })
+                .expect(200);
+            const response = await testSession.post(purl);
+            expect(response.status).toBe(403);
+        });
+    }
+    for (const gurl of geturls) {
+        it(`Should return 403 error for unauthorized user trying to GET UPDATE Specialisations  @ ${gurl}`, async () => {
+            //creates new session object
+            testSession = session(myApp);
+            //Simulate the login process
+            await testSession.post('/portfolio/login')
+                .send({ email: "mitch3@jonny.com", password: "jony67" })
+                .expect(200);
+            const response = await testSession.get(gurl);
+            expect(response.status).toBe(403);
+        });   
+    }
+
+    it('Should successfully POST DELETE a specialisation in the portfolio', async () => {
+        /* Create a specialisation to delete and test the message from the json response  */
+        const SpecToDelete = new Specialisation({ name: 'delFrontend12', description: 'Ability to perform frontend designs' });
+        await SpecToDelete.save();
+        
+        const delid = SpecToDelete._id.toString();
+        const response = await authenticatedSession
+            .post('/portfolio/specialisation/delete')
+            .send({specid: delid  });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({success: "Successfully Deleted"});
+    });
+   
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*//import required modules
 const request = require('supertest');
 const app = require('../app');
 const jwt = require('jsonwebtoken');
@@ -51,7 +286,7 @@ describe('Test that links on Specialisation Authenticated page work', () => {
 });
 
 
-/* END TO END CRUD TESTS */
+/* END TO END CRUD TESTS 
 describe('Test CRUD operations on the Specialisation model', () => {
     test('Gets the specialisation create form', async () => {
         if (isConnected) {
@@ -172,4 +407,4 @@ describe("test GET /specialisation: returns a list of all specialisations", () =
         expect(response.status).toBe(401);
     });
 
-});
+});*/
