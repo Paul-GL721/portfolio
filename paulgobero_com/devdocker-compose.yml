@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+    app:
+        image: paulgl721/testnodejs-portfolio
+        env_file:
+            - ./configs/.env.dev
+        build:
+            context: .
+            dockerfile: devdockerfile
+        ports:
+            - "3001:3001"
+        depends_on:
+            - mongo 
+        command: bash -c "sleep 20 && ./wait-for mongo:27017 --timeout=600 -- npm run devstart"
+        networks:
+            - devnetwork
+
+    #mongodb database service
+    mongo:
+        image: paulgl721/testmongo-portfolio
+        build:
+            context: ./mongodb
+            dockerfile: Dockerfile
+        env_file:
+            - ./configs/.env.dev
+        ports:
+            - "27017:27017"
+        restart: always
+        volumes:
+            - developmentdatabase:/data/db     
+        networks:
+            - devnetwork
+    
+    #web-based mongoDB admin interface
+    mongodbadmin:
+        image: mongo-express:latest
+        restart: always
+        ports:
+            - "8081:8081"
+        env_file:
+            - ./configs/.env.dev
+        depends_on:
+            - mongo
+        networks:
+            - devnetwork
+
+volumes:
+    developmentdatabase:
+networks:
+    devnetwork:

@@ -1,0 +1,23 @@
+#1. From the nodejs base image
+FROM node:18.12.0-bullseye
+
+#2. Create a work directory
+WORKDIR /nodeApp
+
+#3. Copy the depency information into the directory
+COPY package.json package-lock.json ./
+
+#4. Install all the depencies
+RUN npm install
+
+#5. Copy all the code into the work directory
+COPY . ./
+
+#6. Script to wait for the database service before starting the app
+RUN apt-get -q update && apt-get -qy install netcat
+COPY wait-for /nodeApp/
+RUN chmod +x /nodeApp/wait-for
+
+#7. Set the application entry point
+CMD ["npm", "run", "serverstart"]
+ENTRYPOINT ["npm", "run", "devstart"]
