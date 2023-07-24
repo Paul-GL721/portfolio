@@ -23,72 +23,72 @@ function imageToString(filepath) {
     return imageString;
 }
 var authenticatedSession;
-    beforeAll(function (done) {
-        testutils.testconnection()
-        //create an owner author document
-        Author.create([
-            { name: {
-                first: 'Tommy',
-                middle: 'Long',
-                last: 'Sharu'
-                },
-                about: {
-                    short_description: 'Site Owner',
-                    full_description: 'This is the site owner'
-                },
-                brandName: 'TestOwner',
-                email: 'test@gmail.com',
-                password: 'test567',
-                authorStatus: 'owner',
-                authorRole: 'admin',
-                socialmedia: {
-                    github: 'https://jestjs.io/docs/mongodb',
-                    linkedin: 'https://jestjs.io/docs/mongodb'
-                },
-                imageName: imageToString('../public/images/img/project1.jpg')
+beforeAll(function (done) {
+    testutils.testconnection()
+    //create an owner author document
+    Author.create([
+        { name: {
+            first: 'Tommy',
+            middle: 'Long',
+            last: 'Sharu'
             },
-            { name: {
-                first: 'Johnny',
-                middle: 'Mitch',
-                last: 'Longly'
-                },
-                about: {
-                    short_description: 'Test user',
-                    full_description: 'User created to test select options'
-                },
-                brandName: 'Johnny',
-                email: 'mitch3@jonny.com',
-                password: 'jony67',
-                authorStatus: 'normaluser',
-                authorRole: 'member',
-                socialmedia: {
-                    github: 'https://jestjs.io/docs/mongodb',
-                    linkedin: 'https://jestjs.io/docs/mongodb'
-                },
-                imageName: imageToString('../public/images/img/project1.jpg')
-            }
-        ])
-        //1. Create a sample specialisation and save it to the database
-        sampleSpecialisation = new Specialisation({ name: 'PostFrontend', description: 'Ability to perform frontend designs' });
-        sampleSpecialisation.save();
+            about: {
+                short_description: 'Site Owner',
+                full_description: 'This is the site owner'
+            },
+            brandName: 'TestOwner',
+            email: 'test@gmail.com',
+            password: 'test567',
+            authorStatus: 'owner',
+            authorRole: 'admin',
+            socialmedia: {
+                github: 'https://jestjs.io/docs/mongodb',
+                linkedin: 'https://jestjs.io/docs/mongodb'
+            },
+            imageName: imageToString('../public/images/img/project1.jpg')
+        },
+        { name: {
+            first: 'Johnny',
+            middle: 'Mitch',
+            last: 'Longly'
+            },
+            about: {
+                short_description: 'Test user',
+                full_description: 'User created to test select options'
+            },
+            brandName: 'Johnny',
+            email: 'mitch3@jonny.com',
+            password: 'jony67',
+            authorStatus: 'normaluser',
+            authorRole: 'member',
+            socialmedia: {
+                github: 'https://jestjs.io/docs/mongodb',
+                linkedin: 'https://jestjs.io/docs/mongodb'
+            },
+            imageName: imageToString('../public/images/img/project1.jpg')
+        }
+    ])
+    //1. Create a sample specialisation and save it to the database
+    sampleSpecialisation = new Specialisation({ name: 'PostFrontend', description: 'Ability to perform frontend designs' });
+    sampleSpecialisation.save();
 
-        testSession = session(myApp);
-        testSession.post('/portfolio/login')
-            .send({ email: "test@gmail.com", password: "test567" })
-            .expect(200)
-            .end(function (err) {
-                if (err) return done(err);
-                authenticatedSession = testSession;
-                return done();
-            })
-    });
-    
-    afterAll(async () => {
-        // Drop the database
-        await mongoose.connection.dropDatabase();
-        // Close the Mongoose connection
-        await mongoose.connection.close();
-    });
+    testSession = session(myApp);
+    testSession.post('/portfolio/login')
+        .send({ email: "test@gmail.com", password: "test567" })
+        .expect(200)
+        .end(function (err) {
+            if (err) return done(err);
+            authenticatedSession = testSession;
+            return done();
+        })
+});
+
+afterAll(async () => {
+    // Drop the database
+    await mongoose.connection.dropDatabase();
+    // Close the Mongoose connection
+    await mongoose.connection.close();
+});
 
 describe('Acessing authenticated pages', function () {
     it('Get the specialisation form', function (done) {
