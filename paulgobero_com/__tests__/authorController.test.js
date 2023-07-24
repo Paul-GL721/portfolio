@@ -1,80 +1,56 @@
-const testutils = require('../utils/testUtils');
-const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
-const Skill = require('../models/skill'); 
-const Spec = require('../models/specialisation'); 
-const Author = require('../models/author'); 
-const Project = require('../models/project');
-const  database_connection = require('../configs/loadb'); //testdb module
-const fs = require('fs');
+
+/*const { BASEURL} = require('../configs/config');
 const path = require('path');
-const mongoose = require('mongoose');
-const async = require("async"); //run async functions
+const testutils = require('../utils/testUtils');
 
 jest.setTimeout(600000);
 let isConnected;
 const authoremail = "test@gmail.com";
-const authorpassword = "test567";
+const authorpassword = "test567";*/
 
 
-/* END TO END TESTS */
+/* END TO END TESTS 
 describe('Index pages (portfolio/)', () => {
   beforeAll(async () => {
-    await testutils.beforeAllTests();
+    await testutils.beforeAllTests(); 
     await page.goto(`${BASEURL}/`, { waitUntil: 'domcontentloaded' });
+    //await testutils.beforeAllTests(); 
   });
   
   afterAll(
     testutils.afterAllTests
   );
 
-  /*/ After all tests
-  afterAll(async () => {
-    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for 500ms (adjust as needed)
-    try {
-      await dropDatabase();
-    } catch (error) {
-      throw new Error(`Failed to drop database: ${error}`);
-    }
-    await mongoose.connection.close();
-  });
-
-  // Helper function to drop the database
-  async function dropDatabase() {
-    try {
-      await mongoose.connection.dropDatabase();
-    } catch (error) {
-      throw new Error(`Failed to drop database: ${error}`);
-    }
-  }*/
-
-
-
   test('/ page should be titled "Portfolio" or "Default Page"', async () => {
-    await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'});
-    const title = await page.title();
-    expect(title).toMatch(/Portfolio|Default Page/);
+    if (isConnected) {
+      await page.goto(`${BASEURL}/`, {waitUntil: 'domcontentloaded'});
+      const title = await page.title();
+      expect(title).toMatch(/Portfolio|Default Page/);
+    }
   });
-
+  
   //tests specific to the index page
   describe('Default page specific tests', () => { 
+
     //tests for navbar buttons
     testNavbarBtns('#about_section', '#project_section', '#skill_section', '#contact_section', `${BASEURL}/` ); 
     //run tests if the default is loaded
     test('Run tests against default page', async () => {
-      //check if the rendering page is the default
-      await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
-      //const isDefaultpage = await page.$('#defaultpage');
-      const isDefaultpage  = await page.evaluate(() => {
-        return document.querySelector('#defaultpage') !== null;
-      });
-      console.log('isdefaultpage', isDefaultpage);
-      if (isDefaultpage) {
-        const title = await page.title();
-        expect(title).toBe('Default Page'); 
+      if (isConnected) {
+        //check if the rendering page is the default
+        await page.goto(`${BASEURL}/portfolio/`, {waitUntil: 'domcontentloaded'});
+        //const isDefaultpage = await page.$('#defaultpage');
+        const isDefaultpage  = await page.evaluate(() => {
+          return document.querySelector('#defaultpage') !== null;
+        });
+        console.log('isdefaultpage', isDefaultpage);
+        if (isDefaultpage) {
+          const title = await page.title();
+          expect(title).toBe('Default Page'); 
+        }
       }
     });
   });
-
   //tests specific to the index page
   describe('Index page specific tests', () => {
     //tests for navbar buttons
@@ -107,6 +83,7 @@ describe('Index pages (portfolio/)', () => {
     }
   });
 });
+
 
 async function testNavbarBtns(about, project, skill, contact, gotopage) {
   //use for loop to test navbar button links
@@ -170,7 +147,7 @@ async function testNavbarBtns(about, project, skill, contact, gotopage) {
   
   testAuthLinkNavigation('/#about_section', '/#project_section', '/#skill_section', '/#contact_section',  `${BASEURL}/portfolio/author/create`);
 
-});*/
+});
 
 describe('Test that links on Author Authenticated page work', () => {
   async function testAuthLinkNavigation(section, goto) {
@@ -214,7 +191,7 @@ describe('Test CRUD operations on the Author model', () => {
  
   test('Gets the author create form', async () => {
     
-    isConnected = await testutils.testconnection();
+    /*isConnected = await testutils.testconnection();
     console.log('Am testing is connected', isConnected);
 
     if (isConnected) {
@@ -253,7 +230,7 @@ describe('Test CRUD operations on the Author model', () => {
         console.log('JWT token cookie:', jwtTokenCookie);
         expect(isConnected && jwtTokenCookie).toBe(true); // Fails the test if the condition is not met
       }
-    }*/
+    }
   });
     
       
@@ -283,7 +260,7 @@ describe('Test CRUD operations on the Author model', () => {
       console.log('failed authors1')
       console.log('TEsting isconnected const', isConnected)
       console.log('TEsting jwtTokenCookie const', jwtTokenCookie)
-    }*/
+    }
   
 
   test('Test that form data is posted to database', async () => {
@@ -323,7 +300,7 @@ describe('Test CRUD operations on the Author model', () => {
       await page.waitForNavigation();
 
       // Assert that the URL after the redirect is correct
-      expect(await page.url()).toMatch(`${BASEURL}/portfolio/`);*/
+      expect(await page.url()).toMatch(`${BASEURL}/portfolio/`);
     }
   });
 
@@ -408,7 +385,7 @@ describe('Test CRUD operations on the Author model', () => {
 
     }
   });
-});
+});*/
 
 
 

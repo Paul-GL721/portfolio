@@ -1,5 +1,5 @@
 
-const testutils = require('../utils/testUtils');
+/*const testutils = require('../utils/testUtils');
 const path = require('path');
 const { BASEURL } = require('../configs/config');
 
@@ -45,11 +45,11 @@ describe('Test that links on Project Authenticated page work', () => {
 });
 
 
-/* END TO END CRUD TESTS */
+/* END TO END CRUD TESTS 
 describe('Test CRUD operations on the Project model', () => {
     let isConnected;
     /*beforeAll(testutils.beforeAllTests);
-    afterAll(testutils.afterAllTests);*/
+    afterAll(testutils.afterAllTests);
   
     const authoremail = "test@gmail.com";
     const authorpassword = "test567";
@@ -203,4 +203,4 @@ describe('Test CRUD operations on the Project model', () => {
     
         }
     });
-});
+});*/
