@@ -12,7 +12,7 @@ services:
             - "3002:3002"
         depends_on:
             - testmongodb 
-        command: bash -c "sleep 20 && ./wait-for testmongodb:27017 --timeout=600 --npm run test:e2e-inside-docker"
+        command: bash -c "sleep 20 && ./wait-for testmongodb:27017 --timeout=600 --npm run test:unit-inside-docker"
         networks:
             - testnetwork
 
