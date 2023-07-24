@@ -22,6 +22,6 @@ done
 
 echo "Running tests"
 
-docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test
+docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test:unit-inside-docker
 
 echo "Finished test-step.sh"
