@@ -95,7 +95,7 @@ pipeline {
 			when {
 				branch 'development'
 			}
-			//execute the code on the testing machine
+			//use jenkins testing node
 			agent {
 				label 'testnode'
 			}
