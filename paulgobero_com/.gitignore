@@ -64,6 +64,7 @@ typings/
 configs/.env.prod
 stageconfigs/
 configs/.env.dev
+configs/.env.test
 
 #ignore ds store
 .DS_Store
