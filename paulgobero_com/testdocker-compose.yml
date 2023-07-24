@@ -12,7 +12,7 @@ services:
             - "3002:3002"
         depends_on:
             - testmongodb 
-        command: bash -c "sleep 20 && ./wait-for testmongodb:27018 --timeout=600 -- npm run test"
+        command: bash -c "sleep 20 && ./wait-for testmongodb:27017 --timeout=600 --npm run test:unit-inside-docker"
         networks:
             - testnetwork
 
@@ -25,7 +25,7 @@ services:
         env_file:
             - ./configs/.env.test
         ports:
-            - "27018:27017"
+            - "27017:27017"
         restart: always
         volumes:
             - testdatabase:/data/db     

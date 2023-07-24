@@ -3,6 +3,7 @@
 //import required modules
 const mongoose = require('mongoose');
 let db = null;
+let isConnectedDB = false;
 
 const database_connection = async (db_name, db_user, db_passwd, db_host, db_port) => {
     // Set mongoose connection options

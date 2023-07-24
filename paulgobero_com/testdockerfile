@@ -12,7 +12,7 @@ COPY package.json package-lock.json ./
 
 #4. Install all the dependencies
 #RUN npm install -g npm
-RUN npm install --include dev
+RUN npm install
 
 #5. Copy all the code into the work directory
 COPY . ./
@@ -25,5 +25,7 @@ RUN chmod +x /nodeApp/wait-for
 #RUN chmod -R o+rwx node_modules/puppeteer/.local-chromium
 
 #7. Set the application entry point
-ENTRYPOINT ["npm", "run", "test"]
-#ENTRYPOINT ["npm", "run", "test"]
+#ENTRYPOINT ["npm", "run", "devstart"]
+ENTRYPOINT ["npm", "run", "test:unit-inside-docker"]
+#ENTRYPOINT ["npm", "run", "test:e2e-inside-docker"]
+#ENTRYPOINT ["sh", "-c", "npm run test:unit-inside-docker && npm run test:e2e-inside-docker"]
