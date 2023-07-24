@@ -10,12 +10,11 @@ const path = require('path');
 const mongoose = require('mongoose');
 const async = require("async"); //run async functions
 
-async function testconnection() {
+async function testconnection() {  
     try {
-        const isConnected = await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-        console.log('Is Test database connected?', isConnected);
+        await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
+        console.log('Is Test database connected?');
         console.log('Is connected to port', TEST_DB_PORT )
-        return isConnected;
     } catch {
         console.log('Cannot connect to test database');
     }   
