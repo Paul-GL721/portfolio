@@ -68,7 +68,7 @@ pipeline {
 			environment {
 				HOME = "${WORKSPACE}"
 			}
-			//Execute tests if its developmentbranch
+			//Execute tests if its development branch
 			when {
 				branch 'development'
 			}
