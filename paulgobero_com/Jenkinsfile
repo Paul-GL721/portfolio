@@ -79,7 +79,7 @@ pipeline {
                 sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml up -d'
 
                 // Wait for the services to be up and running
-                sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml exec testapp bash -c "./wait-for-it.sh testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker"'
+                sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml exec -T testapp bash -c "./wait-for-it.sh testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker"'
 
                 /*// Capture the exit code of the tests
                 script {
