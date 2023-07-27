@@ -4,7 +4,7 @@ services:
     testapp:
         image: paulgl721/testnodejs-portfolio
         env_file:
-            - ./configs/.env.test
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         build:
             context: .
             dockerfile: testdockerfile
@@ -22,8 +22,12 @@ services:
         build:
             context: ./mongodb
             dockerfile: Dockerfile
+            #args:
+                #DB_USER: ${DB_USER:-default_user}
+                #DB_PASSWORD: ${DB_PASSWORD:-default_password}
+                #DB_NAME: ${DB_NAME:-default_database}
         env_file:
-            - ./configs/.env.test
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         ports:
             - "27018:27017"
         restart: always
@@ -39,7 +43,7 @@ services:
         ports:
             - "8082:8081"
         env_file:
-            - ./configs/.env.test
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         depends_on:
             - testmongodb
         networks:
