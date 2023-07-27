@@ -134,7 +134,21 @@ pipeline {
 			agent {
 				label 'testnode'
 			}
-			steps {
+			environment {
+                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
+                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
+            }
+            steps {
+                echo '..................Runing Tests................'
+                // Print the contents of the .env.test file (for verification purposes)
+                sh "cat $ENV_FILE_PATH"
+
+                // Run tests on the code
+                echo "Testing the code in the git repository"
+                sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
+                sh "./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh"
+            }
+			/*steps {
 				echo '..................Runing Tests................'
 				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
 					// Print the contents of the .env.test file (for verification purposes)
@@ -144,7 +158,7 @@ pipeline {
 					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
 					sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
 				}
-			}
+			}*/
 		}
 
 		/*stage('2. Run unit Tests') {
