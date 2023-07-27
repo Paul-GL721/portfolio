@@ -137,6 +137,8 @@ pipeline {
 			steps {
 				echo '..................Runing Tests................'
 				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
+					// Print the contents of the .env.test file (for verification purposes)
+					sh "cat $ENV_FILE_PATH"
 					//run tests on the code
 					echo "Testing the code in the git repository"
 					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
