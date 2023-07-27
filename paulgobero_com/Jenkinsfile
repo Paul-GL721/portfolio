@@ -140,12 +140,9 @@ pipeline {
             }
             steps {
                 echo '..................Runing Tests................'
-                // Print the contents of the .env.test file (for verification purposes)
-                sh "cat $ENV_FILE_PATH"
-
                 // Run tests on the code
                 echo "Testing the code in the git repository"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build --build-arg ENV_FILE_PATH=$ENV_FILE_PATH"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
                 sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
                 sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
             }

@@ -22,12 +22,6 @@ RUN apt-get -q update && apt-get -qy install netcat
 COPY wait-for /nodeApp/
 RUN chmod +x /nodeApp/wait-for
 
-# The build-time argument for the path to the .env.test file (default value if not provided)
-ARG ENV_FILE_PATH=./configs/.env.test
-
-# Copy the .env.test file to the appropriate location inside the container during build
-COPY $ENV_FILE_PATH ./.env.test
-
 #7. Set the application entry point
 #ENTRYPOINT ["npm", "run", "devstart"]
 ENTRYPOINT ["npm", "run", "test:unit-inside-docker"]
