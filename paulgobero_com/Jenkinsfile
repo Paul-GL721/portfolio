@@ -21,7 +21,58 @@ pipeline {
 	}
 
 	stages {
-		stage('1. Merge development and staging branches') {
+		stage('1. Run unit Tests') {
+			//Execute tests if its development branch
+			when {
+				branch 'development'
+			}
+			//use jenkins testing node
+			agent {
+				label 'testnode'
+			}
+			environment {
+                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
+                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
+            }
+            steps {
+				// Perform a dry run merge
+				sh 'git merge --no-commit origin/feature-branch'
+                echo '..................Runing Tests................'
+                // Run tests on the code
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
+
+				// Capture the exit code of the tests
+				script {
+					def testExitCode = sh script: 'docker-compose -f ./paulgobero_com/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
+					if (testExitCode != 0) {
+						echo "Tests failed. Reverted the changes."
+						// Reverse the merge if tests failed
+						sh 'git reset --hard HEAD@{1}'
+						// Push the changes back to the development branch to revert the merge
+						sh 'git push --force origin development'
+						currentBuild.result = 'FAILURE' // Mark the build as failed
+					}
+				}
+
+				// Stop and remove the containers after the tests
+				sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml down'
+            }
+			/*steps {
+				echo '..................Runing Tests................'
+				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
+					// Print the contents of the .env.test file (for verification purposes)
+					sh "cat $ENV_FILE_PATH"
+					//run tests on the code
+					echo "Testing the code in the git repository"
+					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
+					sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
+				}
+			}*/
+		}
+
+		stage('2. Merge development and staging branches') {
 			//Execute if develpment branch
 			when {
 				branch 'development'
@@ -122,62 +173,6 @@ pipeline {
 				//sh ''' cd ./${BASE_DIRECTORY} '''
 				//sh 'npm install --include dev --prefix ./${BASE_DIRECTORY}'
 				//sh 'npm --prefix ./${BASE_DIRECTORY} run test '
-			}
-		}*/
-
-		stage('2. Run unit Tests') {
-			//Execute tests if its development branch
-			when {
-				branch 'development'
-			}
-			//use jenkins testing node
-			agent {
-				label 'testnode'
-			}
-			environment {
-                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
-                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
-            }
-            steps {
-                echo '..................Runing Tests................'
-                // Run tests on the code
-                echo "Testing the code in the git repository"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
-            }
-			/*steps {
-				echo '..................Runing Tests................'
-				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
-					// Print the contents of the .env.test file (for verification purposes)
-					sh "cat $ENV_FILE_PATH"
-					//run tests on the code
-					echo "Testing the code in the git repository"
-					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
-					sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
-				}
-			}*/
-		}
-
-		/*stage('2. Run unit Tests') {
-			environment {
-				HOME = "${WORKSPACE}"
-			}
-			//Execute if its the staging branch
-			when {
-				branch 'development'
-			}
-			//execute the code on the testing machine
-			agent {
-				docker {
-					image 'browserless/chrome'
-				}
-			}
-			steps {
-				echo '..................Runing Tests................'
-				//run tests on the code
-				echo "Testing the code in the git repository"
-				sh 'npm run test'
 			}
 		}*/
 
