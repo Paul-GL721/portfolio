@@ -9,19 +9,17 @@ let envFilePath;
 if (env === 'production') {
   envFilePath = '.env.prod';
 } else if (env === 'test') {
-  envFilePath = '.env.test';
+  // Check if running in Jenkins
+  if (process.env.JENKINS_HOME) {
+    envFilePath = '/mnt/portfolio/envConfigs/.env.test';
+  } else {
+    envFilePath = '.env.test';
+  }
 } else {
   envFilePath = '.env.dev';
 }
 
 const result = dotenv.config({ path: __dirname + '/' + envFilePath });
-
-//loads env variables from local machine
-//const result = dotenv.config({ path: __dirname+'/.env.dev' });
-//const result = dotenv.config({ path: __dirname+'/.env.test' });
-
-//load env variables from docker-compose
-//const result = dotenv.config();
 
 if (result.error) {
     throw result.error;
