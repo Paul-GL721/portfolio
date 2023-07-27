@@ -145,8 +145,9 @@ pipeline {
 
                 // Run tests on the code
                 echo "Testing the code in the git repository"
-                sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
-                sh "./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build --build-arg ENV_FILE_PATH=$ENV_FILE_PATH"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
             }
 			/*steps {
 				echo '..................Runing Tests................'
