@@ -5,22 +5,16 @@ const dotenv = require('dotenv');
 const env = process.env.NODE_ENV || 'development';
 
 let envFilePath;
-let result;
 
 if (env === 'production') {
   envFilePath = '.env.prod';
 } else if (env === 'test') {
-  // Check if running in Jenkins
-  if (process.env.JENKINS_HOME) {
-    result = dotenv.config('/mnt/portfolio/envConfigs/.env.test');
-  } else {
-    envFilePath = '.env.test';
-  }
+  envFilePath = '.env.test';
 } else {
   envFilePath = '.env.dev';
 }
 
-result = dotenv.config({ path: __dirname + '/' + envFilePath });
+const result = dotenv.config({ path: __dirname + '/' + envFilePath });
 
 //loads env variables from local machine
 //const result = dotenv.config({ path: __dirname+'/.env.dev' });
