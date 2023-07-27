@@ -136,7 +136,7 @@ pipeline {
 			}
 			steps {
 				echo '..................Runing Tests................'
-				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfig/.env.test"]) {
+				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
 					//run tests on the code
 					echo "Testing the code in the git repository"
 					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
