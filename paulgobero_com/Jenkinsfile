@@ -71,6 +71,7 @@ pipeline {
 					}
 				}
 			}
+		}
             /*steps {
 				// Perform a dry run merge
 				sh 'git merge --no-commit origin/feature-branch'
