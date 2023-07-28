@@ -1,0 +1,36 @@
+{% extends "portfolio_base.njk" %}
+
+{% set logindetails = { emailid: "loginemail", passwdid: "loginpasswd" } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block navabar %}   {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <section class="py-4 py-xl-5">
+                    <div class="container">
+                        <div class="row d-flex justify-content-center" style="padding-top: 80px;">
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card">
+                                    <div class="card-body text-center d-flex flex-column align-items-center">
+                                        <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"><img class="rounded-circle" width="80" height="80" src="assets/img/testimonials-2.jpg"></div>
+                                        {% include "reuse_login.njk" %}
+                                            <p class="text-muted"><a href="#">Forgot your password?</a></p>
+                                            <div class="font-weight-bold text-danger loginerrors" id="loginErrors"></div>
+                                            <div class="mb-3"><button class="btn btn-success" id="loginbtn" type="submit">Login</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}  {% endblock %}

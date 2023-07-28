@@ -3,7 +3,8 @@
 /**
  * Module dependencies.
  */
-const { DB_PORT, DB_NAME, NODE_PORT } = require('../configs/config');
+const { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT, TEST_NODE_PORT, TEST_NODE_ENV,  NODE_PORT, NODE_ENV, DBIMAGENAME } = require('../configs/config');
+const  database_connection = require('../configs/loadb'); //testdb module
 var app = require('../app');
 var debug = require('debug')('paulgobero-com:server');
 var http = require('http');
@@ -12,7 +13,29 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort( NODE_PORT || '2999');
+//let port = NODE_ENV === 'test' ? TEST_NODE_PORT : NODE_PORT;
+let port;
+const env = process.env.NODE_ENV || 'development';
+console.log('env defind is', env);
+
+//const env = NODE_ENV || TEST_NODE_ENV 
+// Load environment-specific configuration
+if (env  === 'development') {
+  port = normalizePort( NODE_PORT);
+  database_connection( DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ); 
+} 
+if (env  === 'test') {
+  // Load test-specific configuration
+  port = TEST_NODE_PORT;
+  database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
+} 
+if (env === 'production') {
+  // Load production-specific configuration
+}
+console.log('env is', process.env.NODE_ENV);
+console.log('port is', port);
+//const port = normalizePort(NODE_ENV === 'test' ? TEST_NODE_PORT : NODE_PORT || '2999');
+//var port = normalizePort( NODE_PORT || '2999');
 app.set('port', port);
 
 /**
@@ -88,3 +111,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+

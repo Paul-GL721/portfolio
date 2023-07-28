@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block title %}<title>{{ Title }}</title> {% endblock %}
+    {% block csshead %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">    
+        <meta name="description" content="portfolio for lwanga paul gobero">
+        <link rel="icon" type="image/jpeg" sizes="500x500" href="/images/img/testimonials-2.jpg">
+        <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/stylesheets/multiselect.css">
+        <link rel="stylesheet" href="/stylesheets/Navigation-Clean.css">
+        <link rel="stylesheet" href="/stylesheets/suportstyles.css">
+        <link rel="stylesheet" href="/stylesheets/Lato.css">
+        <link rel="stylesheet" href="/stylesheets/animate.min.css">
+        <link rel="stylesheet" href="/stylesheets/Contact-Details-icons.css">
+        <link rel="stylesheet" href="/images/fonts/simple-line-icons.min.css">
+        <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    {% endblock %}
+</head>
+
+<body>
+    <div class="container-fluid">
+        {% block navabar %}
+            <div class="row" id="{{ navbarurl.id | default("navid", true) }}">
+                <div class="col">
+                    <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
+                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brand1.brandName | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                            <div class="collapse navbar-collapse" id="navcol-1">
+                                <ul class="navbar-nav ml-auto">
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.about }}">About</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.projects }}">Projects</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.skills }}">Skills</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.contact }}">Contact</a></li>
+                                </ul>
+                                {% block createOwnerbutton %}      {% endblock %}
+                                {% block loginbutton %}
+                                    <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/portfolio/login"> Admin login</a>
+                                    <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/portfolio/logout">Sign out</a>
+                                {% endblock %}
+                                {% block createDemoUserbutton %}      {% endblock %}                     
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block content %} <!--Will contain the main block content -->  {% endblock %}
+        {% block loginoutModal %} {% include "reuse_loginout_modal.njk" %}  {% endblock %}
+
+        {% block footer %}
+            <footer class="bg-light footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 text-center text-lg-left my-auto h-100">
+                            <ul class="list-inline mb-2">
+                                <li class="list-inline-item"><a href="{{ navbarurl.about }}">About</a></li>
+                                <li class="list-inline-item"><span>⋅</span></li>
+                                <li class="list-inline-item"><a href="{{ navbarurl.contact }}">Contact</a></li>
+                                <li class="list-inline-item"><span>⋅</span></li>
+                            </ul>
+                            <p class="text-muted small mb-4 mb-lg-0">© {{ brand1.brandName | default("brandName", true) }} 2022. All Rights Reserved.</p>
+                        </div>
+                        <div class="col-lg-6 text-center text-lg-right my-auto h-100">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.github | default('#') | urlize | safe }}"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.linkedin| default('#')  | urlize | safe }}"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
+                        </ul>
+                    </div>
+                    </div>
+                </div>
+            </footer>
+        {% endblock %}
+    </div>
+    {% block jsheader %}
+        <script src="/javascripts/jquery.min.js"></script>
+        <script src="/javascripts/bootstrap.min.js"></script>
+        <script src="/javascripts/bs-init.js"></script>
+        <script src="/javascripts/bootstrap-tables/bootstrap-table.min.js"></script>
+        <script src="/javascripts/editable/bootstrap-editable.min.js"></script>
+        <script src="/javascripts/bootstrap-multiselect/multiselect.js"></script>
+        <script src="/javascripts/jquery-validate/jquery.validate.min.js"></script>
+        <script src="/javascripts/jquery-validate/jquery.form.min.js"></script>
+        <script src="/javascripts/js/poppers/popper.min.js"></script>
+        <script src="/javascripts/generaljs/displayimage.js"></script>
+        <script src="/javascripts/generaljs/conditionalSelect.js"></script>
+        <script src="/javascripts/generaljs/multipleSelections.js"></script>
+        <script src="/javascripts/generaljs/validateForm.js"></script>
+        <script src="/javascripts/generaljs/login.js"></script>
+        <script src="/javascripts/generaljs/index.js"></script>
+        <script src="/javascripts/skills/deleteAdmin.js"></script>
+        <script src="/javascripts/skills/updateAdmin.js"></script>
+        <script src="/javascripts/specialisations/deleteAdmin.js"></script>
+        <script src="/javascripts/specialisations/updateAdmin.js"></script>
+        <script src="/javascripts/authors/deleteAdmin.js"></script>
+        <script src="/javascripts/authors/updateAdmin.js"></script>
+        <script src="/javascripts/projects/deleteAdmin.js"></script>
+        <script src="/javascripts/projects/updateAdmin.js"></script>
+    {% endblock %}
+</body>
+
+</html>
