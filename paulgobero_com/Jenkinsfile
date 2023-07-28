@@ -35,39 +35,41 @@ pipeline {
                 ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
             }
 			steps {
-				// Fetch the latest state of the remote branches
-				sh 'git fetch origin'
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					// Fetch the latest state of the remote branches
+					sh 'git fetch origin'
 
-				// Perform a dry run merge
-				sh 'git merge --no-commit origin/staging'
+					// Perform a dry run merge
+					sh 'git merge --no-commit origin/staging'
 
-				// Check if the merge was successful
-				script {
-					def mergeExitCode = sh script: 'git ls-files --unmerged | wc -l', returnStatus: true
-					if (mergeExitCode == 0) {
-						// Start the required services defined in the Docker Compose file
-						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-						sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
+					// Check if the merge was successful
+					script {
+						def mergeExitCode = sh script: 'git ls-files --unmerged | wc -l', returnStatus: true
+						if (mergeExitCode == 0) {
+							// Start the required services defined in the Docker Compose file
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
-						// Run the tests inside the Docker container
-						sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
+							// Run the tests inside the Docker container
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
 
-						// Capture the exit code of the tests
-						def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
-						if (testExitCode != 0) {
-							echo "Tests failed. Reverted the changes."
-							// Reverse the merge if tests failed
-							sh 'git reset --hard HEAD@{1}'
-							// Push the changes back to the development branch to revert the merge
-							sh 'git push --force origin development'
+							// Capture the exit code of the tests
+							def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
+							if (testExitCode != 0) {
+								echo "Tests failed. Reverted the changes."
+								// Reverse the merge if tests failed
+								sh 'git reset --hard HEAD@{1}'
+								// Push the changes back to the development branch to revert the merge
+								sh 'git push --force origin development'
+								currentBuild.result = 'FAILURE' // Mark the build as failed
+							}
+
+							// Stop and remove the containers after the tests
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/Updatestdocker-compose.yml down'
+						} else {
+							echo "Merge failed. Please resolve conflicts and try again."
 							currentBuild.result = 'FAILURE' // Mark the build as failed
 						}
-
-						// Stop and remove the containers after the tests
-						sh 'docker-compose -f ./${BASE_DIRECTORY}/Updatestdocker-compose.yml down'
-					} else {
-						echo "Merge failed. Please resolve conflicts and try again."
-						currentBuild.result = 'FAILURE' // Mark the build as failed
 					}
 				}
 			}
