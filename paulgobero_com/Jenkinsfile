@@ -72,7 +72,7 @@ pipeline {
 							}
 
 							// Stop and remove the containers after the tests
-							sh 'docker-compose -f ./${BASE_DIRECTORY}/Updatestdocker-compose.yml down'
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
 						} else {
 							echo "Merge failed. Please resolve conflicts and try again."
 							currentBuild.result = 'FAILURE' // Mark the build as failed
