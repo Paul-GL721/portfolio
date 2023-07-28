@@ -42,7 +42,7 @@ pipeline {
 					sh 'git fetch origin'
 
 					// Perform a dry run merge
-					sh 'git merge --no-commit origin/staging'
+					sh 'git merge --no-commit origin/development'
 
 					// Check if the merge was successful
 					script {
