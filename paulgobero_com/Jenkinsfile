@@ -53,7 +53,7 @@ pipeline {
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
 							// Run the tests inside the Docker container
-							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker'
 
 							// Output the logs of the containers (for debugging purposes)
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml logs'
