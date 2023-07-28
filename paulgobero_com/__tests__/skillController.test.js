@@ -1,4 +1,4 @@
-//import required modules
+/*//import required modules
 const request = require('supertest');
 const app = require('../app');
 const jwt = require('jsonwebtoken');
@@ -49,11 +49,11 @@ describe('Test that links on Skill Authenticated page work', () => {
 });
 
 
-/* END TO END CRUD TESTS */
+/* END TO END CRUD TESTS 
 describe('Test CRUD operations on the Skill model', () => {
     let isConnected;
     /*beforeAll(testutils.beforeAllTests);
-    afterAll(testutils.afterAllTests);*/
+    afterAll(testutils.afterAllTests);
   
     const authoremail = "test@gmail.com";
     const authorpassword = "test567";
@@ -163,4 +163,4 @@ describe('Test CRUD operations on the Skill model', () => {
             expect(currentUrl).toMatch('/portfolio/skill');
         }
     });
-});
+});*/

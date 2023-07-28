@@ -65,6 +65,7 @@ configs/.env.prod
 <<<<<<< .merge_file_a12436
 stageconfigs/
 configs/.env.dev
+configs/.env.test
 
 #ignore ds store
 .DS_Store

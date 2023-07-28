@@ -1,52 +1,56 @@
 version: '3.8'
 
 services:
-    app:
+    testapp:
         image: paulgl721/testnodejs-portfolio
         env_file:
-            - ./configs/.env.dev
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         build:
             context: .
             dockerfile: testdockerfile
         ports:
-            - "3001:3001"
+            - "3002:3002"
         depends_on:
-            - mongo 
-        command: bash -c "sleep 20 && ./wait-for mongo:27017 --timeout=600 -- npm run devstart"
+            - testmongodb 
+        command: bash -c "./wait-for-it.sh testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker"
         networks:
             - testnetwork
 
     #mongodb database service
-    mongo:
+    testmongodb:
         image: paulgl721/testmongo-portfolio
         build:
             context: ./mongodb
             dockerfile: Dockerfile
+            #args:
+                #DB_USER: ${DB_USER:-default_user}
+                #DB_PASSWORD: ${DB_PASSWORD:-default_password}
+                #DB_NAME: ${DB_NAME:-default_database}
         env_file:
-            - ./configs/.env.dev
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         ports:
-            - "27017:27017"
+            - "27018:27017"
         restart: always
         volumes:
-            - stagedatabase:/data/db     
+            - testdatabase:/data/db     
         networks:
             - testnetwork
     
     #web-based mongoDB admin interface
-    mongodbadmin:
+    testmongodbadmin:
         image: mongo-express:latest
         restart: always
         ports:
-            - "8081:8081"
+            - "8082:8081"
         env_file:
-            - ./configs/.env.dev
+            - ${ENV_FILE_PATH:-./configs/.env.test}
         depends_on:
-            - mongo
+            - testmongodb
         networks:
             - testnetwork
 
 volumes:
-    stagedatabase:
+    testdatabase:
 networks:
     testnetwork:
 

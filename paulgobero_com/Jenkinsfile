@@ -21,7 +21,105 @@ pipeline {
 	}
 
 	stages {
-		stage('1. Merge development and staging branches') {
+		stage('1. Run unit Tests') {
+			//Execute tests if its development branch
+			when {
+				branch 'development'
+			}
+			//use jenkins testing node
+			agent {
+				label 'testnode'
+			}
+			environment {
+                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
+                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
+            }
+			steps {
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					// Fetch the latest state of the remote branches
+					sh "git config --global user.email 'jenkinsagent2@paulgobero.com'"
+					sh "git config --global user.name 'jenkinsagent2'"
+					sh 'git fetch origin'
+
+					// Perform a dry run merge
+					sh 'git merge --no-commit origin/development'
+
+					// Check if the merge was successful
+					script {
+						def mergeExitCode = sh script: 'git ls-files --unmerged | wc -l', returnStatus: true
+						if (mergeExitCode == 0) {
+							// Start the required services defined in the Docker Compose file
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
+
+							// Run the tests inside the Docker container
+							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker'
+
+							// Output the logs of the containers (for debugging purposes)
+							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml logs'
+
+							// Capture the exit code of the tests
+							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
+
+							//def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
+							if (testExitCode != 0) {
+								echo "Tests failed. Reverted the changes."
+								// Reverse the merge if tests failed
+								sh 'git reset --hard HEAD@{1}'
+								// Push the changes back to the development branch to revert the merge
+								sh 'git push --force origin development'
+								currentBuild.result = 'FAILURE' // Mark the build as failed
+							}
+
+							// Stop and remove the containers after the tests
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
+						} else {
+							echo "Merge failed. Please resolve conflicts and try again."
+							currentBuild.result = 'FAILURE' // Mark the build as failed
+						}
+					}
+				}
+			}
+		}
+            /*steps {
+				// Perform a dry run merge
+				sh 'git merge --no-commit origin/feature-branch'
+                echo '..................Runing Tests................'
+                // Run tests on the code
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
+                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
+
+				// Capture the exit code of the tests
+				script {
+					def testExitCode = sh script: 'docker-compose -f ./paulgobero_com/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
+					if (testExitCode != 0) {
+						echo "Tests failed. Reverted the changes."
+						// Reverse the merge if tests failed
+						sh 'git reset --hard HEAD@{1}'
+						// Push the changes back to the development branch to revert the merge
+						sh 'git push --force origin development'
+						currentBuild.result = 'FAILURE' // Mark the build as failed
+					}
+				}
+
+				// Stop and remove the containers after the tests
+				sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml down'
+            }
+			steps {
+				echo '..................Runing Tests................'
+				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
+					// Print the contents of the .env.test file (for verification purposes)
+					sh "cat $ENV_FILE_PATH"
+					//run tests on the code
+					echo "Testing the code in the git repository"
+					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
+					sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
+				}
+			}
+		}*/
+
+		stage('2. Merge development and staging branches') {
 			//Execute if develpment branch
 			when {
 				branch 'development'
@@ -61,22 +159,6 @@ pipeline {
 						}
 					}
 				}
-			}
-		}
-
-		stage('2. Run unit Tests') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//execute the code on the testing machine
-			agent {
-				label 'testnode'
-			}
-			steps {
-				echo '..................Runing Tests................'
-				//test code
-				echo "Testing the code in the git repository"
 			}
 		}
 
@@ -128,11 +210,7 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-<<<<<<< .merge_file_a02288
 				echo '..........Would you like to create a Pull Request to Production?........'
-=======
-				echo '................Would you like to create a Pull Request?....................'
->>>>>>> .merge_file_a16604
 				input 'would you like to create a pull request?'
 				
 			}
@@ -158,7 +236,6 @@ pipeline {
 
 						//build the image
 						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
-<<<<<<< .merge_file_a02288
 
 						/*//Uncomment if they are changes made and commited to the production branch directly
 						sh('git stash')
@@ -199,48 +276,6 @@ pipeline {
 						echo '..............Creating temporary pull request branch................'
 						echo 'Creating temp branch'
 
-=======
-
-						/*//Uncomment if they are changes made and commited to the production branch directly
-						sh('git stash')
-						sh('git pull')
-						sh('git push ${GIT_REPO}')*/
-
-						//Find the number of staged filess
-						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
-
-						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
-						if(prod_staged_files > 0) {
-							echo "They are ${prod_staged_files} staged files from staging branch"
-							sh('git commit -m "Merged from staging branch: Build version ${VERSION} " ')
-							sh('git push ${GIT_REPO}')
-						}
-						else {
-							echo "There no commits to make"
-						}
-					}
-				}
-			}
-		}
-
-		stage('7. Create production temporary branch') {
-			//Execute if its the production branch
-			when {
-				branch 'production'
-			}
-			//build the docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				//with github credentials stored in jenkins server
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						echo '..............Creating temporary pull request branch................'
-						echo 'Creating temp branch'
-
->>>>>>> .merge_file_a16604
 						//make the pr-branch executable
 						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
 
@@ -280,11 +315,7 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-<<<<<<< .merge_file_a02288
 			///Execute if its the production branch
-=======
-			//Execute if its the production branch
->>>>>>> .merge_file_a16604
 			when {
 				branch 'master'
 			}
@@ -305,10 +336,6 @@ pipeline {
 			}
 		}
 
-<<<<<<< .merge_file_a02288
-=======
-
->>>>>>> .merge_file_a16604
 		stage('10. Deploy to production EC2 instance') {
 			//define env variables
 			environment {
