@@ -53,13 +53,9 @@ pipeline {
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
 							// Run the tests inside the Docker container
-							// Run the tests inside the Docker container with a timeout of 1 minute
-							timeout(time: 1, unit: 'MINUTES') {
-								sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
-							}
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker'
 
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
 
 							// Capture the exit code of the tests
 							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
