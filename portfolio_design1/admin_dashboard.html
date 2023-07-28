@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home - Brand</title>
+    <meta name="description" content="portfolio for lwanga paul gobero">
+    <link rel="icon" type="image/png" sizes="500x500" href="assets/img/My%20project.png">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Lato.css">
+    <link rel="stylesheet" href="assets/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="assets/css/Contact-Details-icons.css">
+    <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    <link rel="stylesheet" href="assets/css/multiselect.css">
+    <link rel="stylesheet" href="assets/css/suportstyles.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
+                    <div class="container-fluid"><a class="navbar-brand" href="#">Brand Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navcol-1">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item"><a class="nav-link" href="#about_section">About</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#project_section">Projects</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#contact_section">Contact</a></li>
+                            </ul><a class="btn btn-outline-danger" role="button" id="projectcreateuser" data-toggle="tooltip" data-placement="top" title="Create your User Profile" href="login.html">Create Owner</a><a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="login.html">login</a><a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="login.html">Sign out</a><a class="btn btn-outline-danger" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used by user to quickly test live demos" href="login.html">Demo User</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <section id="adminabout" class="showcase" style="padding-top: 80px;">
+            <div class="row no-gutters">
+                <div class="col-lg-12 text-center text-white order-lg-2">
+                    <div>
+                        <h3 class="font-weight-bold text-dark">brandName You are now logged in!</h3><img class="rounded-circle img-fluid" src="assets/img/My%20project.png" style="text-align: center;" width="150px" height="150px">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="text-center bg-light features-icons" id="adminpages" style="background: rgb(248, 249, 250);padding-bottom: 0px;padding-top: 50px;">
+            <div class="row">
+                <div class="col">
+                    <p style="text-align: left;font-size: 20px;">CREATE, READ, UPDATE and DELETE from the database</p>
+                    <div class="modal fade" role="dialog" tabindex="-1" id="loginout">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <p class="lead">Would you like to stay signed in?</p>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-primary" id="btnstaysignedin" type="button" data-dismiss="modal">Stay signed in</button><button class="btn btn-success" id="btnlogout" type="button" data-dismiss="modal">Logout</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div></div>
+                        <h3>Skills&nbsp;</h3>
+                        <p class="lead text-left mb-0">CRUD operations on the skills in the database.</p>
+                        <div>
+                            <ul style="font-size: 20px;">
+                                <li class="text-left"><a href="#">Add a new skill.</a></li>
+                                <li class="text-left"><a href="#">View, Update, and Delete existing skill(s).</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div></div>
+                        <h3>Specializations</h3>
+                        <p class="lead text-left mb-0">CRUD operations on the specializations in the database.</p>
+                        <div>
+                            <ul style="font-size: 20px;">
+                                <li class="text-left"><a href="#">Add a new specialization.</a></li>
+                                <li class="text-left"><a href="#">View, Update, and Delete existing specialization(s).</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div></div>
+                        <h3>Authors</h3>
+                        <p class="lead text-left mb-0">CRUD operations on the authors in the database.</p>
+                        <div>
+                            <ul style="font-size: 20px;">
+                                <li class="text-left"><a href="#">Add a new author.</a></li>
+                                <li class="text-left"><a href="#">View, Update, and Delete existing author(s).</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div></div>
+                        <h3>Project</h3>
+                        <p class="lead text-left mb-0">CRUD operations on projects in the database.</p>
+                        <div>
+                            <ul style="font-size: 20px;">
+                                <li class="text-left"><a href="#">Add a new project.</a></li>
+                                <li class="text-left"><a href="#">View, Update, and Delete existing project(s).</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="bg-light footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 text-center text-lg-left my-auto h-100">
+                        <ul class="list-inline mb-2">
+                            <li class="list-inline-item"><a href="#about_section">About</a></li>
+                            <li class="list-inline-item"><span>⋅</span></li>
+                            <li class="list-inline-item"><a href="#">Contact</a></li>
+                            <li class="list-inline-item"><span>⋅</span></li>
+                            <li class="list-inline-item"><a href="#">Terms of &nbsp;Use</a></li>
+                            <li class="list-inline-item"><span>⋅</span></li>
+                            <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                        </ul>
+                        <p class="text-muted small mb-4 mb-lg-0">© brandname 2022. All Rights Reserved.</p>
+                    </div>
+                    <div class="col-lg-6 text-center text-lg-right my-auto h-100">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="#"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/authors/deleteAdmin.js"></script>
+    <script src="assets/js/authors/updateAdmin.js"></script>
+    <script src="assets/js/bootstrap-multiselect/multiselect.js"></script>
+    <script src="assets/js/bootstrap-tables/bootstrap-table.min.js"></script>
+    <script src="assets/js/editable/bootstrap-editable.min.js"></script>
+    <script src="assets/js/generaljs/conditionalSelect.js"></script>
+    <script src="assets/js/generaljs/displayimage.js"></script>
+    <script src="assets/js/generaljs/login.js"></script>
+    <script src="assets/js/generaljs/multipleSelections.js"></script>
+    <script src="assets/js/generaljs/validateForm.js"></script>
+    <script src="assets/js/jquery-validate/jquery.validate.min.js"></script>
+    <script src="assets/js/poppers/popper.min.js"></script>
+    <script src="assets/js/projects/deleteAdmin.js"></script>
+    <script src="assets/js/projects/updateAdmin.js"></script>
+    <script src="assets/js/skills/deleteAdmin.js"></script>
+    <script src="assets/js/skills/updateAdmin.js"></script>
+</body>
+
+</html>

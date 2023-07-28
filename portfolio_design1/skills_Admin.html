@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>portfolio_design1</title>
+    <meta name="description" content="portfolio for lwanga paul gobero">
+    <link rel="icon" type="image/png" sizes="500x500" href="assets/img/My%20project.png">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Lato.css">
+    <link rel="stylesheet" href="assets/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="assets/css/Contact-Details-icons.css">
+    <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    <link rel="stylesheet" href="assets/css/multiselect.css">
+    <link rel="stylesheet" href="assets/css/suportstyles.css">
+</head>
+
+<body>
+    <section class="formsection">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-sm-12 col-md-10">
+                <h3 style="text-align: center;">Skills Admin Form</h3>
+                <div id="toolbar"><button class="btn btn-secondary" id="skillbtnAdd" type="button" title="Add New Skill"><i class="icon-plus tableicons"></i>Add<a href="create_skill"></a></button><button class="btn btn-danger" id="skillbtnDelete" type="button" title="Delete Selected  Row(s)"><i class="icon-trash tableicons"></i>Delete</button></div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="skilltable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
+                        <thead>
+                            <tr>
+                                <th data-checkbox="true" data-field="state"></th>
+                                <th id="skills_id" data-field="skilid">id</th>
+                                <th id="cellicon" data-field="imageUrl">Icon</th>
+                                <th id="cellskillname" data-field="imageName">Skill Name</th>
+                                <th id="cellskilldesc" data-field="Description">Skill Description</th>
+                                <th id="cellactions" data-field="Actions" style="width: 30%;min-width: 10px;max-width: 30px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>{{ skill._id }}</td>
+                                <td><img class="rounded-circle img-fluid" src="{{ skill.imageUrl }}" width="40" height="40"></td>
+                                <td>{{ skill.name }}</td>
+                                <td>{{ skill.description }}</td>
+                                <td><a title="Edit Row"><i class="icon-pencil tableicons edit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="skillUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Skill</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        <p>The content of your modal.</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="submit">Save changes</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </section>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/authors/deleteAdmin.js"></script>
+    <script src="assets/js/authors/updateAdmin.js"></script>
+    <script src="assets/js/bootstrap-multiselect/multiselect.js"></script>
+    <script src="assets/js/bootstrap-tables/bootstrap-table.min.js"></script>
+    <script src="assets/js/editable/bootstrap-editable.min.js"></script>
+    <script src="assets/js/generaljs/conditionalSelect.js"></script>
+    <script src="assets/js/generaljs/displayimage.js"></script>
+    <script src="assets/js/generaljs/login.js"></script>
+    <script src="assets/js/generaljs/multipleSelections.js"></script>
+    <script src="assets/js/generaljs/validateForm.js"></script>
+    <script src="assets/js/jquery-validate/jquery.validate.min.js"></script>
+    <script src="assets/js/poppers/popper.min.js"></script>
+    <script src="assets/js/projects/deleteAdmin.js"></script>
+    <script src="assets/js/projects/updateAdmin.js"></script>
+    <script src="assets/js/skills/deleteAdmin.js"></script>
+    <script src="assets/js/skills/updateAdmin.js"></script>
+</body>
+
+</html>

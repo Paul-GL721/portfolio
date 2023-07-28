@@ -1,0 +1,16 @@
+.formsection {
+  padding-top: 80px;
+}
+
+.tableid {
+  display: none;
+}
+
+.formValidationError {
+  color: red;
+}
+
+#dloginbtn, #projectlogout, #projectcreatedemouser {
+  display: none;
+}
+

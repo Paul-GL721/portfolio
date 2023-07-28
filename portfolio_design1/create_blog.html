@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>portfolio_design1</title>
+    <meta name="description" content="portfolio for lwanga paul gobero">
+    <link rel="icon" type="image/png" sizes="500x500" href="assets/img/My%20project.png">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Lato.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="assets/css/Contact-Details-icons.css">
+    <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    <link rel="stylesheet" href="assets/css/multiselect.css">
+    <link rel="stylesheet" href="assets/css/suportstyles.css">
+</head>
+
+<body>
+    <div class="container">
+        <section class="formsection">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-12 col-sm-12 col-md-8" id="main_div">
+                    <div class="page-header">
+                        <h1 class="text-center projheading"><em><span style="text-decoration: underline;">Create Blog Article</span></em></h1>
+                    </div>
+                    <form id="Blogform" name="Blogform" action="http://localhost/glsranchers/Database1/Backend/Entryinfo/entrysubmtvals.php" method="post" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogtitle"><strong>Title:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="blogtitle" name="blogtitle" placeholder="Enter Blog Title"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogauthor"><strong>Author:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><select class="form-control" id="blogauthor" name="blogauthor">
+                                    <option value="undefined" selected="">Select registered Author</option>
+                                    <option value="12">This is item 1</option>
+                                </select></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogkeywords"><strong>Keywords:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogkeywords" name="blogkeywords" placeholder="Blog Keywords" rows="3" cols="10"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogsummary"><strong>Summary:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogsummary" name="blogsummary" placeholder="Enter blog Abstract" rows="5" cols="10"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogintro"><strong>Introduction:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogintro" name="blogintro" placeholder="Blog Introduction" rows="5" cols="10"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogbody"><strong>Body:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogbody" name="blogbody" placeholder="Blog Body" rows="5" cols="10"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogconclusion"><strong>Conclusion:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="blogconclusion" name="blogconclusion" placeholder="Blog Conclusion" rows="2" cols="10"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="blogstatus"><strong>Status:</strong></label></div>
+                            <div class="col-4 col-sm-4 col-md-4">
+                                <div class="form-check text-center"><input class="form-check-input" type="radio" id="statuscomplete" name="statuscomplete" value="statuscomplete"><label class="form-check-label" for="statuscomplete">Complete</label></div>
+                            </div>
+                            <div class="col-3 col-sm-3 col-md-4">
+                                <div class="form-check"><input class="form-check-input" type="radio" id="statusincomplete" name="statusincomplete" value="statusincomplete"><label class="form-check-label" for="statusincomplete">Incomplete</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 offset-4"><button class="btn btn-success text-center" id="blogsubmitbutton" name="blogsubmitbutton" type="submit">Submit</button></div>
+                        </div>
+                    </form>
+                    <div class="form-group row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 success" id="response"></div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </section>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/authors/deleteAdmin.js"></script>
+    <script src="assets/js/authors/updateAdmin.js"></script>
+    <script src="assets/js/bootstrap-multiselect/multiselect.js"></script>
+    <script src="assets/js/bootstrap-tables/bootstrap-table.min.js"></script>
+    <script src="assets/js/editable/bootstrap-editable.min.js"></script>
+    <script src="assets/js/generaljs/conditionalSelect.js"></script>
+    <script src="assets/js/generaljs/displayimage.js"></script>
+    <script src="assets/js/generaljs/login.js"></script>
+    <script src="assets/js/generaljs/multipleSelections.js"></script>
+    <script src="assets/js/generaljs/validateForm.js"></script>
+    <script src="assets/js/jquery-validate/jquery.validate.min.js"></script>
+    <script src="assets/js/poppers/popper.min.js"></script>
+    <script src="assets/js/projects/deleteAdmin.js"></script>
+    <script src="assets/js/projects/updateAdmin.js"></script>
+    <script src="assets/js/skills/deleteAdmin.js"></script>
+    <script src="assets/js/skills/updateAdmin.js"></script>
+</body>
+
+</html>

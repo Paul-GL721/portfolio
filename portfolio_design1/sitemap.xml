@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    <url>
+        <loc>https://www.paulgobero.com/admin_dashboard.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/author_Admin.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/create_author.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/create_blog.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/create_project.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/create_skill.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/create_specialisation.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/demologin.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/login.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/project_Admin.html</loc>
+    </url>
+    <url>
+        <loc>https://www.paulgobero.com/skills_Admin.html</loc>
+    </url>
+</urlset>
