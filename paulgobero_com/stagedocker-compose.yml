@@ -78,10 +78,10 @@ services:
     #web-based mongoDB admin interface
     stagemongodbadmin:
         image: mongo-express:latest
-        #ports:
-            #- "8082:8082"
-        expose:
-            - 8082
+        ports:
+            - "8082:8082"
+        #expose:
+            #- 8082
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
         depends_on:
@@ -89,6 +89,7 @@ services:
         networks: 
             - traefik_proxy-network #links to traefik proxy
             - stagedbadmin-network #link to database
+        command: bash -c "./wait-for-it.sh mongo:27017 --timeout=600 -- /docker-entrypoint.sh" #wait for mongodb
         deploy: #deploy on the manager node
             mode: replicated
             replicas: 1
