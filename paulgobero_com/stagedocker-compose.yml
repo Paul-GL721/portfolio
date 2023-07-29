@@ -17,7 +17,7 @@ services:
         networks: #networks to db and reverse proxy
             - stagedbapp-network
             - traefik_proxy-network
-        command: bash -c "./wait-for-it.sh mongo:27020 --timeout=600 -- npm run devstart" #wait for mongodb
+        command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run devstart" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -53,13 +53,13 @@ services:
         image: paulgl721/stagingmongdb:stagingVJVERSION
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.stage
-        ports:
-            - "27020:27017"
+        #ports:
+            #- "27020:27017"
         volumes:
             - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
         #command: mongod --port 27020
-        #expose:
-            #- 27020
+        expose:
+            - 27017
         networks: #networks to application and admin
             - stagedbapp-network
             - stagedbadmin-network
@@ -79,7 +79,7 @@ services:
     stagemongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8082:8082"
+            - "8082:8081"
         #expose:
             #- 8082
         env_file:
