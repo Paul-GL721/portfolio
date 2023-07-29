@@ -17,7 +17,7 @@ services:
         networks: #networks to db and reverse proxy
             - stagedbapp-network
             - traefik_proxy-network
-        command: bash -c "./wait-for-it.sh testmongodb:27020 --timeout=600 -- npm run devstart" 
+        command: bash -c "./wait-for-it.sh testmongodb:27020 --timeout=600 -- npm run devstart" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
