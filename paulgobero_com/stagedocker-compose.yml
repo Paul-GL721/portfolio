@@ -7,7 +7,7 @@ services:
             context: .
             dockerfile: stagedockerfile
         volumes:       
-            - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/stageconfigs/.env.stage
+            - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
         ports:
             - "3001:3001"
         #expose:
@@ -16,7 +16,8 @@ services:
             - mongo
         networks: #networks to db and reverse proxy
             - stagedbapp-network
-            - traefik_proxy-network 
+            - traefik_proxy-network
+        command: bash -c "./wait-for-it.sh testmongodb:27020 --timeout=600 -- npm run devstart" 
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
