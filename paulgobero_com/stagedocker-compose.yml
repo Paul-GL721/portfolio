@@ -90,7 +90,7 @@ services:
             - traefik_proxy-network #links to traefik proxy
             - stagedbadmin-network #link to database
         #command: bash -c "./wait-for-it.sh mongo:27020 --timeout=600 -- /docker-entrypoint.sh" #wait for mongodb
-        deploy: #deploy on the manager node
+        deploy: #deploy on the worker node
             mode: replicated
             replicas: 1
             placement:
