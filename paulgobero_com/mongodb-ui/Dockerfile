@@ -9,4 +9,4 @@ WORKDIR /mongodbUI
 COPY wait-for /mongodbUI/
 RUN chmod +x /mongodbUI/wait-for
 
-ENTRYPOINT ["/mongodbUI/wait-for", "mongo:27017", "--timeout=90", "--", "docker-entrypoint.sh"]
+ENTRYPOINT ["./mongodbUI/wait-for", "mongo:27017", "--timeout=90", "--", "docker-entrypoint.sh"]
