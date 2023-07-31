@@ -3,11 +3,6 @@
 
 FROM mongo:6
 
-#set default values
-#ARG DB_USER
-#ARG DB_PASSWORD
-#ARG DB_NAME
-
 COPY mongod.conf.orig /etc
 # MongoDB configuration
 #COPY ./mongod.conf.orig /etc/mongod.conf
