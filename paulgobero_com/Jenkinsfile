@@ -300,7 +300,8 @@ pipeline {
 					echo '.............Creating pull request on production branch..........'
 					//login, check githubcli pr status, create message and logout
 					sh 'gh --version'					
-					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					//sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'					
 					echo '.............Creating pull request on master branch..........'
 					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					
