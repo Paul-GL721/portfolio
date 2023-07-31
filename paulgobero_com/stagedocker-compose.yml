@@ -79,7 +79,7 @@ services:
     stagemongodbadmin:
         image: mongo-express:latest
         ports:
-            - "8081:8081"
+            - "8082:8081"
         #expose:
             #- 8082
         env_file:
@@ -99,7 +99,7 @@ services:
             labels: #generate reverse proxy configurations
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.stagemongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.stagemongodbadmin-service.loadbalancer.server.port=8081"
+                - "traefik.http.services.stagemongodbadmin-service.loadbalancer.server.port=8082"
                 - "traefik.http.routers.stagemongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.stagemongodbadmin.tls=true" #enable tls
                 - "traefik.http.routers.stagemongodbadmin.tls.certresolver=production" #certificate
