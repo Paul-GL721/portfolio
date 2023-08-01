@@ -52,12 +52,6 @@ pipeline {
 							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
-							// Run the tests inside the Docker container
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker'
-
-							// Output the logs of the containers (for debugging purposes)
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml logs'
-
 							// Capture the exit code of the tests
 							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
 
@@ -300,8 +294,8 @@ pipeline {
 					echo '.............Creating pull request on production branch..........'
 					//login, check githubcli pr status, create message and logout
 					sh 'gh --version'					
-					//sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-					sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
+					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					//sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'					
 					echo '.............Creating pull request on master branch..........'
 					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					
