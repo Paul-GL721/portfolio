@@ -6,6 +6,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+        volumes:
+            - /mnt/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         ports:
             - "3000:3000"
         depends_on:
@@ -13,6 +15,7 @@ services:
         networks: #networks to db and reverse proxy
             - dbapp-network
             - traefik_proxy-network 
+        command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run start" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
