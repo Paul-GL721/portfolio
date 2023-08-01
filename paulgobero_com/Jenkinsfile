@@ -52,12 +52,6 @@ pipeline {
 							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
-							// Run the tests inside the Docker container
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker'
-
-							// Output the logs of the containers (for debugging purposes)
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml logs'
-
 							// Capture the exit code of the tests
 							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
 
@@ -145,7 +139,7 @@ pipeline {
 						sh('git pull')
 						sh('git push ${GIT_REPO}')*/
 
-						//Find the number of staged files
+						//Find the number of staged files 
 						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
 						//if staged_files are more than zero, commit the files and push to remote repo
@@ -301,6 +295,7 @@ pipeline {
 					//login, check githubcli pr status, create message and logout
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					//sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'					
 					echo '.............Creating pull request on master branch..........'
 					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					

@@ -62,3 +62,16 @@ typings/
 
 #ignore env variables
 configs/.env.prod
+stageconfigs/
+configs/.env.dev
+configs/.env.test
+configs/.env.stage
+
+#ignore ds store
+.DS_Store
+.DS_Store
+
+globalConfig.json
+
+
+
