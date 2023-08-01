@@ -6,6 +6,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+        volumes:
+            - /mnt/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         ports:
             - "3000:3000"
         depends_on:
