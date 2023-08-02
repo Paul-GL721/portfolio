@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
     app: #node.js app
-        image: paulgl721/nodejs-portfolio:JVERSION
+        image: paulgl721/nodejs-portfolio:prodappJVERSION
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: prodDockerfile
         volumes:
             - /mnt/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         ports:
@@ -15,7 +15,7 @@ services:
         networks: #networks to db and reverse proxy
             - dbapp-network
             - traefik_proxy-network 
-        #command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run start" #wait for mongodb
+        command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run start" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -48,7 +48,7 @@ services:
         build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
-        image: paulgl721/mongdb:prodVJVERSION
+        image: paulgl721/mongdb:proddbVJVERSION
         #image: mongo:6
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.prod
