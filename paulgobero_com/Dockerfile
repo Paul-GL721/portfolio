@@ -19,4 +19,4 @@ COPY wait-for /nodeApp/
 RUN chmod +x /nodeApp/wait-for
 
 #7. Set the application entry point
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
