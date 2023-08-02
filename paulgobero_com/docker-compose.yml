@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
     app: #node.js app
-        image: paulgl721/nodejs-portfolio:prodappJVERSION
+        image: paulgl721/nodejs-portfolio:prodappVJVERSION
         build:
             context: .
             dockerfile: prodDockerfile
@@ -48,7 +48,7 @@ services:
         build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
-        image: paulgl721/mongdb:proddbJVERSION
+        image: paulgl721/mongdb:proddbVJVERSION
         #image: mongo:6
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.prod
