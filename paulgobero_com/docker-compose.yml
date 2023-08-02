@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-    app:
+    app: #node.js app
         image: paulgl721/nodejs-portfolio:JVERSION
         build:
             context: .
