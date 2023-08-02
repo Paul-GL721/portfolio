@@ -119,7 +119,7 @@ pipeline {
 			}
 		}
 
-		stage('3. Build and taged staging image') {
+		stage('3. Build and tag staging image') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
