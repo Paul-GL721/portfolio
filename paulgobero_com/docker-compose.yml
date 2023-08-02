@@ -48,7 +48,7 @@ services:
         build: #build staging mongodb database
             context: ./mongodb
             dockerfile: Dockerfile
-        image: paulgl721/mongdb:proddbVJVERSION
+        image: paulgl721/mongdb:proddbJVERSION
         #image: mongo:6
         env_file:
             - /mnt/portfolio/paulgobero/configs/.env.prod
