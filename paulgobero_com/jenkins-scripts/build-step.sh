@@ -20,7 +20,7 @@ whoami
 echo usr=$USER
 
 docker push paulgl721/nodejs-portfolio:prodappV$VERSION
-docker push paulgl721/mongdb:proddbVJVERSION
+docker push paulgl721/mongdb:proddbV$VERSION
 HERE
 
 #sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
