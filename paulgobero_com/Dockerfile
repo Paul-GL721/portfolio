@@ -8,7 +8,7 @@ WORKDIR /nodeApp
 copy package.json package-lock.json ./
 
 #4. Install all the depencies
-RUN npm install
+RUN npm install --dependencies
 
 #5. Copy all the code into the work directory
 COPY . ./
