@@ -12,7 +12,7 @@ git checkout -b tmpproductionV$VERSION
 
 #If any of these files or folder changes in the production branch
 #merge them into the temporary production branch
-git checkout origin/production paulgobero_com/ansible paulgobero_com/bin paulgobero_com/configs paulgobero_com/controllers paulgobero_com/jenkins-scripts/build-step.sh paulgobero_com/models paulgobero_com/mongodb paulgobero_com/public paulgobero_com/routes paulgobero_com/uploads paulgobero_com/utils paulgobero_com/views paulgobero_com/.dockerignore paulgobero_com/.gitignore paulgobero_com/app.js paulgobero_com/docker-compose.yml paulgobero_com/Dockerfile paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json paulgobero_com/wait-for
+git checkout origin/production paulgobero_com/ansible paulgobero_com/bin paulgobero_com/configs paulgobero_com/controllers paulgobero_com/jenkins-scripts/build-step.sh paulgobero_com/models paulgobero_com/mongodb paulgobero_com/public paulgobero_com/routes paulgobero_com/uploads paulgobero_com/utils paulgobero_com/views paulgobero_com/.dockerignore paulgobero_com/.gitignore paulgobero_com/app.js paulgobero_com/docker-compose.yml paulgobero_com/prodDockerfile paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json paulgobero_com/wait-for
 
 #git add origin/staging paulgobero_com/bin paulgobero_com/configs paulgobero_com/models paulgobero_com/mongodb/Dockerfile paulgobero_com/public paulgobero_com/routes paulgobero_com/views paulgobero_com/app.js paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json
 
