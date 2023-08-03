@@ -102,7 +102,7 @@ services:
                 - "traefik.http.services.stagemongodbadmin-service.loadbalancer.server.port=8082"
                 - "traefik.http.routers.stagemongodbadmin.entrypoints=web,websecure"
                 - "traefik.http.routers.stagemongodbadmin.tls=true" #enable tls
-                #- "traefik.http.routers.stagemongodbadmin.tls.certresolver=production" #certificate
+                - "traefik.http.routers.stagemongodbadmin.tls.certresolver=production" #certificate
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 7s
