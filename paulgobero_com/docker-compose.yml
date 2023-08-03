@@ -55,7 +55,7 @@ services:
         ports:
             - "27017:27017"
         volumes:
-            - /mnt/portfolio/paulgobero/database:/data/db
+            - /mnt/portfolio/paulgobero/database/prodDatabase:/data/db
         networks: #networks to application and admin
             - dbapp-network
             - dbadmin-network
