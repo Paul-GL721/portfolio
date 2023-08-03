@@ -31,7 +31,7 @@ services:
                 - "traefik.http.routers.app.tls.certresolver=production" #certificate
             restart_policy: #how to restart containers when they exit
                 condition: any
-                delay: 7s
+                delay: 20s
                 max_attempts: 10
                 window: 120s
             update_config: #how the service should be updated
@@ -94,13 +94,11 @@ services:
                 - "traefik.http.routers.mongodbadmin.rule=Host(`mongodbadmin.paulgobero.com`)"
                 - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
                 - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
-                - "traefik.http.routers.mongodbadmin.tls=false" #disable tls
-                - "traefik.http.routers.mongodbadmin.tls.certresolver=staging" #staging certificate
-                #- "traefik.http.routers.mongodbadmin.tls=true" #enable tls
-                #- "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
+                - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
+                - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
             restart_policy: #how to restart containers when they exit
                 condition: any
-                delay: 15s
+                delay: 20s
                 max_attempts: 10
                 window: 180s
 
