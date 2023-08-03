@@ -15,7 +15,7 @@ services:
         networks: #networks to db and reverse proxy
             - dbapp-network
             - traefik_proxy-network 
-        #command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run start" #wait for mongo db
+        command: bash -c "./wait-for-it.sh mongo:27017 --timeout=600 -- npm run start" #wait for mongo db
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
