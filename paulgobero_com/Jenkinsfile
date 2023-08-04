@@ -7,7 +7,7 @@ pipeline {
 	//run on different agents
 	agent none
 
-	//define env variables
+	//reusable env variables
 	environment {
 		VERSION="0.1.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
