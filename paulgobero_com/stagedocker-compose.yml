@@ -89,7 +89,6 @@ services:
         networks: 
             - traefik_proxy-network #links to traefik proxy
             - stagedbadmin-network #link to database
-        #command: bash -c "./mongodbUI/wait-for mongo:27017 --timeout=600 -- /docker-entrypoint.sh" #wait for mongodb
         deploy: #deploy on the worker node
             mode: replicated
             replicas: 1
