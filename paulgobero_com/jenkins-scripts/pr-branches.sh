@@ -8,13 +8,10 @@ git config --global user.email paul@paulgobero.com
 echo The branches are:
 git branch
 git checkout -b tmpproductionV$VERSION
-#git checkout -f tmpstagingV$VERSION
 
 #If any of these files or folder changes in the production branch
 #merge them into the temporary production branch
-git checkout origin/production paulgobero_com/ansible paulgobero_com/bin paulgobero_com/configs paulgobero_com/controllers paulgobero_com/jenkins-scripts/build-step.sh paulgobero_com/models paulgobero_com/mongodb paulgobero_com/public paulgobero_com/routes paulgobero_com/uploads paulgobero_com/utils paulgobero_com/views paulgobero_com/.dockerignore paulgobero_com/.gitignore paulgobero_com/app.js paulgobero_com/docker-compose.yml paulgobero_com/prodDockerfile paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json paulgobero_com/wait-for
-
-#git add origin/staging paulgobero_com/bin paulgobero_com/configs paulgobero_com/models paulgobero_com/mongodb/Dockerfile paulgobero_com/public paulgobero_com/routes paulgobero_com/views paulgobero_com/app.js paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json
+git checkout origin/production $BASE_DIRECTORY/ansible $BASE_DIRECTORY/bin $BASE_DIRECTORY/configs $BASE_DIRECTORY/controllers $BASE_DIRECTORY/jenkins-scripts/build-step.sh $BASE_DIRECTORY/models $BASE_DIRECTORY/mongodb $BASE_DIRECTORY/public $BASE_DIRECTORY/routes $BASE_DIRECTORY/uploads $BASE_DIRECTORY/utils $BASE_DIRECTORY/views $BASE_DIRECTORY/.dockerignore $BASE_DIRECTORY/.gitignore $BASE_DIRECTORY/app.js $BASE_DIRECTORY/docker-compose.yml $BASE_DIRECTORY/prodDockerfile $BASE_DIRECTORY/Jenkinsfile $BASE_DIRECTORY/package-lock.json $BASE_DIRECTORY/package.json $BASE_DIRECTORY/wait-for
 
 git push --set-upstream origin tmpproductionV$VERSION
 
