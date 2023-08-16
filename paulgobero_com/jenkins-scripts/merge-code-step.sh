@@ -4,7 +4,7 @@
 
 #set git username and email
 git config --global user.name "server2"
-git config --global user.email paul@paulgobero.com
+git config --global user.email lwangapaul23@gmail.com
 echo The branches are:
 git branch
 git checkout -f staging
