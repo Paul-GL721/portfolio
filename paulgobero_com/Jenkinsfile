@@ -37,7 +37,7 @@ pipeline {
 			steps {
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					// Fetch the latest state of the remote branches
-					sh "git config --global user.email 'jenkinsagent2@paulgobero.com'"
+					sh "git config --global user.email 'lwangapaul23@gmail.com'"
 					sh "git config --global user.name 'jenkinsagent2'"
 					sh 'git fetch origin'
 
