@@ -1,4 +1,251 @@
 
+const request = require("supertest");
+const myApp = require("../app");
+const testutils = require("../utils/testUtils")
+const session = require('supertest-session');
+const Author = require('../models/author');
+const Skill = require('../models/skill');
+const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+
+var testSession = null;
+let sampleAuthor;
+
+function imageToString(filepath) {
+    //read image file
+    const imagePath = path.resolve(__dirname, filepath);
+    const imageData = fs.readFileSync(imagePath);
+    //convert the imagedata to string
+    const imageString = imageData.toString('base64');
+    return imageString;
+}
+var authenticatedSession;
+beforeAll(function (done) {
+  testutils.testconnection();
+  //create an owner author document
+  Author.create([
+    { name: {
+        first: 'Tommy',
+        middle: 'Long',
+        last: 'Sharu'
+        },
+        about: {
+            short_description: 'Site Owner',
+            full_description: 'This is the site owner'
+        },
+        brandName: 'TestOwner',
+        email: 'test@gmail.com',
+        password: 'test567',
+        authorStatus: 'owner',
+        authorRole: 'admin',
+        socialmedia: {
+            github: 'https://jestjs.io/docs/mongodb',
+            linkedin: 'https://jestjs.io/docs/mongodb'
+        },
+        imageName: imageToString('../public/images/img/project1.jpg')
+    },
+    { name: {
+      first: 'Johnny',
+      middle: 'Mitch',
+      last: 'Longly'
+      },
+      about: {
+          short_description: 'Test user',
+          full_description: 'User created to test select options'
+      },
+      brandName: 'Johnny',
+      email: 'mitch3@jonny.com',
+      password: 'jony67',
+      authorStatus: 'normaluser',
+      authorRole: 'member',
+      socialmedia: {
+          github: 'https://jestjs.io/docs/mongodb',
+          linkedin: 'https://jestjs.io/docs/mongodb'
+      },
+      imageName: imageToString('../public/images/img/project1.jpg')
+    }
+  ])
+  //1. Create a sample specialisation and save it to the database
+  sampleAuthor = new Author({ name: {
+    first: 'testJohnny',
+    middle: 'testMitch',
+    last: 'Longly'
+    },
+    about: {
+        short_description: 'Test user',
+        full_description: 'User created to test select options'
+    },
+    brandName: 'Johnny',
+    email: 'testmitch3@jonny.com',
+    password: 'testjony67',
+    authorStatus: 'normaluser',
+    authorRole: 'member',
+    socialmedia: {
+        github: 'https://jestjs.io/docs/mongodb',
+        linkedin: 'https://jestjs.io/docs/mongodb'
+    },
+    imageName: imageToString('../public/images/img/project1.jpg')
+  });
+  sampleAuthor.save();
+
+  testSession = session(myApp);
+  testSession.post('/portfolio/login')
+    .send({ email: "test@gmail.com", password: "test567" })
+    .expect(200)
+    .end(function (err) {
+        if (err) return done(err);
+        authenticatedSession = testSession;
+        return done();
+    })
+});
+
+afterAll(async () => {
+    // Drop the database
+    await mongoose.connection.dropDatabase();
+    // Close the Mongoose connection
+    await mongoose.connection.close();
+});
+
+
+describe('Acessing authenticated pages', function () {
+  it('Get the Author form', function (done) {
+    authenticatedSession.get('/portfolio/author/create')
+      .expect(200)
+      .end(done)
+  });
+    
+
+  it('Post data to the author collection', function (done) {
+    authenticatedSession.post('/portfolio/author/create')
+      .field("authorfirstname", "testFirstName")
+      .field("authormiddlename", "testMiddleName")
+      .field("authorlastname", "testLastName")
+      .field("authorshortdesc", "test short description about you")
+      .field("authorfulldesc", "test more about yourself")
+      .field("authorbrandname", "test brand name")
+      .field("authorstatus", "testAuthorStatus")
+      .field("authorRole", "testAuthorRole")
+      .field("githuburl", "testGithubUrl")
+      .field("linkeninurl", "testLinkedinUrl")
+      .field("authoremail", "testAuthorEmail")
+      .attach('photo1', fs.createReadStream(path.resolve(__dirname, '../public/images/img/project1.jpg')))
+      .set('Content-Type', 'multipart/form-data')
+      .expect(302)
+      .end(done);
+  });
+
+    it('Get a list of available authors', function (done) {
+      authenticatedSession.get('/portfolio/author')
+        .expect(200)
+        .expect('Content-Type', /html/)
+        .end(done)
+    });
+
+    it('Should successfully update a GET author in the portfolio', async () => {
+      //1. Update the author name
+      const updatedName = 'Updated author';
+      sampleAuthor.first = updatedName;
+      sampleAuthor.about.short_description = 'updated description';
+      await sampleAuthor.save();
+      //2. Convert the id to string to be used in the res.query
+      const upid = sampleAuthor._id.toString()
+      //3. Send the id to the given route
+      const response = await authenticatedSession
+          .get('/portfolio/author/update')
+          .query({ updateid: upid  });
+      //4. Retrieve the updated author from the database
+      const updatedAuthor = await Author.findOne({ _id: upid }).exec();
+      //5. Format createdAt and updatedAt as ISO 8601 strings
+      const formatDateString = (date) => new Date(date).toISOString();
+      // Using the spread format create a new array with a 
+      //converted createdAt and updatedAt to formatted date strings
+      const expectedauthor = {
+        ...updatedAuthor.toJSON(),
+        createdAt: formatDateString(updatedAuthor.createdAt),
+        updatedAt: formatDateString(updatedAuthor.updatedAt),
+        _id: updatedAuthor._id.toString(),
+      };
+      //6. Assert that the response contains the expected updated author
+      expect(response.status).toBe(200);
+      //expect(response.body).toEqual(expectedauthor);   
+    });
+    
+    it('Should successfully update a POST author in the portfolio', async () => { 
+      //Convert the id to string to be used in the res.query
+      const upid = sampleAuthor._id.toString()
+      //Send the update date to the given route
+      const response = await authenticatedSession
+        .post('/portfolio/author/update')
+        .field('authorname', 'up Technical DevOps')
+        .field('authordescription', 'up Technically Ability to deploy to apps')
+        .field('authorUpdateid', upid)
+        .attach('photo1', fs.createReadStream(path.resolve(__dirname, '../public/images/img/project1.jpg')))
+        .set('Content-Type', 'multipart/form-data') // Set the content type for file upload
+        .expect(302);
+      //Retrieve the updated specialisation from the database
+      const updatedAuthor = await author.findOne({ _id: upid }).exec();
+      
+      //Assert that the response contains the expected updated specialisation
+      expect(response.status).toBe(302);
+      const redirectPath = response.headers.location;
+      expect(redirectPath).toBe('/portfolio/author');
+      expect(updatedAuthor.name).toBe('up Technical DevOps');
+      expect(updatedAuthor.description).toBe('up Technically Ability to deploy to apps');
+    });
+
+    const geturls = [
+      '/portfolio/author/create',
+      '/portfolio/author',
+      '/portfolio/author/update'
+    ];
+    const posturls = [
+      '/portfolio/author/create',
+      '/portfolio/author/update',
+      '/portfolio/author/delete',
+    ];
+    
+    //Using the authenticated session data, make the request, should fail with a 403
+    for (const purl of posturls) {
+        it(`Should return 403 error for unauthorized user trying to POST UPDATE author @ ${purl}`, async () => {
+            //creates new session object
+            testSession = session(myApp);
+            //Simulate the login process
+            await testSession.post('/portfolio/login')
+                .send({ email: "mitch3@jonny.com", password: "jony67" })
+                .expect(200);
+            const response = await testSession.post(purl);
+            expect(response.status).toBe(403);
+        });
+    }
+    for (const gurl of geturls) {
+        it(`Should return 403 error for unauthorized user trying to GET UPDATE author  @ ${gurl}`, async () => {
+            //creates new session object
+            testSession = session(myApp);
+            //Simulate the login process
+            await testSession.post('/portfolio/login')
+                .send({ email: "mitch3@jonny.com", password: "jony67" })
+                .expect(200);
+            const response = await testSession.get(gurl);
+            expect(response.status).toBe(403);
+        });   
+    }
+
+    it('Should successfully POST DELETE a specialisation in the portfolio', async () => {
+        //Create a specialisation to delete and test the message from the json response  
+        const delid = sampleAuthor._id.toString();
+        const response = await authenticatedSession
+            .post('/portfolio/author/delete')
+            .send({skilid: delid  });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({success: "Successfully Deleted"});
+        
+    });
+   
+});
+
+
 /*const { BASEURL} = require('../configs/config');
 const path = require('path');
 const testutils = require('../utils/testUtils');
