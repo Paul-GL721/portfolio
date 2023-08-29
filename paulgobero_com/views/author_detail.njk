@@ -1,0 +1,119 @@
+
+{% extends "portfolio_base.njk" %}
+{% set posturl = { submiturl: "update" } %}
+{% set navbarurl = {about: "/#about_section", projects: "/#project_section",  skills: "/#skill_section", contact: "/#contact_section"  } %}
+
+{% block title %}<title>{{ Title }}</title> {% endblock %}
+
+{% block content %}
+	<section class="formsection">
+        <div class="row">
+            <div class="col-md-2"> </div>
+            <div class="col-sm-12 col-md-8">
+                <h3 style="text-align: center;">{{ abtauthor.name.first }} Detail's Table</h3>
+                <div id="toolbar"><button class="btn btn-secondary mr-3" id="authordetailbtnEdit" type="button" title="Edit Details" ><i class="icon-plus tableicons"></i> Edit</button></div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="authortable" data-toggle="table" data-pagination="true" data-show-refresh="true" data-id-field="true" data-maintain-selected="true" data-toolbar="#toolbar" data-search="true" data-smart-display="true" data-maintain-meta-data="true">
+                        <thead>
+                            <tr class="d-flex">
+                                <td class="w-20pec text-wrap text-break" id="author_header" data-field="headz">Item</td>
+                                <td class="w-80pec text-wrap text-break">Db Value</td>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            <tr class="d-flex">
+                                <td class="w-20pec text-wrap text-break" id="author_id" data-field="authoridz">id</td>
+                                <td class="w-80pec text-wrap text-break" id="author_idvalue">{{ abtauthor._id }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellprofilepic" data-field="imageUrl">Profile Picture</td>
+                                <td class="w-80pec"><img class="rounded-circle img-fluid" src="{{ abtauthor.imageUrl }}" width="70" height="70"></td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorfirstname" data-field="namefirst">First Name</td>
+                                <td class="w-80pec">{{ abtauthor.name.first }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthormiddlename" data-field="namemiddle">Middle Name</td>
+                                <td class="w-80pec">{{ abtauthor.name.middle }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorlastname" data-field="namelast">Last Name</td>
+                                <td class="w-80pec">{{ abtauthor.name.last }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorshortdesc" data-field="shortdesc">Short Description</td>
+                                <td class="w-80pec">{{ abtauthor.about.short_description }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorlongdesc" data-field="longdesc">Long Description</td>
+                                <td class="w-80pec">{{ abtauthor.about.full_description }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorbrand" data-field="authorbrand">BrandName</td>
+                                <td class="w-80pec">{{ abtauthor.brandName }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthoremail" data-field="authoremail">Email</td>
+                                <td class="w-80pec">{{ abtauthor.email }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorStaus" data-field="authorStaus">Status</td>
+                                <td class="w-80pec">{{ abtauthor.authorStatus }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellauthorRole" data-field="authorRole">Role</td>
+                                <td class="w-80pec">{{ abtauthor.authorRole }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="cellgithuburl" data-field="githuburl">Github</td>
+                                <td class="w-80pec text-wrap text-break">{{ abtauthor.socialmedia.github | urlize | safe }}</td>
+                            </tr>
+                            <tr class="d-flex">
+                                <td class="w-20pec" id="celllinkeninurl" data-field="linkeninurl">LinkedIn</td>
+                                <td class="w-80pec text-wrap text-break">{{ abtauthor.socialmedia.linkedin | urlize | safe }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-2"> </div>
+                <div class="col">
+                    <div class="modal fade" role="dialog" tabindex="-1" id="authorUpdateModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Update Author Details</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {% include "reuse_author.njk" %}
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorUpdateid"><strong>Author Update ID:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorUpdateid" name="authorUpdateid" readonly="" placeholder="Author Update Id"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="authorpassword"><strong>Password:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="password" id="authorpassword" placeholder="Type your password" name="authorpassword" readonly="" required=""></div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorstatus" for="authorstatus"><strong>Author Status:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorstatus" name="authorstatus" readonly=""></div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label authorRole" for="authorRole"><strong>Author Role:</strong></label></div>
+                                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="text" id="authorRole" name="authorRole" readonly=""></div>
+                                        </div>    
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button id="authorUpdatebtn" class="btn btn-primary" type="submit">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
