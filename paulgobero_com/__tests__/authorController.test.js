@@ -126,9 +126,10 @@ describe('Acessing authenticated pages', function () {
       .field("authorbrandname", "test brand name")
       .field("authorstatus", "testAuthorStatus")
       .field("authorRole", "testAuthorRole")
-      .field("githuburl", "testGithubUrl")
-      .field("linkeninurl", "testLinkedinUrl")
-      .field("authoremail", "testAuthorEmail")
+      .field("authorpassword", "testAuthorRole")
+      .field("githuburl", "https://jestjs.io/docs/puppeteer")
+      .field("linkeninurl", "https://jestjs.io/docs/puppeteer")
+      .field("authoremail", "test@testAuthorEmail.com")
       .attach('photo1', fs.createReadStream(path.resolve(__dirname, '../public/images/img/project1.jpg')))
       .set('Content-Type', 'multipart/form-data')
       .expect(302)
@@ -177,21 +178,31 @@ describe('Acessing authenticated pages', function () {
       //Send the update date to the given route
       const response = await authenticatedSession
         .post('/portfolio/author/update')
-        .field('authorname', 'up Technical DevOps')
-        .field('authordescription', 'up Technically Ability to deploy to apps')
+        .field("authorfirstname", "up Technical DevOps")
+        .field("authormiddlename", "testMiddleName")
+        .field("authorlastname", "testLastName")
+        .field("authorshortdesc", "test short description about you")
+        .field("authorfulldesc", "up Technically Ability to deploy to apps")
+        .field("authorbrandname", "test brand name")
+        .field("authorstatus", "testAuthorStatus")
+        .field("authorRole", "testAuthorRole")
+        .field("authorpassword", "testAuthorRole")
+        .field("githuburl", "https://jestjs.io/docs/puppeteer")
+        .field("linkeninurl", "https://jestjs.io/docs/puppeteer")
+        .field("authoremail", "test2@testAuthorEmail.com")
         .field('authorUpdateid', upid)
         .attach('photo1', fs.createReadStream(path.resolve(__dirname, '../public/images/img/project1.jpg')))
-        .set('Content-Type', 'multipart/form-data') // Set the content type for file upload
+        .set('Content-Type', 'multipart/form-data')
         .expect(302);
       //Retrieve the updated specialisation from the database
-      const updatedAuthor = await author.findOne({ _id: upid }).exec();
+      const updatedAuthor = await Author.findOne({ _id: upid }).exec();
       
       //Assert that the response contains the expected updated specialisation
       expect(response.status).toBe(302);
       const redirectPath = response.headers.location;
       expect(redirectPath).toBe('/portfolio/author');
-      expect(updatedAuthor.name).toBe('up Technical DevOps');
-      expect(updatedAuthor.description).toBe('up Technically Ability to deploy to apps');
+      expect(updatedAuthor.name.first).toBe('up Technical DevOps');
+      expect(updatedAuthor.about.full_description).toBe('up Technically Ability to deploy to apps');
     });
 
     const geturls = [
@@ -201,7 +212,6 @@ describe('Acessing authenticated pages', function () {
     ];
     const posturls = [
       '/portfolio/author/create',
-      '/portfolio/author/update',
       '/portfolio/author/delete',
     ];
     
