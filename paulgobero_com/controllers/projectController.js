@@ -186,7 +186,7 @@ exports.project_delete_post = async (req, res, next) => {
 				controllerUtils.deletefroms3bucket(delvidparams);
 			}	
 		});
-		res.json({sucess: "Successfully Deleted"});
+		res.json({success: "Successfully Deleted"});
 	}
 };
 
