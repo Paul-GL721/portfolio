@@ -533,7 +533,7 @@ exports.author_update_post = [
 		} else {
 			// If user is not an admin return error
 			if (Role !== 'admin') {
-			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+				return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 			} else {
 				const update_author_id = req.body.authorUpdateid;
 				console.log ("The author update id is"+ update_author_id);
