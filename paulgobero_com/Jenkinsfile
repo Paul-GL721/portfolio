@@ -4,7 +4,7 @@ def staged_files
 def prod_staged_files
 
 pipeline {
-	//run on different agents
+	//run script on different agents
 	agent none
 
 	//reusable env variables
@@ -77,7 +77,7 @@ pipeline {
 		}
 
 		stage('2. Merge development and staging branches') {
-			//Execute if develpment branch
+			//Execute if its the develpment branch
 			when {
 				branch 'development'
 			}
