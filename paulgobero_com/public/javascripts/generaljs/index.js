@@ -3,7 +3,7 @@
 $(document).ready(function() {
 
   submitForm('#contactForm', '#contactmodal', '/' );
-  submitForm('#authorcreateid', '#createAuthormodal', 'create' );
+  //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
     var projectId = $(this).data('project-id');
