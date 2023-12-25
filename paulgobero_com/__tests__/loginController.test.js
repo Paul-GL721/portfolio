@@ -1,4 +1,121 @@
 
+
+const request = require("supertest");
+const myApp = require("../app");
+const testutils = require("../utils/testUtils")
+const session = require('supertest-session');
+const Author = require('../models/author');
+const supertest = require('supertest');
+const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+
+var testSession = null;
+var authenticatedSession;
+
+
+function imageToString(filepath) {
+    //read image file
+    const imagePath = path.resolve(__dirname, filepath);
+    const imageData = fs.readFileSync(imagePath);
+    //convert the imagedata to string
+    const imageString = imageData.toString('base64');
+    return imageString;
+}
+
+beforeAll(function (done) {
+  testutils.testconnection();
+
+  //create an owner author document
+  Author.create([
+    { name: {
+        first: 'Tommy',
+        middle: 'Long',
+        last: 'Sharu'
+        },
+        about: {
+            short_description: 'Site Owner',
+            full_description: 'This is the site owner'
+        },
+        brandName: 'TestOwner',
+        email: 'test@gmail.com',
+        password: 'test567',
+        authorStatus: 'owner',
+        authorRole: 'admin',
+        socialmedia: {
+            github: 'https://jestjs.io/docs/mongodb',
+            linkedin: 'https://jestjs.io/docs/mongodb'
+        },
+        imageName: imageToString('../public/images/img/project1.jpg')
+    },
+    { name: {
+      first: 'Johnny',
+      middle: 'Mitch',
+      last: 'Longly'
+      },
+      about: {
+          short_description: 'Test user',
+          full_description: 'User created to test select options'
+      },
+      brandName: 'Johnny',
+      email: 'mitch3@jonny.com',
+      password: 'jony67',
+      authorStatus: 'normaluser',
+      authorRole: 'member',
+      socialmedia: {
+          github: 'https://jestjs.io/docs/mongodb',
+          linkedin: 'https://jestjs.io/docs/mongodb'
+      },
+      imageName: imageToString('../public/images/img/project1.jpg')
+    }
+  ])
+
+  testSession = session(myApp);
+  testSession.post('/portfolio/login')
+    .send({ email: "test@gmail.com", password: "test567" })
+    .expect(200)
+    .end(function (err) {
+        if (err) return done(err);
+        authenticatedSession = testSession;
+        return done();
+    })
+});
+
+afterAll(async () => {
+    // Drop the database
+    await mongoose.connection.dropDatabase();
+    // Close the Mongoose connection
+    await mongoose.connection.close();
+});
+
+
+describe('Login Post Route', function () {
+    it('Get the login form', function (done) {
+        authenticatedSession.get('/portfolio/login')
+          .expect(200)
+          .end(done)
+    });
+    it('should log in a user and return a JWT token', async () => {
+        const response = await supertest(myApp)
+            .post('/portfolio/login')
+            .send({ email: "test@gmail.com", password: "test567" });
+    
+        expect(response.status).toBe(200);
+    });
+    it(`Should return status false for unregistered user`, async () => {
+        //creates new session object
+        testSession = session(myApp);
+        //Simulate the login process
+        await testSession.post('/portfolio/login')
+            .send({ email: 'nonexistent@example.com', password: 'invalidpassword' })
+            .expect({status: false});
+    }); 
+});
+
+
+
+
+
 /*const path = require('path');
 const { BASEURL} = require('../configs/config');
 const testutils = require('../utils/testUtils');

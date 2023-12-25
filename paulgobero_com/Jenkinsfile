@@ -4,10 +4,10 @@ def staged_files
 def prod_staged_files
 
 pipeline {
-	//run on different agents
+	//run script on different agents
 	agent none
 
-	//define env variables
+	//reusable env variables
 	environment {
 		VERSION="0.1.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
@@ -37,7 +37,7 @@ pipeline {
 			steps {
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					// Fetch the latest state of the remote branches
-					sh "git config --global user.email 'jenkinsagent2@paulgobero.com'"
+					sh "git config --global user.email 'lwangapaul23@gmail.com'"
 					sh "git config --global user.name 'jenkinsagent2'"
 					sh 'git fetch origin'
 
@@ -51,12 +51,6 @@ pipeline {
 							// Start the required services defined in the Docker Compose file
 							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
-
-							// Run the tests inside the Docker container
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker'
-
-							// Output the logs of the containers (for debugging purposes)
-							//sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml logs'
 
 							// Capture the exit code of the tests
 							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
@@ -81,46 +75,9 @@ pipeline {
 				}
 			}
 		}
-            /*steps {
-				// Perform a dry run merge
-				sh 'git merge --no-commit origin/feature-branch'
-                echo '..................Runing Tests................'
-                // Run tests on the code
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
-                sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml run testapp npm run test:unit-inside-docker"
-
-				// Capture the exit code of the tests
-				script {
-					def testExitCode = sh script: 'docker-compose -f ./paulgobero_com/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
-					if (testExitCode != 0) {
-						echo "Tests failed. Reverted the changes."
-						// Reverse the merge if tests failed
-						sh 'git reset --hard HEAD@{1}'
-						// Push the changes back to the development branch to revert the merge
-						sh 'git push --force origin development'
-						currentBuild.result = 'FAILURE' // Mark the build as failed
-					}
-				}
-
-				// Stop and remove the containers after the tests
-				sh 'docker-compose -f ./paulgobero_com/testdocker-compose.yml down'
-            }
-			steps {
-				echo '..................Runing Tests................'
-				withEnv(["ENV_FILE_PATH=/mnt/portfolio/envConfigs/.env.test"]) {
-					// Print the contents of the .env.test file (for verification purposes)
-					sh "cat $ENV_FILE_PATH"
-					//run tests on the code
-					echo "Testing the code in the git repository"
-					sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
-					sh ''' ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh '''
-				}
-			}
-		}*/
 
 		stage('2. Merge development and staging branches') {
-			//Execute if develpment branch
+			//Execute if its the develpment branch
 			when {
 				branch 'development'
 			}
@@ -145,7 +102,7 @@ pipeline {
 						sh('git pull')
 						sh('git push ${GIT_REPO}')*/
 
-						//Find the number of staged files
+						//Find the number of staged files 
 						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
 						//if staged_files are more than zero, commit the files and push to remote repo
@@ -162,7 +119,7 @@ pipeline {
 			}
 		}
 
-		stage('3. Build and taged staging image') {
+		stage('3. Build and tag staging image') {
 			//Execute if its the staging branch
 			when {
 				branch 'staging'
@@ -301,6 +258,7 @@ pipeline {
 					//login, check githubcli pr status, create message and logout
 					sh 'gh --version'					
 					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
+					//sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
 					sh 'gh auth status'					
 					echo '.............Creating pull request on master branch..........'
 					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					

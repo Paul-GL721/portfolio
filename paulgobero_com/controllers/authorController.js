@@ -200,9 +200,27 @@ exports.project_authors = async (req, res, next) => {
 };
 
 //Display details of specific author
-exports.author_detail = (req, res) => {
-	res.send(`NOT IMPLEMENTED: Author details: ${req.params.id}`);
-}
+exports.author_detail = async(req, res, next) => {
+	try {
+		brand = await controllerUtils.getBrandName();
+		const detailauthor = await Author .findById(req.params.id, {})
+		.exec( async function (err, details_authors) {
+			if (err) {
+				return next(err);
+			}
+			details_authors.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, details_authors.imageName, 3600 );
+			//console.log("details_authors")
+			//res.json(details_authors);
+			res.render("author_detail", { Title: "Author details", abtauthor: details_authors, brand1: brand });
+			
+			//res.render( "author_detail", { Title: "Author details", detailauthors: details_authors, brand1: brand });
+		});
+	} catch {
+		console.log("Author Detail Error occurred: ", err);	
+	}
+	
+};
+
 
 //on GET request, display the author create form
 exports.author_create_get = async (req, res, next) => {
@@ -313,8 +331,8 @@ exports.author_create_post = [
 					//upload the actual image to s3
 					//await s3Client.send(new PutObjectCommand(s3uploadparams));
 					controllerUtils.uploadtos3bucket(s3uploadparams);
-					//res.redirect(Author.url);
-					res.status(200).json({ "successj": true });
+					res.redirect(authorz.url);
+					//res.status(200).json({ "successj": true });
 
 				}
 			}
@@ -515,7 +533,7 @@ exports.author_update_post = [
 		} else {
 			// If user is not an admin return error
 			if (Role !== 'admin') {
-			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+				return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 			} else {
 				const update_author_id = req.body.authorUpdateid;
 				console.log ("The author update id is"+ update_author_id);

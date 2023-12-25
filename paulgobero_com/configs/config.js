@@ -11,7 +11,7 @@ if (env === 'production') {
 } else if (env === 'test') {
   envFilePath = '.env.test';
 } else {
-  envFilePath = '.env.dev';
+  envFilePath = '.env.stage' ;
 }
 
 const result = dotenv.config({ path: __dirname + '/' + envFilePath });
