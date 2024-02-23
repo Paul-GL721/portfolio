@@ -38,7 +38,7 @@ router.get("/author/update", login_controller.verifyToken, author_controller.aut
 //Post request for updating author
 router.post("/author/update", login_controller.verifyToken, author_controller.author_update_post);
 
-//Get request for one author
+//Get request for one authors
 router.get("/author/:id", login_controller.verifyToken, author_controller.author_detail);
 
 //Get request for all authors
