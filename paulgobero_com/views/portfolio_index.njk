@@ -84,6 +84,7 @@
                                                             </p>
                                                         </div>
                                                     </div>
+                                                    {% if index.mediaUrl.videoUrl %}
                                                     <div class="row">
                                                         <div class="col-lg-2"> </div>
                                                         <div class="col-lg-8 text-white align-self-center">
@@ -91,6 +92,7 @@
                                                         </div>
                                                         <div class="col-lg-2"> </div>
                                                     </div>
+                                                    {% endif %}
                                                     <div class="row">
                                                         <div class="col-lg-6" style="text-align: left;">
                                                             <p class="lead">
@@ -100,11 +102,15 @@
                                                                 From this project I gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
                                                             </p>
                                                         </div>
+                                                        {% if dindex.githubUrl %}
                                                         <div class="col-lg-6" style="text-align: left;">
                                                             <p class="lead">
                                                                 You can <a href="{{ dindex.githubUrl | urlize | safe }}">test the live demo</a> or View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
                                                             </p>
                                                         </div>
+                                                        {% else %}
+                                                            <div class="col-lg-6" style="text-align: left;"> </div>
+                                                        {% endif %}
                                                     </div>        
                                                 </div>
                                             </section>
