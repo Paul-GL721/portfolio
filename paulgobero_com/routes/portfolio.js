@@ -13,7 +13,6 @@ const login_controller = require("../controllers/loginController");
 				//........AUTHOR ROUTES.....//
 //Get portfolio home page
 router.get("/", author_controller.index);
-
 //Post contact page from portfolio home page
 router.post("/", author_controller.index_post);
 
