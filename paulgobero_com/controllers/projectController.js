@@ -73,11 +73,6 @@ exports.project_create_post = [
 			const photo = req.files['photo1'][0];
 			const video = req.files['video1'][0];
 
-			//console.log(req.files);
-			//console.log("The body is" );
-			//console.log( req.body);
-			//console.log(JSON.stringify(req.body));
-
 			//s3 bucket video upload parameters
 			const s3projvideouploadparams = {
 				Bucket: BUCKET_NAME,
