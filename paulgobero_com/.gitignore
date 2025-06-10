@@ -62,19 +62,16 @@ typings/
 
 #ignore env variables
 configs/.env.prod
-<<<<<<< .merge_file_a12436
 stageconfigs/
 configs/.env.dev
 configs/.env.test
 configs/.env.stage
 
 #ignore ds store
-.DS_Store
+../.DS_Store
 .DS_Store
 
 globalConfig.json
 
 
 
-=======
->>>>>>> .merge_file_a15120
