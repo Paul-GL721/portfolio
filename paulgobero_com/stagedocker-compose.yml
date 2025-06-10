@@ -7,17 +7,10 @@ services:
             context: .
             dockerfile: stagedockerfile
         volumes:       
-            - /mnt/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
-        ports:
-            - "3001:3001"
-        #expose:
-            #- 3001
-        depends_on:
-            - mongo
+            - /glustervol/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
         networks: #networks to db and reverse proxy
-            - stagedbapp-network
             - traefik_proxy-network
-        command: bash -c "./wait-for.sh mongo:27017 --timeout=600 -- npm run devstart" #wait for mongodb
+        command: bash -c "npm run devstart" 
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -44,78 +37,10 @@ services:
             rollback_config: #how the service should be rolled back in case an update fails
                 parallelism: 2
                 delay: 10s  
-
-    #mongodb staging database service
-    mongo:        
-        build: #build staging mongodb database
-            context: ./mongodb
-            dockerfile: Dockerfile
-        image: paulgl721/stagingmongdb:stagingVJVERSION
-        env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.stage
-        #ports:
-            #- "27020:27017"
-        volumes:
-            - /mnt/portfolio/paulgobero/database/stagedatabase:/data/db
-        #command: mongod --port 27020
-        expose:
-            - 27017
-        networks: #networks to application and admin
-            - stagedbapp-network
-            - stagedbadmin-network
-        deploy: #deploy the db on the manager node
-            mode: replicated
-            replicas: 1
-            placement:
-                constraints:
-                    - node.role==worker
-            restart_policy: #how to restart containers when they exit
-                condition: any
-                delay: 20s
-                max_attempts: 10
-                window: 180s
-
-    #web-based mongoDB admin interface
-    stagemongodbadmin:
-        image: mongo-express:latest
-        ports:
-            - "8082:8081"
-        #expose:
-            #- 8082
-        env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.stage
-        depends_on:
-            - mongo
-        networks: 
-            - traefik_proxy-network #links to traefik proxy
-            - stagedbadmin-network #link to database
-        deploy: #deploy on the worker node
-            mode: replicated
-            replicas: 1
-            placement:
-                constraints:
-                    - node.role==worker
-            labels: #generate reverse proxy configurations
-                - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.stagemongodbadmin.rule=Host(`stagingmongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.stagemongodbadmin-service.loadbalancer.server.port=8082"
-                - "traefik.http.routers.stagemongodbadmin.entrypoints=web,websecure"
-                - "traefik.http.routers.stagemongodbadmin.tls=true" #enable tls
-                - "traefik.http.routers.stagemongodbadmin.tls.certresolver=production" #certificate
-            restart_policy: #how to restart containers when they exit
-                condition: any
-                delay: 7s
-                max_attempts: 10
-                window: 120s
+                 
 
 #Communication networks between the containers
 networks:
-    stagedbapp-network: #link db and webapp
-        driver: overlay
-        attachable: true
-    stagedbadmin-network:
-        driver: overlay
-        attachable: true
     traefik_proxy-network:
         external: true
 
