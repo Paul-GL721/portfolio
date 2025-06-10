@@ -14,7 +14,18 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
    };
 
    //set mongoose connection
-   const mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+   let mongoDBurl;
+
+   const env = process.env.NODE_ENV;
+
+   if (env === 'production' || env === 'stage' || env === 'test') {
+      // Replica Set connection via Traefik in prod/staging/test
+      mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}/${db_name}?authSource=admin&replicaSet=rs0`;
+   } else {
+      // Local development connection
+      mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+   }
+   
    //connection to mongo container
    try {
       if (!db) {
