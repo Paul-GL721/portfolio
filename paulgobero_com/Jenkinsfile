@@ -40,7 +40,6 @@ pipeline {
 					sh "git config --global user.email 'lwangapaul23@gmail.com'"
 					sh "git config --global user.name 'jenkinsagent2'"
 					sh 'git fetch origin'
-
 					// Perform a dry run merge
 					sh 'git merge --no-commit origin/development'
 
