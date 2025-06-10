@@ -28,11 +28,11 @@ pipeline {
 			}
 			//use jenkins testing node
 			agent {
-				label 'testnode'
+				label 'buildnode'
 			}
 			environment {
                 // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
-                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
+                ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test" 
             }
 			steps {
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
