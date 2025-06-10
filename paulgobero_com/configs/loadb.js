@@ -35,6 +35,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       return true; // Connection successful
    } catch (error) {
       console.error('FAILED TO CONNECT');
+      console.error('Mongo url', mongoDBurl);
       console.error('Error connecting to MongoDB', error);
       return false; // Connection failed
    }
