@@ -9,7 +9,7 @@ pipeline {
 
 	//reusable env variables
 	environment {
-		VERSION="0.1.${BUILD_NUMBER}"
+		VERSION="2.0.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
 		REMOTE_DIR='STAGE_PORTFOLIO'
@@ -28,11 +28,11 @@ pipeline {
 			}
 			//use jenkins testing node
 			agent {
-				label 'testnode'
+				label 'buildnode'
 			}
 			environment {
                 // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
-                ENV_FILE_PATH = "/mnt/portfolio/envConfigs/.env.test" 
+                ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test" 
             }
 			steps {
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
@@ -40,7 +40,6 @@ pipeline {
 					sh "git config --global user.email 'lwangapaul23@gmail.com'"
 					sh "git config --global user.name 'jenkinsagent2'"
 					sh 'git fetch origin'
-
 					// Perform a dry run merge
 					sh 'git merge --no-commit origin/development'
 
