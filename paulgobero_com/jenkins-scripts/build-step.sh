@@ -20,10 +20,9 @@ whoami
 echo usr=$USER
 
 docker push paulgl721/nodejs-portfolio:prodappV$VERSION
-docker push paulgl721/mongdb:proddbV$VERSION
 HERE
 
+#docker push paulgl721/mongdb:proddbV$VERSION
 #sh '''sed  -i -e 's/JVERSION/$VERSION/g' ./${BASE_DIRECTORY}/docker-compose.yml'''
 #sh '''docker-compose -f ./${BASE_DIRECTORY}/docker-compose.yml build'''
-
 # echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin

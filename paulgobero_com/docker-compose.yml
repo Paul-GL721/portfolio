@@ -7,7 +7,7 @@ services:
             context: .
             dockerfile: prodDockerfile
         volumes:
-            - /mnt/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
+            - /glustervol/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         ports:
             - "3000:3000"
         depends_on:
@@ -15,7 +15,7 @@ services:
         networks: #networks to db and reverse proxy
             - dbapp-network
             - traefik_proxy-network 
-        command: bash -c "/nodeApp/wait-for mongo:27017 --timeout=900 -- npm run start" #wait for mongo db
+        command: bash -c "npm run start"
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -43,73 +43,8 @@ services:
                 parallelism: 2
                 delay: 10s  
 
-    #mongodb database services
-    mongo:
-        build: #build staging mongodb database
-            context: ./mongodb
-            dockerfile: Dockerfile
-        image: paulgl721/mongdb:proddbVJVERSION
-        #image: mongo:6
-        env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.prod
-        ports:
-            - "27017:27017"
-        volumes:
-            - /mnt/portfolio/paulgobero/database/prodDatabase:/data/db
-        networks: #networks to application and admin
-            - dbapp-network
-            - dbadmin-network
-        deploy: #deploy the db on the manager node
-            mode: replicated
-            replicas: 1
-            placement:
-                constraints:
-                    - node.role==manager
-            restart_policy: #how to restart containers when they exit
-                condition: any
-                delay: 7s
-                max_attempts: 10
-                window: 120s
-
-    #web-based mongoDB admin interface
-    mongodbadmin:
-        image: mongo-express:latest
-        ports:
-            - "8081:8081"
-        env_file:
-            - /mnt/portfolio/paulgobero/configs/.env.prod
-        depends_on:
-            - mongo
-        networks: 
-            - traefik_proxy-network #links to traefik proxy
-            - dbadmin-network #link to database
-        deploy: #deploy on the manager node
-            mode: replicated
-            replicas: 1
-            placement:
-                constraints:
-                    - node.role==manager
-            labels: #generate configurations for the reverse proxy
-                - "traefik.enable=true" # Enable the service
-                - "traefik.http.routers.mongodbadmin.rule=Host(`mongodbadmin.paulgobero.com`)"
-                - "traefik.http.services.mongodbadmin-service.loadbalancer.server.port=8081"
-                - "traefik.http.routers.mongodbadmin.entrypoints=web,websecure"
-                - "traefik.http.routers.mongodbadmin.tls=true" #enable tls
-                - "traefik.http.routers.mongodbadmin.tls.certresolver=production" #certificate
-            restart_policy: #how to restart containers when they exit
-                condition: any
-                delay: 20s
-                max_attempts: 10
-                window: 180s
-
 #create the communication networks between the containers
 networks:
-    dbapp-network: #link db and webapp
-        driver: overlay
-        attachable: true
-    dbadmin-network:
-        driver: overlay
-        attachable: true
     traefik_proxy-network:
         external: true
 
