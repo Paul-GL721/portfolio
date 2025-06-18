@@ -315,7 +315,6 @@ pipeline {
 			}
 		}
 	}
-
 	post {
 		success {
 			echo '...........JOB EXECUTED SUCCESSFULLY...........'
