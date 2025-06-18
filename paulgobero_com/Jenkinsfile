@@ -80,6 +80,7 @@ pipeline {
 			when {
 				branch 'development'
 			}
+			
 			//where to execute
 			agent {
 				label 'buildnode'
@@ -314,6 +315,8 @@ pipeline {
 			}
 		}
 	}
+
+
 	post {
 		success {
 			echo '...........JOB EXECUTED SUCCESSFULLY...........'
