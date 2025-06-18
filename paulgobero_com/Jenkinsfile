@@ -17,7 +17,7 @@ pipeline {
 		STACKNAME='stagingportfolio'
 		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
 		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
-		EMAIL_TO='team@paulgobero.com'
+		EMAIL_TO='portfolioteam@paulgobero.com'
 	}
 
 	stages {
@@ -80,6 +80,7 @@ pipeline {
 			when {
 				branch 'development'
 			}
+
 			//where to execute
 			agent {
 				label 'buildnode'
@@ -315,6 +316,8 @@ pipeline {
 			}
 		}
 	}
+
+
 	post {
 		success {
 			echo '...........JOB EXECUTED SUCCESSFULLY...........'
