@@ -12,7 +12,6 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       useUnifiedTopology: true,
       connectTimeoutMS: 60000, // Increase the timeout to 6000 seconds (adjust as needed)
    };
-
    //set mongoose connection
    let mongoDBurl;
 
