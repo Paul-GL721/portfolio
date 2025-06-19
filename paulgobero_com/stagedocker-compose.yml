@@ -6,11 +6,19 @@ services:
         build: #build from stagedockerfile
             context: .
             dockerfile: stagedockerfile
+        environment:
+            db_host: hamongodb_mongo1:27017,hamongodb_mongo2:27017,hamongodb_mongo3:27017
+            db_name: stageportfolio
+            READINESS_DB_PASSWORD: /run/secrets/db_password
+            READINESS_DB_USER: /run/secrets/db_user
+        secrets:
+            - db_user
+            - db_password
         volumes:       
             - /glustervol/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
         networks: #networks to db and reverse proxy
             - traefik_proxy-network
-        command: bash -c "npm run devstart" 
+        command: bash -c "./wait-for.sh --timeout=600 -- npm run stagestart" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -37,6 +45,13 @@ services:
             rollback_config: #how the service should be rolled back in case an update fails
                 parallelism: 2
                 delay: 10s  
+
+#secrets to test readiness of mongodb
+secrets:
+   db_password:
+     file: /glustervol/portfolio/paulgobero/secrets/staging_db_password.txt
+   db_user:
+     file: /glustervol/portfolio/paulgobero/secrets/staging_db_user.txt
                  
 
 #Communication networks between the containers
