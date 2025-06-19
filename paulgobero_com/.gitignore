@@ -68,7 +68,7 @@ configs/.env.test
 configs/.env.stage
 
 #ignore ds store
-../.DS_Store
+.DS_Store
 .DS_Store
 
 globalConfig.json

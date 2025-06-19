@@ -3,7 +3,6 @@
 /**
  * Module dependencies.
  */
-
 const { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT, TEST_NODE_PORT, TEST_NODE_ENV,  NODE_PORT, NODE_ENV, DBIMAGENAME } = require('../configs/config');
 const  database_connection = require('../configs/loadb'); //testdb module
 var app = require('../app');
@@ -119,4 +118,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
