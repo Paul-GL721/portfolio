@@ -45,6 +45,7 @@ services:
             rollback_config: #how the service should be rolled back in case an update fails
                 parallelism: 2
                 delay: 10s  
+                
 
 #secrets to test readiness of mongodb
 secrets:
