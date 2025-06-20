@@ -134,15 +134,16 @@ exports.index_post = [
 			
 			transporter.sendMail(mailoptions, (error, response) => {
 				if (error) {
-					console.log(error);
-					//res.send(error);
-					//res.jsonp({failed : true});
-					return res.status(500).json({ failed: true });	
+					console.log("Mail error", error);
+					return res.render("portfolio_index", {
+						alert: { type: "danger", message: "Failed to send message. Try again later." },
+						formdata: req.body
+					});
 				} else {
 					console.log("Email Sent");
-					//res.redirect("/portfolio#contact_section");
-					return res.status(200).json({ success: true });
-
+					return res.render("portfolio_index", {
+						alert: { type: "success", message: "Message sent successfully!" }
+					});
 				}
 			});
 		}

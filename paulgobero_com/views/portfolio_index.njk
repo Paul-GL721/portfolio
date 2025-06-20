@@ -171,6 +171,14 @@
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-6 col-xl-6">
                             <div>
+                                {% if alert %}
+                                    <div class="alert alert-{{ alert.type }} alert-dismissible fade show" role="alert">
+                                        {{ alert.message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
                                 <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action="/portfolio">
                                     <div class="mb-3">
                                         <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
