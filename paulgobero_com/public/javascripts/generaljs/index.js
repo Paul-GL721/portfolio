@@ -14,7 +14,7 @@ $(document).ready(function() {
     $(formId).ajaxForm({
       url: posturl,
       type: 'POST',
-      dataType: 'html',
+      dataType: 'json',
       success: function(data) {
         console.log('data is', data)
         $('#contact-div').html(data.html);
