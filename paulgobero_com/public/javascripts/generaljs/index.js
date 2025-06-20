@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-  submitForm('#contactForm', '#contactmodal', '/portfolio/formemailpost' );
+  submitForm('#contactForm', '#contactmodal', '/portfolio' );
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
@@ -16,6 +16,7 @@ $(document).ready(function() {
       type: 'POST',
       dataType: 'json',
       success: function(data) {
+        console.log(data)
         if (data.success) {
           $(formId).resetForm(); // Clear the form
           $(modalId).modal('show'); // Show modal

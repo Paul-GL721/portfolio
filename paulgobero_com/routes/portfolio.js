@@ -14,7 +14,7 @@ const login_controller = require("../controllers/loginController");
 //Get portfolio home page
 router.get("/", author_controller.index);
 //Post contact page from portfolio home page
-router.post("/formemailpost", author_controller.index_post);
+router.post("/", author_controller.index_post);
 
 //Get request for creating author page
 router.get("/author/create", login_controller.verifyToken, author_controller.author_create_get);
