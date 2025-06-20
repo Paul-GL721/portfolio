@@ -135,17 +135,35 @@ exports.index_post = [
 			transporter.sendMail(mailoptions, (error, response) => {
 				if (error) {
 					console.log("Mail error", error);
-					return res.render("partial_contact_form", {
-						alert: { type: "danger", message: "Failed to send message. Try again later." },
-						formdata: req.body
+					
+					// Render the partial_contact_form to HTML string
+					res.render("partial_contact_form", {
+					alert: { type: "danger", message: "Failed to send message. Try again later." },
+					formdata: req.body
+					}, (err, html) => {
+					if (err) {
+						console.log("Render error:", err);
+						return res.status(500).json({ error: "Render failed" });
+					}
+					return res.json({ html: html });
 					});
+
 				} else {
 					console.log("Email Sent");
-					return res.render("partial_contact_form", {
-						alert: { type: "success", message: "Message sent successfully!" }
+
+					// Render the updated contact section
+					res.render("partial_contact_form", {
+					alert: { type: "success", message: "Message sent successfully!" }
+					}, (err, html) => {
+					if (err) {
+						console.log("Render error:", err);
+						return res.status(500).json({ error: "Render failed" });
+					}
+					return res.json({ html: html });
 					});
 				}
 			});
+
 		}
 	}
 ];
