@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-  submitForm('#contactForm', '#contactmodal', '/portfolio');
+  //submitForm('#contactForm', '#contactmodal', '/portfolio');
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
@@ -55,13 +55,16 @@ $(document).ready(function() {
       })
     }*/    
     
-    /*$('#contactForm').on('submit', function(event) {
+    $('#contactForm').on('submit', function(event) {
       event.preventDefault();
+      var formData = new FormData($('#contactForm')[0]);
       $.ajax({
-        url: "/",
+        url: "/portfolio",
         method: "POST",
-        data: $(this).serialize(),
+        data: formData,
         success: function(response) {
+          console.log("response is");
+          console.log(response);
           $("#contactForm")[0].reset();
           $('#contactmodal').modal('show');
         },
@@ -70,7 +73,7 @@ $(document).ready(function() {
           alert("An error occured while sending the message, please try again later")
         }
       });
-    }); */ 
+    });  
     /*$('#authorcreateid').ajaxForm(function() {
       alert('done with submission')
 
