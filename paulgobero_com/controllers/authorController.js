@@ -135,13 +135,13 @@ exports.index_post = [
 			transporter.sendMail(mailoptions, (error, response) => {
 				if (error) {
 					console.log("Mail error", error);
-					return res.render("portfolio_index", {
+					return res.render("partial_contact_form", {
 						alert: { type: "danger", message: "Failed to send message. Try again later." },
 						formdata: req.body
 					});
 				} else {
 					console.log("Email Sent");
-					return res.render("portfolio_index", {
+					return res.render("partial_contact_form", {
 						alert: { type: "success", message: "Message sent successfully!" }
 					});
 				}
