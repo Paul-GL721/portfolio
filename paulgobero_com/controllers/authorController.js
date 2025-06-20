@@ -132,23 +132,25 @@ exports.index_post = [
 				replyTo: req.body.contactemail
 			};
 			
-			transporter.sendMail(mailoptions, (error, response) => {
+			transporter.sendMail(mailoptions, (error, info) => {
 				if (error) {
-					return res.render("partial_contact_form", {
-					alert: { type: "danger", message: "Failed to send message." },
+					console.log("Mail error", error);
+					res.render("partial_contact_form", {
+					alert: { type: "danger", message: "Failed to send message. Try again later." },
 					formdata: req.body
 					}, (err, html) => {
-					return res.json({ html });
+					return res.json({ success: false, html });  // 🔁 Send as JSON
 					});
 				} else {
-					return res.render("partial_contact_form", {
-					alert: { type: "success", message: "Message sent!" }
+					console.log("Email Sent");
+					res.render("partial_contact_form", {
+					alert: { type: "success", message: "Message sent successfully!" }
 					}, (err, html) => {
-					res.status(200).json({ status: 'success', message: 'Data received!' });
-					//return res.json({ html }); // <== KEY!
+					return res.json({ success: true, html });  // 🔁 Send as JSON
 					});
 				}
 			});
+
 
 
 		}

@@ -70,6 +70,7 @@ $(document).ready(function() {
           console.log(response);
           $("#contactForm")[0].reset();
           $('#contactmodal').modal('show');
+          $('#contact-div').html(response.html); 
         },
         error: function(error) {
           console.log(error);
