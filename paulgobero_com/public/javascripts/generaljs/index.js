@@ -65,6 +65,7 @@ $(document).ready(function() {
         data: formData,
         processData: false, 
         contentType: false,
+        dataType: 'json',
         success: function(response) {
           console.log("response is");
           console.log(response);
@@ -72,9 +73,10 @@ $(document).ready(function() {
           $('#contactmodal').modal('show');
           $('#contact-div').html(response.html); 
         },
-        error: function(error) {
-          console.log(error);
-          alert("An error occured while sending the message, please try again later")
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log("❌ error callback");
+          console.log(jqXHR, textStatus, errorThrown);
+          alert("An error occurred while submitting the form. Please try again.");
         }
       });
     });  
