@@ -17,7 +17,7 @@ $(document).ready(function() {
       dataType: 'html',
       success: function(data) {
         console.log('data is', data)
-        $('#contact-section').html(data);
+        $('#contact-div').html(data.html);
       },
       error: function(error) {
         console.log(error);
