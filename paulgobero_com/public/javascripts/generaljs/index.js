@@ -74,9 +74,9 @@ $(document).ready(function() {
           $('#contact-div').html(response.html); 
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.log("❌ error callback");
-          console.log(jqXHR, textStatus, errorThrown);
-          alert("An error occurred while submitting the form. Please try again.");
+          console.log("AJAX error:", textStatus, errorThrown);
+          console.log("Full object:", jqXHR);
+          alert("AJAX Error: " + textStatus + " — " + errorThrown);
         }
       });
     });  
