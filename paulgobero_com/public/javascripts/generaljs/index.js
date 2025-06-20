@@ -16,8 +16,12 @@ $(document).ready(function() {
       type: 'POST',
       dataType: 'json',
       success: function(data) {
-        $(formId).resetForm();
-        $(modalId).modal('show');
+        if (data.success) {
+          $(formId).resetForm(); // Clear the form
+          $(modalId).modal('show'); // Show modal
+        } else {
+          console.log("Form submitted but server returned error");
+        }
       },
       error: function(error) {
         console.log(error);
