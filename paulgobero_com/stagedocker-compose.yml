@@ -10,7 +10,8 @@ services:
             - /glustervol/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
         networks: #networks to db and reverse proxy
             - traefik_proxy-network
-        command: bash -c "npm run devstart" 
+            - hamongodb_mongodb-network
+        command: bash -c "./wait-for.sh hamongodb_mongo1:27017 --timeout=600 -- npm run stagestart" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
             replicas: 2
@@ -36,11 +37,12 @@ services:
                 order: start-first
             rollback_config: #how the service should be rolled back in case an update fails
                 parallelism: 2
-                delay: 10s  
-                 
+                delay: 10s                  
 
 #Communication networks between the containers
 networks:
     traefik_proxy-network:
+        external: true
+    hamongodb_mongodb-network:
         external: true
 
