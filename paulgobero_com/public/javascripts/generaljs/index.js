@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-  submitForm('#contactForm', '#contactmodal', '/' );
+  submitForm('#contactForm', '#contactmodal', '/portfolio' );
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
