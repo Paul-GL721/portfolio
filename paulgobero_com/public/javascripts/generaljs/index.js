@@ -69,12 +69,12 @@ $(document).ready(function() {
         success: function(response) {
           console.log("response is");
           console.log(response);
-          $("#contactForm")[0].reset();
-          $('#contactmodal').modal('show');
           $('#contact-div').html(response.html); 
+          $("#contactForm")[0].reset();
+          $('#contactmodal').modal('show');  
         },
         error: function(xhr, status, error) {
-          console.error("An error occurred: ", error);
+          console.error(error);
           alert('An error occured while receiving data from server');
         }
       });
