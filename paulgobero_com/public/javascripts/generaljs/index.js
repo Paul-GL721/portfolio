@@ -73,10 +73,9 @@ $(document).ready(function() {
           $('#contactmodal').modal('show');
           $('#contact-div').html(response.html); 
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log("AJAX error:", textStatus, errorThrown);
-          console.log("Full object:", jqXHR);
-          alert("AJAX Error: " + textStatus + " — " + errorThrown);
+        error: function(xhr, status, error) {
+          console.error("An error occurred: ", error);
+          alert('An error occured while receiving data from server');
         }
       });
     });  

@@ -139,14 +139,14 @@ exports.index_post = [
 					alert: { type: "danger", message: "Failed to send message. Try again later." },
 					formdata: req.body
 					}, (err, html) => {
-					return res.json({ success: false, html });  // 🔁 Send as JSON
+					return res.json({ success: false, html });  
 					});
 				} else {
 					console.log("Email Sent");
 					res.render("partial_contact_form", {
 					alert: { type: "success", message: "Message sent successfully!" }
 					}, (err, html) => {
-					return res.json({ success: true, html });  // 🔁 Send as JSON
+					return res.json({ success: true, html }); 
 					});
 				}
 			});
