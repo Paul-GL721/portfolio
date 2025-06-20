@@ -144,7 +144,8 @@ exports.index_post = [
 					return res.render("partial_contact_form", {
 					alert: { type: "success", message: "Message sent!" }
 					}, (err, html) => {
-					return res.json({ html }); // <== KEY!
+					res.status(200).json({ status: 'success', message: 'Data received!' });
+					//return res.json({ html }); // <== KEY!
 					});
 				}
 			});
