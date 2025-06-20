@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-  //submitForm('#contactForm', '#contactmodal', '/portfolio');
+  submitForm('#contactForm', '#contactmodal', '/portfolio');
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
@@ -55,7 +55,7 @@ $(document).ready(function() {
       })
     }*/    
     
-    $('#contactForm').on('submit', function(event) {
+    /*$('#contactForm').on('submit', function(event) {
       event.preventDefault();
       var formData = new FormData($('#contactForm')[0]);
       console.log('data is sent successfully');
@@ -78,7 +78,7 @@ $(document).ready(function() {
           alert('An error occured while receiving data from server');
         }
       });
-    });  
+    }); */ 
     /*$('#authorcreateid').ajaxForm(function() {
       alert('done with submission')
 
