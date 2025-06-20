@@ -17,12 +17,7 @@ $(document).ready(function() {
       dataType: 'json',
       success: function(data) {
         console.log(data)
-        if (data.success) {
-          $(formId).resetForm(); // Clear the form
-          $(modalId).modal('show'); // Show modal
-        } else {
-          console.log("Form submitted but server returned error");
-        }
+        $('#contact-section').html(data);
       },
       error: function(error) {
         console.log(error);
