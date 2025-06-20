@@ -58,10 +58,13 @@ $(document).ready(function() {
     $('#contactForm').on('submit', function(event) {
       event.preventDefault();
       var formData = new FormData($('#contactForm')[0]);
+      console.log('data is sent successfully');
       $.ajax({
         url: "/portfolio",
         method: "POST",
         data: formData,
+        processData: false, 
+        contentType: false,
         success: function(response) {
           console.log("response is");
           console.log(response);
