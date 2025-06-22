@@ -64,7 +64,7 @@ $(document).ready(function() {
         url: "/portfolio",
         method: "POST",
         data: formData,  // serialized
-        dataType: 'json',
+        //dataType: 'json',
         success: function(response) {
           $('#contact-div').html(response.html); 
           $("#contactForm")[0].reset();

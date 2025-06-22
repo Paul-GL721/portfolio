@@ -146,18 +146,8 @@ exports.index_post = [
 						res.render("partial_contact_form", {
 						alert: { type: "success", message: "Message sent successfully!" }
 						}, (err, html) => {
-						if (err) {
-							console.error("Render error", err);
-							return res.status(500).json({ success: false, html: "<p>Render error</p>" });
-						}
-
-						// Safely embed HTML into JSON response
-						const safeResponse = JSON.stringify({ success: true, html });
-
-						res.setHeader("Content-Type", "application/json");
-						return res.send(safeResponse);
+							return res.json({ success: true }); 
 						});
-
 					}
 				});
 			} catch (e) {
