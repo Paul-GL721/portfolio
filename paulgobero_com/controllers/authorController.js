@@ -131,25 +131,29 @@ exports.index_post = [
 				text: req.body.contactmessage,
 				replyTo: req.body.contactemail
 			};
-			
-			transporter.sendMail(mailoptions, (error, info) => {
-				if (error) {
-					console.log("Mail error", error);
-					res.render("partial_contact_form", {
-					alert: { type: "danger", message: "Failed to send message. Try again later." },
-					formdata: req.body
-					}, (err, html) => {
-						return res.json({ success: false, html });  
-					});
-				} else {
-					console.log("Email Sent");
-					res.render("partial_contact_form", {
-					alert: { type: "success", message: "Message sent successfully!" }
-					}, (err, html) => {
-						return res.json({ success: true, html }); 
-					});
-				}
-			});
+			try {
+				transporter.sendMail(mailoptions, (error, info) => {
+					if (error) {
+						console.log("Mail error", error);
+						res.render("partial_contact_form", {
+						alert: { type: "danger", message: "Failed to send message. Try again later." },
+						formdata: req.body
+						}, (err, html) => {
+							return res.json({ success: false, html });  
+						});
+					} else {
+						console.log("Email Sent");
+						res.render("partial_contact_form", {
+						alert: { type: "success", message: "Message sent successfully!" }
+						}, (err, html) => {
+							return res.json({ success: true, html }); 
+						});
+					}
+				});
+			} catch (e) {
+				console.log("Unexpected mail error:", e);
+				return res.json({ success: false, html: "<p>Server error occurred.</p>" });
+			}
 		}
 	}
 ];
