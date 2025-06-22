@@ -57,29 +57,27 @@ $(document).ready(function() {
     
     $('#contactForm').on('submit', function(event) {
       event.preventDefault();
-      var formData = new FormData($('#contactForm')[0]);
-      console.log('data is sent successfully');
-      alert('Message sent Successfully');
+
+      const formData = $(this).serialize();  // ← instead of FormData
+
       $.ajax({
         url: "/portfolio",
         method: "POST",
-        data: formData,
-        processData: false, 
-        contentType: false,
+        data: formData,  // serialized
         dataType: 'json',
         success: function(response) {
-          console.log("response is");
-          console.log(response);
           $('#contact-div').html(response.html); 
           $("#contactForm")[0].reset();
           $('#contactmodal').modal('show');  
+          alert(response.success ? 'Message sent Successfully' : 'Message failed');
         },
         error: function(xhr, status, error) {
           console.error(error);
-          alert('An error occured while receiving data from server');
+          alert('An error occurred');
         }
       });
-    }); 
+    });
+
     /*$('#authorcreateid').ajaxForm(function() {
       alert('done with submission')
 
