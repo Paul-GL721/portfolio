@@ -107,9 +107,9 @@ exports.index_post = [
 			//Re-render the project form with errors
 
 		} else {
-			//console.log("this is the body");
-			//console.log(req.body);
-			
+			/*console.log("this is the email body");
+			console.log(req.body);
+			//console.log('emial host is', EMAIL_HOST)*/
 			const transporter = nodemailer.createTransport({
 				host: EMAIL_HOST,
 				port: EMAIL_PORT,
@@ -131,20 +131,28 @@ exports.index_post = [
 				text: req.body.contactmessage,
 				replyTo: req.body.contactemail
 			};
-			
-			transporter.sendMail(mailoptions, (error, response) => {
-				if (error) {
-					console.log(error);
-					//res.send(error);
-					//res.jsonp({failed : true});
-					return res.status(500).json({ failed: true });	
-				} else {
-					console.log("Email Sent");
-					//res.redirect("/portfolio#contact_section");
-					return res.status(200).json({ success: true });
-
-				}
-			});
+			try {
+				transporter.sendMail(mailoptions, (error, info) => {
+					if (error) {
+						console.log("Mail error", error);
+						res.render("partial_contact_form", {alert: { type: "danger", message: "Failed to send message. Try again later." },
+						formdata: req.body
+						}, (err, html) => {
+							return res.json({ success: false, "html": html});  
+						});
+					} else {
+						console.log("Email Sent");
+						res.render("partial_contact_form", {
+						alert: { type: "success", message: "Message sent successfully!" }
+						}, (err, html) => {
+							return res.json({ success: true, "html": html }); 
+						});
+					}
+				});
+			} catch (e) {
+				console.log("Unexpected mail error:", e);
+				return res.json({ success: false, html: "<p>Server error occurred.</p>" });
+			}
 		}
 	}
 ];
