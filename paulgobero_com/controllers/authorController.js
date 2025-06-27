@@ -135,18 +135,17 @@ exports.index_post = [
 				transporter.sendMail(mailoptions, (error, info) => {
 					if (error) {
 						console.log("Mail error", error);
-						res.render("partial_contact_form", {
-						alert: { type: "danger", message: "Failed to send message. Try again later." },
+						res.render("partial_contact_form", {alert: { type: "danger", message: "Failed to send message. Try again later." },
 						formdata: req.body
 						}, (err, html) => {
-							return res.json({ success: false, html });  
+							return res.json({ success: false, "html": html});  
 						});
 					} else {
 						console.log("Email Sent");
 						res.render("partial_contact_form", {
 						alert: { type: "success", message: "Message sent successfully!" }
 						}, (err, html) => {
-							return res.json({ success: true }); 
+							return res.json({ success: true, "html": html }); 
 						});
 					}
 				});
