@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-  submitForm('#contactForm', '#contactmodal', '/' );
+  //submitForm('#contactForm', '#contactmodal', '/portfolio');
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
   $('.project-modal-link').on('click', function() {
@@ -16,8 +16,8 @@ $(document).ready(function() {
       type: 'POST',
       dataType: 'json',
       success: function(data) {
-        $(formId).resetForm();
-        $(modalId).modal('show');
+        console.log('data is', data)
+        $('#contact-div').html(data.html);
       },
       error: function(error) {
         console.log(error);
@@ -57,20 +57,31 @@ $(document).ready(function() {
     
     /*$('#contactForm').on('submit', function(event) {
       event.preventDefault();
+
+      const formData = $(this).serialize(); 
+      console.log("This is the form data", formData);
+
       $.ajax({
-        url: "/",
+        url: "/portfolio",
         method: "POST",
-        data: $(this).serialize(),
+        data: formData,  // serialized
+        dataType: 'json',
         success: function(response) {
+          console.log("This is the data from the server",response);
+          
+          $('#contact_form_div').html(response.html); 
           $("#contactForm")[0].reset();
-          $('#contactmodal').modal('show');
+          //$('#contactmodal').modal('show'); 
+          alert("Message sent successfuly"); 
+          //alert(response.success ? 'Message sent Successfully' : 'Message failed');
         },
-        error: function(error) {
-          console.log(error);
-          alert("An error occured while sending the message, please try again later")
+        error: function(xhr, status, error) {
+          console.error(error);
+          alert('An error occurred');
         }
       });
-    }); */ 
+    });*/
+
     /*$('#authorcreateid').ajaxForm(function() {
       alert('done with submission')
 
