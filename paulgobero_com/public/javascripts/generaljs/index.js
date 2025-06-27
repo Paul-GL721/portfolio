@@ -55,28 +55,32 @@ $(document).ready(function() {
       })
     }*/    
     
-    $('#contactForm').on('submit', function(event) {
+    /*$('#contactForm').on('submit', function(event) {
       event.preventDefault();
 
-      const formData = $(this).serialize();  // ← instead of FormData
+      const formData = $(this).serialize(); 
+      console.log("This is the form data", formData);
 
       $.ajax({
         url: "/portfolio",
         method: "POST",
         data: formData,  // serialized
-        //dataType: 'json',
+        dataType: 'json',
         success: function(response) {
-          $('#contact-div').html(response.html); 
+          console.log("This is the data from the server",response);
+          
+          $('#contact_form_div').html(response.html); 
           $("#contactForm")[0].reset();
-          $('#contactmodal').modal('show');  
-          alert(response.success ? 'Message sent Successfully' : 'Message failed');
+          //$('#contactmodal').modal('show'); 
+          alert("Message sent successfuly"); 
+          //alert(response.success ? 'Message sent Successfully' : 'Message failed');
         },
         error: function(xhr, status, error) {
           console.error(error);
           alert('An error occurred');
         }
       });
-    });
+    });*/
 
     /*$('#authorcreateid').ajaxForm(function() {
       alert('done with submission')
