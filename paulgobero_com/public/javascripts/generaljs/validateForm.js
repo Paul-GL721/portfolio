@@ -25,6 +25,9 @@ function setupContactFormValidation() {
 
     submitHandler: function(form) {
       const formData = $(form).serialize();
+	  // Show spinner
+      $("#submitSpinner").removeClass("d-none");
+      $("#submitText").text("Sending...");
 
       $.ajax({
         url: "/portfolio",
@@ -32,19 +35,29 @@ function setupContactFormValidation() {
         data: formData,
         dataType: "json",
         success: function(response) {
-          $("#contact_form_div").html(response.html);
-          
-          //Re-bind validation on the new form
-          setupContactFormValidation();
+			// Replace the form content with the new partial (including success alert)
+			$("#contact_form_div").html(response.html);
 
-          alert("Message sent successfully");
+			// Re-bind validation to the new form
+			setupContactFormValidation();
+
+			// Smooth scroll to contact section
+			$('html, body').animate({
+				scrollTop: $('#contact_section').offset().top
+			}, 600);
+
+			// Auto-dismiss alert after 5 seconds
+			setTimeout(() => {
+				$('.alert-success').fadeOut('slow', function () {
+				$(this).remove();
+				});
+			}, 5000);
         },
         error: function(xhr, status, error) {
           console.error(error);
           alert("An error occurred");
         }
       });
-
       return false;
     }
   });
