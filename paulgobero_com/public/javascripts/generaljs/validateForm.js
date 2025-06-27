@@ -31,19 +31,28 @@ $(document).ready(function() {
 		      minlength: jQuery.validator.format("At least {3} characters required!")
 		    }
 		},
-		submitHandler: function(form,e) {
-			e.preventDefault();
-			const formsdata = new FormData($("#contactForm")[0]);
-			/*console.log("formsdata is");
-			console.log(formsdata);
-			formsdata.has("contactmessage");
-			// Display the values
-			for (const value of formsdata.values()) {
-				console.log(value);
-			}*/
-			form.submit(function(){
-				alert("Message successfully sent");
+		submitHandler: function(form) {
+			const formData = $(form).serialize(); 
+			console.log("This is the form data", formData);
 
+			$.ajax({
+				url: "/portfolio",
+				method: "POST",
+				data: formData,  // serialized
+				dataType: 'json',
+				success: function(response) {
+					console.log("This is the data from the server",response);
+					
+					$('#contact_form_div').html(response.html); 
+					//$("#contactForm")[0].reset();
+					$('#contactmodal').modal('show'); 
+					//alert("Message sent successfuly"); 
+					//alert(response.success ? 'Message sent Successfully' : 'Message failed');
+				},
+				error: function(xhr, status, error) {
+					console.error(error);
+					alert('An error occurred');
+				}
 			});
 		}
 	});
