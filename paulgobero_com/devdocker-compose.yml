@@ -35,7 +35,7 @@ services:
     
     #web-based mongoDB admin interface
     mongodbadmin:
-        image: mongo-express:latest
+        image: mongo-express:1.0.2-20-alpine3.19
         restart: always
         ports:
             - "8081:8081"
