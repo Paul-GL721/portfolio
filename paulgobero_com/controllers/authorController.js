@@ -107,9 +107,6 @@ exports.index_post = [
 			//Re-render the project form with errors
 
 		} else {
-			/*console.log("this is the email body");
-			console.log(req.body);
-			//console.log('emial host is', EMAIL_HOST)*/
 			const transporter = nodemailer.createTransport({
 				host: EMAIL_HOST,
 				port: EMAIL_PORT,
