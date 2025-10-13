@@ -5,7 +5,7 @@
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block createDemoUserbutton %}
-    <a class="btn btn-outline-danger ml-3" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used to quickly test live demos" href="/portfolio/signup/demouser">Create Demo User</a>
+    
 {% endblock %}
 
 {% block content %}
@@ -83,7 +83,7 @@
                                         <h3 class="modal-title fw-bold text-primary" id="projectModalLabel-{{ dindex._id }}">
                                             {{ dindex.ptitle }}
                                         </h3>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                     </div>
 
                                     <div class="modal-body">
@@ -114,9 +114,13 @@
 
                                                 <div class="mb-4">
                                                     <h5 class="fw-semibold text-secondary">My Role</h5>
-                                                    <p class="fs-6 text-dark">
-                                                        {{ dindex.role | urlize | safe }}
-                                                    </p>
+                                                    <ul class="fs-6 text-left text-dark">
+                                                        {% for item in dindex.role.split('\n') %}
+                                                            {% if item.trim() %}
+                                                            <li>{{ item.trim() }}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
                                                 </div>
 
                                                 <div class="mb-4">
@@ -136,7 +140,7 @@
                                                             View on GitHub
                                                         </a>
                                                         {% if dindex.liveDemoUrl %}
-                                                            • <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">
+                                                            <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">
                                                                 Live Demo
                                                             </a>
                                                         {% endif %}
@@ -148,7 +152,7 @@
                                     </div>
 
                                     <div class="modal-footer border-0 pt-0">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                                             Close
                                         </button>
                                     </div>
