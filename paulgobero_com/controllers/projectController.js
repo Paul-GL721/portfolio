@@ -53,7 +53,7 @@ exports.project_create_post = [
 	body("projsummary", "Project summary is required").trim().isLength({ min:2 }).escape(),
 	body("projproblem", "What problem was the project solving?").trim().isLength({ min:2 }).escape(),
 	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
-	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
+	body("prorole", "Your contribution to this project is required").trim().isLength({ min: 2 }).customSanitizer(value => value.replace(/\r\n/g, '\n')), // normalize newlines
 	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
 	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
@@ -232,7 +232,7 @@ exports.project_update_post = [
 	body("projsummary", "Project summary is required").trim().isLength({ min:2 }).escape(),
 	body("projproblem", "What problem was the project solving?").trim().isLength({ min:2 }).escape(),
 	body("projsoln", "What solution did you provide?").trim().isLength({ min:2 }).escape(),
-	body("prorole", "Your contribution to this project is required").trim().isLength({ min:2 }).escape(),
+	body("prorole", "Your contribution to this project is required").trim().isLength({ min: 2 }).customSanitizer(value => value.replace(/\r\n/g, '\n')),
 	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
 	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
