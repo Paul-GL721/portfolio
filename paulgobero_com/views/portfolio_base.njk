@@ -1,41 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {% block title %}<title>{{ Title }}</title> {% endblock %}
+    {% block title %}
+        <title>{{ meta_author or 'Portfolio' }} | {{ meta_keywords or 'Full Stack Developer & DevOps Engineer' }}</title>
+    {% endblock %}
 
     {% block mobileview %}
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     {% endblock %}
 
     {% block primarymeta %}
         <!-- Primary Meta -->
-        <meta name="description" content="{{ meta_description or 'Portfolio of Paul Gobero — Full Stack Web Developer and DevOps Engineer specializing in Node.js, React, Kubernetes, CI/CD, and cloud infrastructure.' }}">
-        <meta name="keywords" content="Lwanga Paul Gobero, Paul Gobero, Full Stack Developer, DevOps Engineer, Node.js, React, jquery, html, bootstrap, css,  Docker, Kubernetes, AWS, CI/CD, Portfolio, Web Developer Uganda, fullstack Web Developer Uganda">
-        <meta name="author" content="Paul Gobero">
+        <meta name="description"
+        content="{{ meta_description or 'Portfolio of a full stack developer and DevOps engineer.' }}">
+        <meta name="keywords"
+        content="{{ meta_keywords or 'full stack developer, devops, nodejs, react, kubernetes, ci/cd, aws' }}">
+        <meta name="author" content="{{ meta_author or 'Portfolio Owner' }}">
         <meta name="robots" content="index, follow">
     {% endblock %}
 
     {% block opengraph %}
-        <!-- Open Graph (Facebook, LinkedIn) -->
-        <meta property="og:title" content="{{ og_title or 'Paul Gobero | Full Stack Web Developer & DevOps Engineer' }}">
-        <meta property="og:description" content="{{ og_description or 'I build scalable web applications and DevOps pipelines using modern cloud technologies.' }}">
+        <!-- Open Graph -->
+        <meta property="og:title"
+        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        <meta property="og:description"
+        content="{{ meta_description or 'Building scalable web applications and DevOps pipelines.' }}">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ og_url or 'https://www.paulgobero.com' }}">
-        <meta property="og:image" content="{{ og_image or 'https://www.paulgobero.com/images/img/og-image.jpg' }}">
+        <meta property="og:url" content="{{ og_url or hostname or 'https://example.com' }}">
+        <meta property="og:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
     {% endblock %}
 
     {% block twittercard %}
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="{{ twitter_title or 'Paul Gobero | Full Stack Web Developer & DevOps Engineer' }}">
-        <meta name="twitter:description" content="{{ twitter_description or 'Experienced in Node.js, React, and DevOps automation with Kubernetes and CI/CD pipelines.' }}">
-        <meta name="twitter:image" content="{{ twitter_image or 'https://www.paulgobero.com/images/img/og-image.jpg' }}">
+        <meta name="twitter:title"
+        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        <meta name="twitter:description"
+        content="{{ meta_description or 'Experienced in Node.js, React, and cloud infrastructure.' }}">
+        <meta name="twitter:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
     {% endblock %}
 
     {% block canonical %}
         <!-- Canonical -->
-        <link rel="canonical" href="{{ canonical_url or 'https://www.paulgobero.com' }}">
+        <link rel="canonical" href="{{ og_url or hostname or 'https://example.com' }}">
     {% endblock %}
 
     {% block favicon %}
@@ -43,7 +51,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/images/img/paulgobero_fav.png">
     {% endblock %}
 
-    {% block csshead %}   
+    {% block csshead %}
         <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/bootstrap-table.min.css">
         <link rel="stylesheet" href="/stylesheets/multiselect.css">
@@ -60,17 +68,17 @@
         <!-- Schema.org Structured Data -->
         <script type="application/ld+json">
             {
-            "@context": "https://schema.org/",
-            "@type": "Person",
-            "name": "Paul Gobero",
-            "url": "https://www.paulgobero.com",
-            "jobTitle": "Full Stack Web Developer and DevOps Engineer",
-            "sameAs": [
-                "https://github.com/paulgobero",
-                "https://linkedin.com/in/paulgobero"
-            ],
-            "image": "https://www.paulgobero.com/images/img/profile.jpg",
-            "description": "Full Stack Developer and DevOps Engineer with expertise in Node.js, React, Docker, Kubernetes, and AWS."
+                "@context": "https://schema.org/",
+                "@type": "Person",
+                "name": "{{ meta_author or 'Portfolio Owner' }}",
+                "url": "{{ hostname or 'https://example.com' }}",
+                "jobTitle": "{{ meta_description or 'Full Stack Web Developer and DevOps Engineer' }}",
+                "sameAs": [
+                {% if social.github %}"{{ social.github }}"{% if social.linkedin %}, {% endif %}{% endif %}
+                {% if social.linkedin %}"{{ social.linkedin }}"{% endif %}
+                ],
+                "image": "{{ og_image or '/images/img/default-og.jpg' }}",
+                "description": "{{ full_description or meta_description }}"
             }
         </script>
     {% endblock %}
