@@ -2,11 +2,48 @@
 <html>
 <head>
     {% block title %}<title>{{ Title }}</title> {% endblock %}
-    {% block csshead %}
+
+    {% block mobileview %}
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">    
-        <meta name="description" content="portfolio for lwanga paul gobero">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"> 
+    {% endblock %}
+
+    {% block primarymeta %}
+        <!-- Primary Meta -->
+        <meta name="description" content="{{ meta_description or 'Portfolio of Paul Gobero — Full Stack Web Developer and DevOps Engineer specializing in Node.js, React, Kubernetes, CI/CD, and cloud infrastructure.' }}">
+        <meta name="keywords" content="Lwanga Paul Gobero, Paul Gobero, Full Stack Developer, DevOps Engineer, Node.js, React, jquery, html, bootstrap, css,  Docker, Kubernetes, AWS, CI/CD, Portfolio, Web Developer Uganda, fullstack Web Developer Uganda">
+        <meta name="author" content="Paul Gobero">
+        <meta name="robots" content="index, follow">
+    {% endblock %}
+
+    {% block opengraph %}
+        <!-- Open Graph (Facebook, LinkedIn) -->
+        <meta property="og:title" content="{{ og_title or 'Paul Gobero | Full Stack Web Developer & DevOps Engineer' }}">
+        <meta property="og:description" content="{{ og_description or 'I build scalable web applications and DevOps pipelines using modern cloud technologies.' }}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ og_url or 'https://www.paulgobero.com' }}">
+        <meta property="og:image" content="{{ og_image or 'https://www.paulgobero.com/images/img/og-image.jpg' }}">
+    {% endblock %}
+
+    {% block twittercard %}
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ twitter_title or 'Paul Gobero | Full Stack Web Developer & DevOps Engineer' }}">
+        <meta name="twitter:description" content="{{ twitter_description or 'Experienced in Node.js, React, and DevOps automation with Kubernetes and CI/CD pipelines.' }}">
+        <meta name="twitter:image" content="{{ twitter_image or 'https://www.paulgobero.com/images/img/og-image.jpg' }}">
+    {% endblock %}
+
+    {% block canonical %}
+        <!-- Canonical -->
+        <link rel="canonical" href="{{ canonical_url or 'https://www.paulgobero.com' }}">
+    {% endblock %}
+
+    {% block favicon %}
+        <!-- Favicon -->
         <link rel="icon" type="image/png" sizes="16x16" href="/images/img/paulgobero_fav.png">
+    {% endblock %}
+
+    {% block csshead %}   
         <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/bootstrap-table.min.css">
         <link rel="stylesheet" href="/stylesheets/multiselect.css">
@@ -17,6 +54,25 @@
         <link rel="stylesheet" href="/stylesheets/Contact-Details-icons.css">
         <link rel="stylesheet" href="/images/fonts/simple-line-icons.min.css">
         <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    {% endblock %}
+
+    {% block schema %}
+        <!-- Schema.org Structured Data -->
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org/",
+            "@type": "Person",
+            "name": "Paul Gobero",
+            "url": "https://www.paulgobero.com",
+            "jobTitle": "Full Stack Web Developer and DevOps Engineer",
+            "sameAs": [
+                "https://github.com/paulgobero",
+                "https://linkedin.com/in/paulgobero"
+            ],
+            "image": "https://www.paulgobero.com/images/img/profile.jpg",
+            "description": "Full Stack Developer and DevOps Engineer with expertise in Node.js, React, Docker, Kubernetes, and AWS."
+            }
+        </script>
     {% endblock %}
 </head>
 
