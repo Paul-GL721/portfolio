@@ -1,10 +1,22 @@
 // utils/seoContext.js
 const Author = require("../models/author");
 
+let cachedOwner = null;
+let lastFetched = 0;
+const CACHE_DURATION = 60 * 60 * 1000; // 60 minutes
+
 module.exports = async function seoContext(req, res, next) {
   try {
-    // Assuming one owner per SaaS tenant
-    const owner = await Author.findOne({ authorStatus: "owner" }).lean();
+    const now = Date.now();
+
+    // Reuse cached owner if still fresh
+    if (!cachedOwner || now - lastFetched > CACHE_DURATION) {
+      console.log("Fetching author from DB...");
+      cachedOwner = await Author.findOne({ authorStatus: "owner" }).lean();
+      lastFetched = now;
+    }
+
+    const owner = cachedOwner;
 
     if (owner) {
       res.locals.meta_author = `${owner.name.first} ${owner.name.last}`;
