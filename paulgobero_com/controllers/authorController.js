@@ -45,7 +45,17 @@ exports.index = async (req, res, next) => {
 							Author.findById(author_id).exec(callback);
 						},
 						author_projects(callback) {
-							Project.find({ author: author_id }).sort({ createdAt: -1 })
+							Project.find({ author: author_id, checked: true }).sort({ createdAt: -1 })
+							.limit(3) 
+							.populate('author', 'name')
+							.populate({
+								path: 'skill',
+								select: ['name', 'imageName', 'imageUrl' ]})
+							.populate('specialisation', 'name')
+							.exec(callback);
+						},
+						author_all_projects(callback) {
+							Project.find({ author: author_id}).sort({ createdAt: -1 })
 							.populate('author', 'name')
 							.populate({
 								path: 'skill',

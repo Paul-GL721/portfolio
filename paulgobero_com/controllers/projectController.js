@@ -56,6 +56,7 @@ exports.project_create_post = [
 	body("prorole", "Your contribution to this project is required").trim().isLength({ min: 2 }).customSanitizer(value => value.replace(/\r\n/g, '\n')), // normalize newlines
 	body("projstartDate").optional({ checkFalsy: true }).isISO8601().toDate().withMessage("Invalid start date format"),
 	body("projendDate").optional({ checkFalsy: true }).isISO8601().toDate().withMessage("Invalid end date format"),
+	body("checked").optional().toBoolean().isBoolean().withMessage("Invalid value for checked field."),
 	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
 	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
@@ -104,6 +105,7 @@ exports.project_create_post = [
 				const projectDates = {};
 				if (req.body.projstartDate) projectDates.startDate = req.body.projstartDate;
 				if (req.body.projendDate) projectDates.endDate = req.body.projendDate;
+				const isChecked = req.body.checked === 'true' || req.body.checked === 'on';
 				//if formdata has no errors, submit the video to S3 and formdata to db
 				const projz = new Project({
 					ptitle: req.body.projtitle,
@@ -118,6 +120,7 @@ exports.project_create_post = [
 					author: req.body.projauthor,
 					specialisation: req.body.projspecialisation,
 					projectDates, 
+					checked: isChecked,
 					mediaName: {
 						imageName:  projimagename,
 						videoName: projvideoname
@@ -242,6 +245,7 @@ exports.project_update_post = [
 	body("prorole", "Your contribution to this project is required").trim().isLength({ min: 2 }).customSanitizer(value => value.replace(/\r\n/g, '\n')),
 	body("projstartDate").optional({ checkFalsy: true }).isISO8601().toDate().withMessage("Invalid start date format"),
 	body("projendDate").optional({ checkFalsy: true }).isISO8601().toDate().withMessage("Invalid end date format"),
+	body("checked").optional().toBoolean().isBoolean().withMessage("Invalid value for checked field."),
 	body("progithub", "Project Github url").optional({ checkFalsy: true }).isURL(),
 	body("prolivelink", "Project live link url").optional({ checkFalsy: true }).isURL(),
 	body("proskills.*").escape(),
@@ -321,7 +325,9 @@ exports.project_update_post = [
 				const projectDates = {};
 				if (req.body.projstartDate) projectDates.startDate = req.body.projstartDate;
 				if (req.body.projendDate) projectDates.endDate = req.body.projendDate;
-				const update_projectz = { $set: {
+				const isChecked = !!req.body.checked
+				const update_projectz = { $set: 
+					{
 						ptitle: req.body.projtitle,
 						psummary: req.body.projsummary,
 						problemStatement: req.body.projproblem,
@@ -334,6 +340,7 @@ exports.project_update_post = [
 						author: req.body.projauthor,
 						specialisation: req.body.projspecialisation,
 						projectDates,
+						checked: isChecked,
 						mediaName: {
 							imageName:  updateprojimagename,
 							videoName: updateprojvideoname

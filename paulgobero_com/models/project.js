@@ -30,6 +30,7 @@ const ProjectSchema = new Schema({
             },
         },
     },
+    checked: {type: Boolean, default: false },
     mediaName: {
         imageName: { type: String, required: true },
         videoName: { type: String, required: true }
