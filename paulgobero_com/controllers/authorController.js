@@ -45,7 +45,17 @@ exports.index = async (req, res, next) => {
 							Author.findById(author_id).exec(callback);
 						},
 						author_projects(callback) {
-							Project.find({ author: author_id }).sort({ createdAt: -1 })
+							Project.find({ author: author_id, checked: true }).sort({ createdAt: -1 })
+							.limit(3) 
+							.populate('author', 'name')
+							.populate({
+								path: 'skill',
+								select: ['name', 'imageName', 'imageUrl' ]})
+							.populate('specialisation', 'name')
+							.exec(callback);
+						},
+						author_all_projects(callback) {
+							Project.find({ author: author_id}).sort({ createdAt: -1 })
 							.populate('author', 'name')
 							.populate({
 								path: 'skill',
@@ -257,6 +267,8 @@ exports.author_create_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -312,6 +324,8 @@ exports.author_create_post = [
 							full_description: req.body.authorfulldesc
 						},
 						brandName: req.body.authorbrandname,
+						hostName: req.body.authorhostname,
+						yourKeyword: req.body.authorkeywords,
 						email: req.body.authoremail,
 						password: req.body.authorpassword,
 						authorStatus: req.body.authorstatus,
@@ -360,6 +374,8 @@ exports.author_ownercreate_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -404,6 +420,8 @@ exports.author_ownercreate_post = [
 								full_description: req.body.authorfulldesc
 							},
 							brandName: req.body.authorbrandname,
+							hostName: req.body.authorhostname,
+							yourKeyword: req.body.authorkeywords,
 							email: req.body.authoremail,
 							password: req.body.authorpassword,
 							authorStatus: req.body.authorstatus,
@@ -517,6 +535,8 @@ exports.author_update_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -584,6 +604,8 @@ exports.author_update_post = [
 						full_description: req.body.authorfulldesc
 					},
 					brandName: req.body.authorbrandname,
+					hostName: req.body.authorhostname,
+					yourKeyword: req.body.authorkeywords,
 					email: req.body.authoremail,
 					password: req.body.authorpassword,
 					authorStatus: req.body.authorstatus,
