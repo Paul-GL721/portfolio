@@ -15,8 +15,6 @@
 #deploy to swarm node
 - name: Deploy to docker swarm
   hosts: staging
-  vars:
-    project_dir: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}"
   tasks:
     - name: check availabilty of server
       become: true
@@ -32,7 +30,7 @@
         owner: "{{ REMOTE_USER }}"
         group: "{{ REMOTE_USER }}"
 
-    - name: Clone the staging branch of the repository
+    - name: Clone the master branch of the repository
       ansible.builtin.git:
         repo: "{{ GIT_REPO }}"
         dest: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}
@@ -41,27 +39,12 @@
         force: yes
         key_file: /home/{{ REMOTE_USER }}/.ssh/ansiblegithub
 
-    - name: Replace JVERSION placeholder in stagedocker-compose.yml
+    - name: Replace JVERSION Placeholders in docker-compose.yml 
       shell: |
-        sed -i "s/JVERSION/{{ VERSION }}/g" {{ project_dir }}/stagedocker-compose.yml
+        sed -i -e "s/JVERSION/{{ VERSION }}/g" /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}/stagedocker-compose.yml
 
-    - name: Verify image version in docker-compose file
-      shell: grep 'image:' {{ project_dir }}/stagedocker-compose.yml
-      register: image_check
-
-    - name: Print the image being deployed
-      ansible.builtin.debug:
-        msg: "Deploying image -> {{ image_check.stdout }}"
-
-    - name: Deploy updated stack to Docker Swarm
+    - name: change directory, and deploy stack
       ansible.builtin.shell:
+      args:
+        chdir: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}
         cmd: docker stack deploy -c stagedocker-compose.yml --with-registry-auth {{ STACKNAME }}
-        chdir: "{{ project_dir }}"
-
-    - name: Verify running services
-      ansible.builtin.shell: docker service ls --filter name={{ STACKNAME }}
-      register: stack_services
-
-    - name: Show active services
-      ansible.builtin.debug:
-        msg: "{{ stack_services.stdout }}"
