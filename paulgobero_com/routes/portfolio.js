@@ -9,6 +9,7 @@ const specialisation_controller = require("../controllers/specialisationControll
 const skill_controller = require("../controllers/skillController");
 const project_controller = require("../controllers/projectController");
 const login_controller = require("../controllers/loginController");
+const sitemap_controller = require("../controllers/sitemapController");
 
 				//........AUTHOR ROUTES.....//
 //Get portfolio home page
@@ -137,6 +138,13 @@ router.get("/specialisation/:id", login_controller.verifyToken, specialisation_c
 
 //Get request for all specialisations
 router.get("/specialisation", login_controller.verifyToken, specialisation_controller.specialisation_list);
+
+
+
+
+//........SITEMAP ROUTES.....//
+router.get("/seo/sitemap.xml", sitemap_controller.getSitemap);
+
 
 
 				//........SKILLS ROUTES.....//

@@ -13,6 +13,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var portfolioRouter = require('./routes/portfolio');
 
+//SEO middleware
+var seoContext = require('./utils/seoContext');
+
 var app = express();
 
 // view engine setup
@@ -31,6 +34,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Apply the SEO middleware
+app.use(seoContext);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
