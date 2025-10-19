@@ -1,5 +1,5 @@
 ---
-# test ansible connection
+#test ansible connection
 - name: Run the test playbook 
   gather_facts: false
   hosts: localhost
@@ -8,40 +8,38 @@
       become: false
       local_action: command whoami
       register: username_on_the_host
-
     - name: Display the User name
       ansible.builtin.debug:
         msg: "Hello User {{ username_on_the_host.stdout }} from Jenkins and Ansible!!"
 
-
-# deploy to swarm node
+#deploy to swarm node
 - name: Deploy to docker swarm
   hosts: staging
-  become: true
   vars:
     project_dir: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}"
   tasks:
+    - name: check availabilty of server
+      become: true
+      remote_user: "{{ REMOTE_USER }}"
+      action: ping
 
-    - name: Check availability of server
-      ansible.builtin.ping:
-
-    - name: Ensure deployment directory exists
+    - name: Create a directory
       ansible.builtin.file:
-        path: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}"
+        path: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}
         state: directory
-        mode: '0775'
+        mode: u=rwx,g=rwx,o=rx
+        recurse: yes
         owner: "{{ REMOTE_USER }}"
         group: "{{ REMOTE_USER }}"
-        recurse: yes
 
     - name: Clone the staging branch of the repository
       ansible.builtin.git:
         repo: "{{ GIT_REPO }}"
-        dest: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}"
+        dest: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}
         single_branch: yes
         version: staging
         force: yes
-        key_file: "/home/{{ REMOTE_USER }}/.ssh/ansiblegithub"
+        key_file: /home/{{ REMOTE_USER }}/.ssh/ansiblegithub
 
     - name: Replace JVERSION placeholder in stagedocker-compose.yml
       shell: |
@@ -67,4 +65,3 @@
     - name: Show active services
       ansible.builtin.debug:
         msg: "{{ stack_services.stdout }}"
-
