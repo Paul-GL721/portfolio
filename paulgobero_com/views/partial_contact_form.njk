@@ -1,27 +1,58 @@
-<div>    
+<div>
     {% if alert %}
         <div class="alert alert-{{ alert.type }} alert-dismissible fade show" role="alert">
             {{ alert.message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
-    <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action="/portfolio">
+
+    <form id="contactForm" method="post" action="/portfolio" class="p-2 p-md-3">
         <div class="mb-3">
-            <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
+            <label for="contactname" class="form-label fw-semibold">Name</label>
+            <input
+                type="text"
+                id="contactname"
+                name="contactname"
+                class="form-control form-control-lg"
+                placeholder="Enter your full name"
+                required
+            >
         </div>
+
         <div class="mb-3">
-            <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Your Email" required=""></div>
+            <label for="contactemail" class="form-label fw-semibold">Email</label>
+            <input
+                type="email"
+                id="contactemail"
+                name="contactemail"
+                class="form-control form-control-lg"
+                placeholder="you@example.com"
+                required
+            >
         </div>
-        <div class="mb-3">
-            <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
+
+        <div class="mb-4">
+            <label for="contactmessage" class="form-label fw-semibold">Message</label>
+            <textarea
+                id="contactmessage"
+                name="contactmessage"
+                class="form-control form-control-lg"
+                rows="6"
+                placeholder="Write your message here..."
+                required
+            ></textarea>
         </div>
+
         <div>
-            <button class="btn btn-primary d-block w-100" id="contactsubmitbtn" type="submit">
+            <button
+                type="submit"
+                id="contactsubmitbtn"
+                class="btn btn-primary btn-lg w-100 d-flex justify-content-center align-items-center gap-2"
+            >
                 <span class="spinner-border spinner-border-sm d-none" id="submitSpinner" role="status" aria-hidden="true"></span>
                 <span id="submitText">Send Message</span>
             </button>
         </div>
     </form>
 </div>
+

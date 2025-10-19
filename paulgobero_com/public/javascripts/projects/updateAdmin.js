@@ -20,6 +20,7 @@ $(document).ready(function(){
 					$("#prorole").val(data.all_projs.role);
 					var originalgitUrl = data.all_projs.githubUrl;
 					$("#progithub").val(originalgitUrl.replace(/&#x2F;/g, '/'));
+					$("#prolivelink").val(data.all_projs.livelinkUrl.replace(/&#x2F;/g, '/'));
 					$("#projcontibutor").val(data.all_projs.contributor);
 					$(`#proskills option[value='${data.authorzproj._id}']`).prop('selected', true);
 					//$("#proskills").val(data.skill);
@@ -28,6 +29,23 @@ $(document).ready(function(){
 					$("#div1").attr("src", data.all_projs.mediaUrl.imageUrl);
 					$("#div2").attr("src", data.all_projs.mediaUrl.videoUrl);
 					$("#projectUpdateid").val(data.all_projs._id);	
+					// Dates 
+					if (data.all_projs.projectDates?.startDate) {
+						$("#projstartDate").val(new Date(data.all_projs.projectDates.startDate).toISOString().split("T")[0]);
+					} else {
+						$("#projstartDate").val("");
+					}
+					if (data.all_projs.projectDates?.endDate) {
+						$("#projendDate").val(new Date(data.all_projs.projectDates.endDate).toISOString().split("T")[0]);
+					} else {
+						$("#projendDate").val("");
+					}
+					// Checkbox (Show on Homepage) ===
+					if (data.all_projs.checked) {
+						$("#checked").prop("checked", true);
+					} else {
+						$("#checked").prop("checked", false);
+					}
 				}
 			});
 		});
