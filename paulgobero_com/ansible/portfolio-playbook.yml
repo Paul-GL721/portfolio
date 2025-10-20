@@ -41,6 +41,7 @@
         version: staging
         force: yes
         key_file: "/home/{{ REMOTE_USER }}/.ssh/ansiblegithub"
+        accept_hostkey: yes
 
     - name: Replace JVERSION placeholder in stagedocker-compose.yml
       shell: |
