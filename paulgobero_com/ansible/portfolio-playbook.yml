@@ -1,5 +1,4 @@
----
-#test ansible connection
+# test ansible connection
 - name: Run the test playbook 
   gather_facts: false
   hosts: localhost
@@ -8,43 +7,62 @@
       become: false
       local_action: command whoami
       register: username_on_the_host
+
     - name: Display the User name
       ansible.builtin.debug:
         msg: "Hello User {{ username_on_the_host.stdout }} from Jenkins and Ansible!!"
 
-#deploy to swarm node
+
+# deploy to swarm node
 - name: Deploy to docker swarm
   hosts: staging
+  become: true
+  vars:
+    project_dir: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}"
   tasks:
-    - name: check availabilty of server
-      become: true
-      remote_user: "{{ REMOTE_USER }}"
-      action: ping
 
-    - name: Create a directory
+    - name: Check availability of server
+      ansible.builtin.ping:
+
+    - name: Ensure deployment directory exists
       ansible.builtin.file:
-        path: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}
+        path: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}"
         state: directory
-        mode: u=rwx,g=rwx,o=rx
-        recurse: yes
+        mode: '0775'
         owner: "{{ REMOTE_USER }}"
         group: "{{ REMOTE_USER }}"
+        recurse: yes
 
-    - name: Clone the master branch of the repository
+    - name: Clone the staging branch of the repository
       ansible.builtin.git:
         repo: "{{ GIT_REPO }}"
-        dest: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}
+        dest: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}"
         single_branch: yes
         version: staging
         force: yes
-        key_file: /home/{{ REMOTE_USER }}/.ssh/ansiblegithub
+        key_file: "/home/{{ REMOTE_USER }}/.ssh/ansiblegithub"
 
-    - name: Replace JVERSION Placeholders in docker-compose.yml 
+    - name: Replace JVERSION placeholder in stagedocker-compose.yml
       shell: |
-        sed -i -e "s/JVERSION/{{ VERSION }}/g" /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}/stagedocker-compose.yml
+        sed -i "s/JVERSION/{{ VERSION }}/g" {{ project_dir }}/stagedocker-compose.yml
 
-    - name: change directory, and deploy stack
+    - name: Verify image version in docker-compose file
+      shell: grep 'image:' {{ project_dir }}/stagedocker-compose.yml
+      register: image_check
+
+    - name: Print the image being deployed
+      ansible.builtin.debug:
+        msg: "Deploying image -> {{ image_check.stdout }}"
+
+    - name: Deploy updated stack to Docker Swarm
       ansible.builtin.shell:
-      args:
-        chdir: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}
         cmd: docker stack deploy -c stagedocker-compose.yml --with-registry-auth {{ STACKNAME }}
+        chdir: "{{ project_dir }}"
+
+    - name: Verify running services
+      ansible.builtin.shell: docker service ls --filter name={{ STACKNAME }}
+      register: stack_services
+
+    - name: Show active services
+      ansible.builtin.debug:
+        msg: "{{ stack_services.stdout }}"
