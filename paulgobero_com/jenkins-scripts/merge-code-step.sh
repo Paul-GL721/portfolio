@@ -11,7 +11,7 @@ git checkout -f staging
 
 #If any of these files or folder changes in the development branch
 #merge them into the staging branch
-git checkout origin/development paulgobero_com/bin paulgobero_com/configs/loadb.js paulgobero_com/models paulgobero_com/mongodb/Dockerfile paulgobero_com/public paulgobero_com/routes paulgobero_com/controllers paulgobero_com/views paulgobero_com/app.js paulgobero_com/Jenkinsfile paulgobero_com/package-lock.json paulgobero_com/package.json paulgobero_com/.gitignore paulgobero_com/testdocker-compose.yml paulgobero_com/testdockerfile paulgobero_com/wait-for
+git checkout origin/development $BASE_DIRECTORY/bin $BASE_DIRECTORY/configs/loadb.js $BASE_DIRECTORY/models $BASE_DIRECTORY/mongodb/Dockerfile $BASE_DIRECTORY/public $BASE_DIRECTORY/routes $BASE_DIRECTORY/controllers $BASE_DIRECTORY/views $BASE_DIRECTORY/app.js $BASE_DIRECTORY/Jenkinsfile $BASE_DIRECTORY/package-lock.json $BASE_DIRECTORY/package.json $BASE_DIRECTORY/.gitignore $BASE_DIRECTORY/testdocker-compose.yml $BASE_DIRECTORY/testdockerfile $BASE_DIRECTORY/wait-for $BASE_DIRECTORY/utils
 
 git status
 #git remote -v
