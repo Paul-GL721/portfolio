@@ -12,7 +12,6 @@
       ansible.builtin.debug:
         msg: "Hello User {{ username_on_the_host.stdout }} from Jenkins and Ansible!!"
 
-
 # deploy to swarm node
 - name: Deploy to docker swarm
   hosts: staging
