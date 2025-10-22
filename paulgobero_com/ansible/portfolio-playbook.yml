@@ -20,7 +20,6 @@
   vars:
     project_dir: "/home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}"
   tasks:
-
     - name: Check availability of server
       ansible.builtin.ping:
 
