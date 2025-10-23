@@ -2,6 +2,9 @@
 **/jenkins-scripts/merge-code-step.sh merge=ours
 
 # Ignore merge files between dev and staging
+**/jenkins-scripts/build-step.sh merge=ours
+
+# Ignore merge files between dev and staging
 **/jenkins-scripts/staging-merge-code-step.sh merge=ours
 
 # Ignore playbook between staging and prod
