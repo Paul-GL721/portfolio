@@ -49,6 +49,16 @@ for commit in $COMMITS; do
             git add "$BASE_DIRECTORY/.gitattributes"
         fi
 
+        #Drop staging-only files from the commit so they remain untouched
+        STAGING_ONLY_FILES=(
+            "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+        )
+
+        for file in "${STAGING_ONLY_FILES[@]}"; do
+            git rm -f --cached --ignore-unmatch "$file" || true
+            git add -u "$file" || true
+        done
+
         # Prefer development version for allowed PATHS
         for path in "${PATHS[@]}"; do
             if [ -e "$path" ]; then
