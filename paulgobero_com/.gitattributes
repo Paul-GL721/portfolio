@@ -6,3 +6,6 @@
 
 # Ignore playbook between staging and prod
 **/ansible/portfolio-playbook.yml merge=ours
+
+# Ignore inventory between staging and prod
+**/ansible/inventory.ini merge=ours
