@@ -140,6 +140,8 @@ router.get("/specialisation/:id", login_controller.verifyToken, specialisation_c
 router.get("/specialisation", login_controller.verifyToken, specialisation_controller.specialisation_list);
 
 
+
+
 //........SITEMAP ROUTES.....//
 router.get("/seo/sitemap.xml", sitemap_controller.getSitemap);
 

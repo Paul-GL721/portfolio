@@ -168,11 +168,8 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-<<<<<<< .merge_file_a02288
 				echo '..........Would you like to create a Pull Request to Production?........'
-=======
 				echo '................Would you like to create a Pull Request?....................'
->>>>>>> .merge_file_a16604
 				input 'would you like to create a pull request?'
 				
 			}
@@ -198,7 +195,6 @@ pipeline {
 
 						//build the image
 						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
-<<<<<<< .merge_file_a02288
 
 						/*//Uncomment if they are changes made and commited to the production branch directly
 						sh('git stash')
@@ -239,48 +235,6 @@ pipeline {
 						echo '..............Creating temporary pull request branch................'
 						echo 'Creating temp branch'
 
-=======
-
-						/*//Uncomment if they are changes made and commited to the production branch directly
-						sh('git stash')
-						sh('git pull')
-						sh('git push ${GIT_REPO}')*/
-
-						//Find the number of staged filess
-						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
-
-						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
-						if(prod_staged_files > 0) {
-							echo "They are ${prod_staged_files} staged files from staging branch"
-							sh('git commit -m "Merged from staging branch: Build version ${VERSION} " ')
-							sh('git push ${GIT_REPO}')
-						}
-						else {
-							echo "There no commits to make"
-						}
-					}
-				}
-			}
-		}
-
-		stage('7. Create production temporary branch') {
-			//Execute if its the production branch
-			when {
-				branch 'production'
-			}
-			//build the docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				//with github credentials stored in jenkins server
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						echo '..............Creating temporary pull request branch................'
-						echo 'Creating temp branch'
-
->>>>>>> .merge_file_a16604
 						//make the pr-branch executable
 						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
 
@@ -321,11 +275,8 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-<<<<<<< .merge_file_a02288
 			///Execute if its the production branch
-=======
 			//Execute if its the production branch
->>>>>>> .merge_file_a16604
 			when {
 				branch 'master'
 			}
@@ -346,10 +297,6 @@ pipeline {
 			}
 		}
 
-<<<<<<< .merge_file_a02288
-=======
-
->>>>>>> .merge_file_a16604
 		stage('10. Deploy to production EC2 instance') {
 			//define env variables
 			environment {

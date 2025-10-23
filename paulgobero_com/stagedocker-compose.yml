@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+    stageapp: #nodejs app
+        image: paulgl721/nodejs-portfolio:stagingVJVERSION
+        build: #build from stagedockerfile
+            context: .
+            dockerfile: stagedockerfile
+        volumes:       
+            - /glustervol/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
+        networks: #networks to db and reverse proxy
+            - traefik_proxy-network
+            - hamongodb_mongodb-network
+        command: bash -c "./wait-for.sh hamongodb_mongo1:27017 --timeout=600 -- npm run stagestart" #wait for mongodb
+        deploy: #using swarm to scale the service
+            mode: replicated
+            replicas: 2
+            placement:
+                constraints:
+                    - node.role==worker
+            labels: #generate configurations for the reverse proxy
+                - "traefik.enable=true" # Enable the service
+                - "traefik.http.routers.stageapp.rule=Host(`stagingwww.paulgobero.com`)"
+                - "traefik.http.services.stageapp-service.loadbalancer.server.port=3001"
+                - "traefik.http.routers.stageapp.entrypoints=web,websecure"
+                - "traefik.http.routers.stageapp.tls=true" #enable tls
+                - "traefik.http.routers.stageapp.tls.certresolver=production" #certificate
+            restart_policy: #how to restart containers when they exit
+                condition: any
+                delay: 7s
+                max_attempts: 10
+                window: 120s
+            update_config: #how the service should be updated
+                parallelism: 2
+                delay: 10s
+                failure_action: rollback
+                order: start-first
+            rollback_config: #how the service should be rolled back in case an update fails
+                parallelism: 2
+                delay: 10s                  
+
+#Communication networks between the containers
+networks:
+    traefik_proxy-network:
+        external: true
+    hamongodb_mongodb-network:
+        external: true
+
