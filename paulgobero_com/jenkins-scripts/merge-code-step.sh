@@ -7,6 +7,109 @@
 set -e
 set -o pipefail
 
+### Safe merge script: merge selected files from 'development' into 'staging'
+### Preserves staging-only files and ignores dev-only ones.
+
+git config --global user.name "server2"
+git config --global user.email "lwangapaul23@gmail.com"
+
+BASE_DIRECTORY=$(pwd)
+
+echo "Checking out staging branch..."
+git fetch origin staging development
+git checkout -f staging
+git pull origin staging
+
+git config merge.ours.driver true
+
+# Define directories and files to include
+APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
+FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
+
+# Define dev-only and staging-only files
+DEV_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
+    "$BASE_DIRECTORY/devdocker-compose.yml"
+    "$BASE_DIRECTORY/jest.config.js"
+    "$BASE_DIRECTORY/devdockerfile"
+    "$BASE_DIRECTORY/testdocker-compose.yml"
+    "$BASE_DIRECTORY/testdockerfile"
+    "$BASE_DIRECTORY/mongodb"
+    "$BASE_DIRECTORY/e2e"
+    "$BASE_DIRECTORY/__tests__/"
+)
+
+STAGING_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+    "$BASE_DIRECTORY/stagedocker-compose.yml"
+    "$BASE_DIRECTORY/stagedockerfile"
+    "$BASE_DIRECTORY/views"
+    "$BASE_DIRECTORY/controllers"
+    "$BASE_DIRECTORY/public/images"
+)
+
+# Build allowed path list
+PATHS=()
+for folder in "${APP_FOLDERS[@]}"; do
+    [[ -d "$BASE_DIRECTORY/$folder" ]] && PATHS+=("$BASE_DIRECTORY/$folder")
+done
+for file in "${FILES[@]}"; do
+    [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
+done
+
+COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
+echo "Commits to cherry-pick:"
+echo "$COMMITS"
+
+for commit in $COMMITS; do
+    echo "Cherry-picking commit $commit"
+    if ! git cherry-pick -n $commit; then
+        echo "Conflict detected — resolving automatically..."
+
+        # Keep staging version of .gitattributes
+        [ -f "$BASE_DIRECTORY/.gitattributes" ] && git checkout --ours "$BASE_DIRECTORY/.gitattributes" && git add "$BASE_DIRECTORY/.gitattributes"
+
+        # Preserve staging-only files
+        for path in "${STAGING_ONLY_FILES[@]}"; do
+            echo "Preserving staging-only: $path"
+            git checkout origin/staging -- "$path" 2>/dev/null || true
+            git add "$path" || true
+        done
+
+        # Skip dev-only files
+        for path in "${DEV_ONLY_FILES[@]}"; do
+            echo "Skipping dev-only: $path"
+            git checkout --ours "$path" 2>/dev/null || true
+            git add "$path" || true
+        done
+
+        # Prefer dev version for allowed files
+        for path in "${PATHS[@]}"; do
+            [ -e "$path" ] && git checkout --theirs "$path" && git add "$path"
+        done
+
+        git cherry-pick --continue || true
+    fi
+done
+
+# Final restore of staging-only files (critical fix)
+echo "Restoring staging-only files to last known good state..."
+for path in "${STAGING_ONLY_FILES[@]}"; do
+    git checkout origin/staging -- "$path" 2>/dev/null || true
+    git add "$path" || true
+done
+
+git status
+
+echo "🎉 Merge complete. Staging-only files preserved!"
+
+
+
+
+
+set -e
+set -o pipefail
+
 # Basic Git identity for automation
 git config --global user.name "server2"
 git config --global user.email "lwangapaul23@gmail.com"
@@ -116,106 +219,4 @@ done
 
 echo "Merge summary:"
 git status
-echo "🎉 Development branch successfully merged into staging (safe mode)."
-
-
-
-
-
-
-
-
-#!/bin/bash
-
-
-
-# Set git username and email
-git config --global user.name "server2"
-git config --global user.email "lwangapaul23@gmail.com"
-
-echo "Branches in repo:"
-git branch
-git checkout -f staging
-
-# Ensure merge driver is configured (optional for .gitattributes)
-git config merge.ours.driver true
-
-# Define Express app files and folders to include
-APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
-FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
-
-
-# Combine paths that exist
-PATHS=()
-for folder in "${APP_FOLDERS[@]}"; do
-    if [[ -d "$BASE_DIRECTORY/$folder" ]]; then
-        PATHS+=("$BASE_DIRECTORY/$folder")
-    fi
-done
-
-for file in "${FILES[@]}"; do
-    if [[ -f "$BASE_DIRECTORY/$file" ]]; then
-        PATHS+=("$BASE_DIRECTORY/$file")
-    fi
-done
-
-# Get commits from development not in staging touching only allowed files
-COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
-echo "Commits to cherry-pick (not in staging yet):"
-echo "$COMMITS"
-
-# Cherry-pick commits
-for commit in $COMMITS; do
-    echo "Cherry-picking commit $commit"
-    if ! git cherry-pick -n $commit; then
-        echo "Conflict detected in commit $commit. Resolving automatically..."
-
-        # Keep staging version of .gitattributes
-        if [ -f "$BASE_DIRECTORY/.gitattributes" ]; then
-            git checkout --ours "$BASE_DIRECTORY/.gitattributes"
-            git add "$BASE_DIRECTORY/.gitattributes"
-        fi
-
-        # keep files specific to dev or staging branches from the commit so they remain untouched
-        BRANCH_SPECIFIC_FILES=(
-            "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
-            "$BASE_DIRECTORY/devdocker-compose.yml"
-            "$BASE_DIRECTORY/jest.config.js"
-            "$BASE_DIRECTORY/devdockerfile"
-            "$BASE_DIRECTORY/testdocker-compose.yml"
-            "$BASE_DIRECTORY/testdockerfile"
-            "$BASE_DIRECTORY/mongodb"
-            "$BASE_DIRECTORY/e2e"
-            "$BASE_DIRECTORY/__tests__/"
-            "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
-            "$BASE_DIRECTORY/stagedocker-compose.yml"
-            "$BASE_DIRECTORY/stagedockerfile"
-        )
-
-        for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
-            if [ -e "$path" ]; then
-                git rm -rf --cached "$path" || true
-                git add -u "$path" || true
-            fi
-        done
-
-        # Prefer development version for allowed PATHS
-        for path in "${PATHS[@]}"; do
-            if [ -e "$path" ]; then
-                git checkout --theirs "$path"
-                git add "$path"
-            fi
-        done
-
-        git cherry-pick --continue || true
-    fi
-done
-
-# Add only allowed files that exist
-for path in "${PATHS[@]}"; do
-    if [ -e "$path" ]; then
-        git add "$path"
-    fi
-done
-
-git status
+echo "Development branch successfully merged into staging (safe mode)."
