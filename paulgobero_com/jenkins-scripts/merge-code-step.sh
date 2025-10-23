@@ -14,7 +14,7 @@ git checkout -f staging
 git config merge.ours.driver true
 
 # Define Express app files and folders to include
-APP_FOLDERS=("bin" "configs" "controllers" "routes" "models" "views" "public" "utils")
+APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
 FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
 
 
