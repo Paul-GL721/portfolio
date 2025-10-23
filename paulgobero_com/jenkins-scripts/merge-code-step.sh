@@ -50,13 +50,21 @@ for commit in $COMMITS; do
         fi
 
         #Drop staging-only files from the commit so they remain untouched
-        STAGING_ONLY_FILES=(
+        BRANCH_SPECIFIC_FILES=(
             "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+            "$BASE_DIRECTORY/devdocker-compose.yml"
+            "$BASE_DIRECTORY/devdockerfile"
+            "$BASE_DIRECTORY/testdocker-compose.yml"
+            "$BASE_DIRECTORY/testdockerfile"
+            "$BASE_DIRECTORY/mongodb"
+            "$BASE_DIRECTORY/e2e"
         )
 
-        for file in "${STAGING_ONLY_FILES[@]}"; do
-            git rm -f --cached --ignore-unmatch "$file" || true
-            git add -u "$file" || true
+        for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
+            if [ -e "$path" ]; then
+                git rm -rf --cached "$path" || true
+                git add -u "$path" || true
+            fi
         done
 
         # Prefer development version for allowed PATHS
