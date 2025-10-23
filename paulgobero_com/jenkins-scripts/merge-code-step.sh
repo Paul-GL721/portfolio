@@ -49,7 +49,7 @@ for commit in $COMMITS; do
             git add "$BASE_DIRECTORY/.gitattributes"
         fi
 
-        #Drop staging-only files from the commit so they remain untouched
+        #Drop files specific to dev or staging branches from the commit so they remain untouched
         BRANCH_SPECIFIC_FILES=(
             "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
             "$BASE_DIRECTORY/devdocker-compose.yml"
@@ -59,6 +59,7 @@ for commit in $COMMITS; do
             "$BASE_DIRECTORY/mongodb"
             "$BASE_DIRECTORY/e2e"
             "$BASE_DIRECTORY/uploads"
+            "$BASE_DIRECTORY/__tests__/"
         )
 
         for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
