@@ -32,10 +32,6 @@ for file in "${FILES[@]}"; do
     fi
 done
 
-# Show paths that will be considered
-echo "Selected paths for cherry-pick:"
-printf "%s\n" "${PATHS[@]}"
-
 # Get commits from development not in staging touching only allowed files
 COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
 echo "Commits to cherry-pick (not in staging yet):"
