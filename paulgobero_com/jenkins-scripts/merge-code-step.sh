@@ -51,7 +51,7 @@ for commit in $COMMITS; do
 
         #Drop files specific to dev or staging branches from the commit so they remain untouched
         BRANCH_SPECIFIC_FILES=(
-            "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+            "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
             "$BASE_DIRECTORY/devdocker-compose.yml"
             "$BASE_DIRECTORY/jest.config.js"
             "$BASE_DIRECTORY/devdockerfile"
@@ -59,8 +59,10 @@ for commit in $COMMITS; do
             "$BASE_DIRECTORY/testdockerfile"
             "$BASE_DIRECTORY/mongodb"
             "$BASE_DIRECTORY/e2e"
-            "$BASE_DIRECTORY/uploads"
             "$BASE_DIRECTORY/__tests__/"
+            "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+            "$BASE_DIRECTORY/stagedocker-compose.yml"
+            "$BASE_DIRECTORY/stagedockerfile"
         )
 
         for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
