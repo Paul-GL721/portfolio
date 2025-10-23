@@ -58,6 +58,7 @@ for commit in $COMMITS; do
             "$BASE_DIRECTORY/testdockerfile"
             "$BASE_DIRECTORY/mongodb"
             "$BASE_DIRECTORY/e2e"
+            "$BASE_DIRECTORY/uploads"
         )
 
         for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
