@@ -53,6 +53,7 @@ for commit in $COMMITS; do
         BRANCH_SPECIFIC_FILES=(
             "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
             "$BASE_DIRECTORY/devdocker-compose.yml"
+            "$BASE_DIRECTORY/jest.config.js"
             "$BASE_DIRECTORY/devdockerfile"
             "$BASE_DIRECTORY/testdocker-compose.yml"
             "$BASE_DIRECTORY/testdockerfile"
