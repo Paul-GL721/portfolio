@@ -26,6 +26,8 @@ FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".
 # === Development-only files (never merge to staging) ===
 DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/merge-code.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
     "$BASE_DIRECTORY/devdocker-compose.yml"
     "$BASE_DIRECTORY/jest-mongodb-config.js"
     "$BASE_DIRECTORY/jest.config.js"
@@ -34,7 +36,7 @@ DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/testdockerfile"
     "$BASE_DIRECTORY/mongodb"
     "$BASE_DIRECTORY/e2e"
-    "$BASE_DIRECTORY/__tests__/"
+    "$BASE_DIRECTORY/__tests__"
 )
 
 # === Staging-only files (preserve them) ===
