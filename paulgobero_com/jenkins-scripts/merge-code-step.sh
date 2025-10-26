@@ -2,24 +2,28 @@
 set -e
 set -o pipefail
 
-### Safe merge script: merge selected files from 'development' into 'staging'
-### Preserves staging-only files and ignores dev-only ones.
+### Safe merge script: merges selected files from 'development' into 'staging'
+### Preserves staging-only files and removes dev-only ones.
 
 git config --global user.name "server2"
 git config --global user.email "lwangapaul23@gmail.com"
 
-echo "Checking out staging branch..."
+echo "=== Checking out staging branch ==="
 git fetch origin staging development
 git checkout -f staging
 git pull origin staging
 
-# ensure custom merge strategy works for .gitattributes
+# Ensure our merge strategy for .gitattributes works
 git config merge.ours.driver true
+
+# === Define base directory ===
+BASE_DIRECTORY=${BASE_DIRECTORY:-paulgobero_com}
 
 # === Define folders and files ===
 APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
 FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
 
+# === Development-only files (never merge to staging) ===
 DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/jenkins-scripts"
     "$BASE_DIRECTORY/devdocker-compose.yml"
@@ -32,6 +36,7 @@ DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/__tests__/"
 )
 
+# === Staging-only files (preserve them) ===
 STAGING_ONLY_FILES=(
     "$BASE_DIRECTORY/jenkins-scripts"
     "$BASE_DIRECTORY/stagedocker-compose.yml"
@@ -48,18 +53,18 @@ for file in "${FILES[@]}"; do
     [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
 done
 
-echo "Allowed merge paths:"
+echo "=== Allowed merge paths ==="
 printf '  - %s\n' "${PATHS[@]}"
 
 # === Get commits from development not yet in staging ===
 COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
-echo "Commits to cherry-pick:"
+echo "=== Commits to cherry-pick ==="
 echo "$COMMITS"
 
 # === Cherry-pick commits ===
 for commit in $COMMITS; do
     echo "Cherry-picking commit $commit"
-    if ! git cherry-pick -n $commit; then
+    if ! git cherry-pick -n "$commit"; then
         echo "Conflict detected — resolving automatically..."
 
         # Keep staging version of .gitattributes
@@ -75,14 +80,19 @@ for commit in $COMMITS; do
             git add "$path" || true
         done
 
-        # Exclude dev-only files from staging
+        # Exclude dev-only files
         for path in "${DEV_ONLY_FILES[@]}"; do
             echo "Ignoring dev-only: $path"
-            git checkout --ours "$path" 2>/dev/null || true
-            git add "$path" || true
+            if git ls-tree -r --name-only HEAD | grep -q "^${path#$BASE_DIRECTORY/}$"; then
+                git checkout --ours "$path" 2>/dev/null || true
+            else
+                git rm -rf --cached "$path" 2>/dev/null || true
+                rm -rf "$path" 2>/dev/null || true
+            fi
+            git add -A "$path" 2>/dev/null || true
         done
 
-        # Prefer development versions for allowed paths
+        # Prefer dev versions for allowed paths
         for path in "${PATHS[@]}"; do
             [ -e "$path" ] && git checkout --theirs "$path" && git add "$path"
         done
@@ -91,13 +101,31 @@ for commit in $COMMITS; do
     fi
 done
 
-# === Final staging restore ===
-echo "Restoring staging-only files to last known good state..."
+# === Final restore for staging-only files ===
+echo "=== Restoring staging-only files to last known good state ==="
 for path in "${STAGING_ONLY_FILES[@]}"; do
     git checkout origin/staging -- "$path" 2>/dev/null || true
     git add "$path" || true
 done
 
-echo "Merge summary:"
+# === Cleanup dev-only files just in case ===
+echo "=== Cleaning up any stray dev-only files ==="
+for path in "${DEV_ONLY_FILES[@]}"; do
+    rm -rf "$path" 2>/dev/null || true
+    git rm -rf --cached "$path" 2>/dev/null || true
+done
+
+# === Commit changes ===
+echo "=== Merge summary ==="
 git status
+
+CHANGED_FILES=$(git diff --cached --numstat | wc -l)
+echo "They are $CHANGED_FILES staged files"
+
+if [ "$CHANGED_FILES" -gt 0 ]; then
+    git commit -m "Merged from development branch: Build version ${VERSION}"
+else
+    echo "No changes to commit."
+fi
+
 echo "Development branch successfully merged into staging (safe mode)."
