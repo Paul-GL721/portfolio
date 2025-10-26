@@ -126,10 +126,4 @@ git status
 CHANGED_FILES=$(git diff --cached --numstat | wc -l)
 echo "They are $CHANGED_FILES staged files"
 
-if [ "$CHANGED_FILES" -gt 0 ]; then
-    git commit -m "Merged from development branch: Build version ${VERSION}"
-else
-    echo "No changes to commit."
-fi
-
 echo "Development branch successfully merged into staging (safe mode)."
