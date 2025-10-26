@@ -8,8 +8,6 @@ set -o pipefail
 git config --global user.name "server2"
 git config --global user.email "lwangapaul23@gmail.com"
 
-BASE_DIRECTORY=$(pwd)
-
 echo "Checking out staging branch..."
 git fetch origin staging development
 git checkout -f staging
