@@ -27,10 +27,6 @@ pipeline {
 			when {
 				branch 'development'
 			}
-			
-			
-			
-
 			//use jenkins testing node
 			agent {
 				label 'buildnode'
