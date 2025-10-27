@@ -55,7 +55,7 @@
 
     - name: Deploy updated stack to Docker Swarm
       ansible.builtin.shell:
-        cmd: docker stack deploy -c stagedocker-compose.yml --with-registry-auth {{ STACKNAME }}
+        cmd: docker stack deploy -c stagedocker-compose.yml {{ STACKNAME }}
         chdir: "{{ project_dir }}"
 
     - name: Verify running services
