@@ -20,6 +20,7 @@ whoami
 echo usr=$USER
 docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 HERE
+
 # docker push paulgl721/stagingmongdb:stagingV$VERSION
 #docker push paulgl721/nodejs-portfolio:stagingV$VERSION
 
