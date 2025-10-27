@@ -28,7 +28,7 @@ STAGE_ONLY_FILES=(
     "$BASE_DIRECTORY/stagedocker-compose.yml"
     "$BASE_DIRECTORY/stagedockerfile"
     "$BASE_DIRECTORY/ansible"
-    "$BASE_DIRECTORY/portfolio_design1"
+    "portfolio_design1"
     "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
     "$BASE_DIRECTORY/jenkins-scripts/merge-code.sh"
     "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
@@ -52,6 +52,7 @@ PROD_ONLY_FILES=(
     "$BASE_DIRECTORY/ansible"
 )
 
+
 # === Build allowed merge path list ===
 PATHS=()
 for folder in "${APP_FOLDERS[@]}"; do
@@ -60,6 +61,10 @@ done
 for file in "${FILES[@]}"; do
     [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
 done
+# Add .gitignore manually (outside base directory)
+if [[ -f ".gitignore" ]]; then
+    PATHS+=(".gitignore")
+fi
 
 echo "=== Allowed merge paths ==="
 printf '  - %s\n' "${PATHS[@]}"
