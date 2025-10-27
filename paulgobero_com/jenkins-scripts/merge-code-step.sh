@@ -28,6 +28,7 @@ STAGE_ONLY_FILES=(
     "$BASE_DIRECTORY/stagedocker-compose.yml"
     "$BASE_DIRECTORY/stagedockerfile"
     "$BASE_DIRECTORY/ansible"
+    "$BASE_DIRECTORY/testdocker-compose.yml"
 )
 
 # === Staging-only files (preserve them) ===
