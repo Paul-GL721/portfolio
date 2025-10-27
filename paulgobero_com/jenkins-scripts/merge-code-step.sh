@@ -28,6 +28,7 @@ STAGE_ONLY_FILES=(
     "$BASE_DIRECTORY/stagedocker-compose.yml"
     "$BASE_DIRECTORY/stagedockerfile"
     "$BASE_DIRECTORY/ansible"
+    "$BASE_DIRECTORY/portfolio_design1"
     "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
     "$BASE_DIRECTORY/jenkins-scripts/merge-code.sh"
     "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
