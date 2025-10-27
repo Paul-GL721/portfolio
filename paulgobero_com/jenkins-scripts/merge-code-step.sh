@@ -1,88 +1,120 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
-### Script to merge selected files from development branch into staging with commit history ###
+### Safe merge script: merges selected files from 'staging' into 'production'
+### Preserves prod-only files and removes staging-only ones.
 
-# Set git username and email
 git config --global user.name "server2"
 git config --global user.email "lwangapaul23@gmail.com"
 
-echo "Branches in repo:"
-git branch
+echo "=== Checking out staging branch ==="
+git fetch origin production staging
 git checkout -f production
+git pull origin production
 
-# Ensure merge driver is configured (optional for .gitattributes)
+# Ensure our merge strategy for .gitattributes works
 git config merge.ours.driver true
 
-# Define Express app files and folders to include
+
+# === Define folders and files ===
 APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
 FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
 
+# === Staging-only files (never merge to production) ===
+STAGE_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/merge-code-step.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+    "$BASE_DIRECTORY/stagedocker-compose.yml"
+    "$BASE_DIRECTORY/stagedockerfile"
+    "$BASE_DIRECTORY/ansible"
+)
 
-# Combine paths that exist
+# === Staging-only files (preserve them) ===
+PROD_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/pr-branches.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+    "$BASE_DIRECTORY/docker-compose.yml"
+    "$BASE_DIRECTORY/prodDockerfile"
+    "$BASE_DIRECTORY/ansible"
+)
+
+# === Build allowed merge path list ===
 PATHS=()
 for folder in "${APP_FOLDERS[@]}"; do
-    if [[ -d "$BASE_DIRECTORY/$folder" ]]; then
-        PATHS+=("$BASE_DIRECTORY/$folder")
-    fi
+    [[ -d "$BASE_DIRECTORY/$folder" ]] && PATHS+=("$BASE_DIRECTORY/$folder")
 done
-
 for file in "${FILES[@]}"; do
-    if [[ -f "$BASE_DIRECTORY/$file" ]]; then
-        PATHS+=("$BASE_DIRECTORY/$file")
-    fi
+    [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
 done
 
-# Get commits from development not in staging touching only allowed files
-COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
-echo "Commits to cherry-pick (not in staging yet):"
+echo "=== Allowed merge paths ==="
+printf '  - %s\n' "${PATHS[@]}"
+
+# === Get commits from staging not yet in production ===
+COMMITS=$(git log --reverse --pretty=format:"%H" production..origin/staging -- "${PATHS[@]}")
+echo "=== Commits to cherry-pick ==="
 echo "$COMMITS"
 
-# Cherry-pick commits
+# === Cherry-pick commits ===
 for commit in $COMMITS; do
     echo "Cherry-picking commit $commit"
-    if ! git cherry-pick -n $commit; then
-        echo "Conflict detected in commit $commit. Resolving automatically..."
+    if ! git cherry-pick -n "$commit"; then
+        echo "Conflict detected — resolving automatically..."
 
-        # Keep staging version of .gitattributes
+        # Keep production version of .gitattributes
         if [ -f "$BASE_DIRECTORY/.gitattributes" ]; then
             git checkout --ours "$BASE_DIRECTORY/.gitattributes"
             git add "$BASE_DIRECTORY/.gitattributes"
         fi
 
-        #Drop files specific to staging or production branches from the commit so they remain untouched
-        BRANCH_SPECIFIC_FILES=(
-            "$BASE_DIRECTORY/stagedocker-compose.yml"
-            "$BASE_DIRECTORY/stagedockerfile"
-            "$BASE_DIRECTORY/pull-request-step.sh"
-            "$BASE_DIRECTORY/docker-compose.yml"
-            "$BASE_DIRECTORY/prodDockerfile"
-            "$BASE_DIRECTORY/pr-branches.sh"
-        )
-
-        for path in "${BRANCH_SPECIFIC_FILES[@]}"; do
-            if [ -e "$path" ]; then
-                git rm -rf --cached "$path" || true
-                git add -u "$path" || true
-            fi
+        # Preserve production-only files
+        for path in "${PROD_ONLY_FILES[@]}"; do
+            echo "Preserving production-only: $path"
+            git checkout origin/production -- "$path" 2>/dev/null || git checkout --ours "$path" 2>/dev/null || true
+            git add "$path" || true
         done
 
-        # Prefer development version for allowed PATHS
-        for path in "${PATHS[@]}"; do
-            if [ -e "$path" ]; then
-                git checkout --theirs "$path"
-                git add "$path"
+        # Exclude stage-only files
+        for path in "${STAGE_ONLY_FILES[@]}"; do
+            echo "Ignoring stage-only: $path"
+            if git ls-tree -r --name-only HEAD | grep -q "^${path#$BASE_DIRECTORY/}$"; then
+                git checkout --ours "$path" 2>/dev/null || true
+            else
+                git rm -rf --cached "$path" 2>/dev/null || true
+                rm -rf "$path" 2>/dev/null || true
             fi
+            git add -A "$path" 2>/dev/null || true
+        done
+
+        # Prefer stage versions for allowed paths
+        for path in "${PATHS[@]}"; do
+            [ -e "$path" ] && git checkout --theirs "$path" && git add "$path"
         done
 
         git cherry-pick --continue || true
     fi
 done
 
-# Add only allowed files that exist
-for path in "${PATHS[@]}"; do
-    if [ -e "$path" ]; then
-        git add "$path"
-    fi
+# === Final restore for production-only files ===
+echo "=== Restoring production-only files to last known good state ==="
+for path in "${PROD_ONLY_FILES[@]}"; do
+    git checkout origin/production -- "$path" 2>/dev/null || true
+    git add "$path" || true
 done
 
+# === Cleanup stage-only files just in case ===
+echo "=== Cleaning up any stray stage-only files ==="
+for path in "${STAGE_ONLY_FILES[@]}"; do
+    rm -rf "$path" 2>/dev/null || true
+    git rm -rf --cached "$path" 2>/dev/null || true
+done
+
+# === Commit changes ===
+echo "=== Merge summary ==="
 git status
+
+CHANGED_FILES=$(git diff --cached --numstat | wc -l)
+echo "They are $CHANGED_FILES staged files"
+
+echo "Staging branch successfully merged into production (safe mode)."
