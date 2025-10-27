@@ -28,7 +28,18 @@ STAGE_ONLY_FILES=(
     "$BASE_DIRECTORY/stagedocker-compose.yml"
     "$BASE_DIRECTORY/stagedockerfile"
     "$BASE_DIRECTORY/ansible"
+    "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/merge-code.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
+    "$BASE_DIRECTORY/devdocker-compose.yml"
+    "$BASE_DIRECTORY/jest-mongodb-config.js"
+    "$BASE_DIRECTORY/jest.config.js"
+    "$BASE_DIRECTORY/devdockerfile"
     "$BASE_DIRECTORY/testdocker-compose.yml"
+    "$BASE_DIRECTORY/testdockerfile"
+    "$BASE_DIRECTORY/mongodb"
+    "$BASE_DIRECTORY/e2e"
+    "$BASE_DIRECTORY/__tests__"
 )
 
 # === Staging-only files (preserve them) ===
