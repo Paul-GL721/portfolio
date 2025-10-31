@@ -114,18 +114,18 @@ for commit in $COMMITS; do
     fi
 done
 
-# === Final restore for production-only files ===
-echo "=== Restoring production-only files to last known good state ==="
-for path in "${PROD_ONLY_FILES[@]}"; do
-    git checkout origin/production -- "$path" 2>/dev/null || true
-    git add "$path" || true
-done
-
 # === Cleanup stage-only files just in case ===
 echo "=== Cleaning up any stray stage-only files ==="
 for path in "${STAGE_ONLY_FILES[@]}"; do
     rm -rf "$path" 2>/dev/null || true
     git rm -rf --cached "$path" 2>/dev/null || true
+done
+
+# === Final restore for production-only files ===
+echo "=== Restoring production-only files to last known good state ==="
+for path in "${PROD_ONLY_FILES[@]}"; do
+    git checkout origin/production -- "$path" 2>/dev/null || true
+    git add "$path" || true
 done
 
 # === Commit changes ===
