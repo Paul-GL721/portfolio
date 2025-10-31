@@ -16,6 +16,8 @@ git pull origin staging
 # Ensure our merge strategy for .gitattributes works
 git config merge.ours.driver true
 
+# === Define base directory (ensure set from Jenkins) ===
+BASE_DIRECTORY=${BASE_DIRECTORY:-paulgobero_com}
 
 # === Define folders and files ===
 APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
@@ -63,7 +65,7 @@ echo "=== Allowed merge paths ==="
 printf '  - %s\n' "${PATHS[@]}"
 
 # === Get commits from development not yet in staging ===
-COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
+COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}" || true)
 echo "=== Commits to cherry-pick ==="
 echo "$COMMITS"
 
@@ -71,12 +73,12 @@ echo "$COMMITS"
 for commit in $COMMITS; do
     echo "Cherry-picking commit $commit"
     if ! git cherry-pick -n "$commit"; then
-        echo "Conflict detected — resolving automatically..."
+        echo "⚠️  Conflict detected — resolving automatically..."
 
         # Keep staging version of .gitattributes
         if [ -f "$BASE_DIRECTORY/.gitattributes" ]; then
-            git checkout --ours "$BASE_DIRECTORY/.gitattributes"
-            git add "$BASE_DIRECTORY/.gitattributes"
+            git checkout --ours "$BASE_DIRECTORY/.gitattributes" || true
+            git add "$BASE_DIRECTORY/.gitattributes" || true
         fi
 
         # Preserve staging-only files
@@ -98,33 +100,26 @@ for commit in $COMMITS; do
             git add -A "$path" 2>/dev/null || true
         done
 
-        # Prefer dev versions for allowed paths
-        # Prefer dev versions for allowed paths, even if deleted in staging
+        # Prefer dev versions for allowed paths (even if deleted in staging)
         for path in "${PATHS[@]}"; do
-            echo "Resolving conflicts for: $path"
-            # Try to checkout dev version (theirs)
-            git checkout --theirs "$path" 2>/dev/null || true
+            echo "Preferring dev version for: $path"
 
-            # If the file now exists, add it
-            if [ -e "$path" ]; then
-                git add "$path"
-            else
-                # If still missing, try restoring directly from development branch
-                if git show origin/development:"$path" > "$path" 2>/dev/null; then
-                    echo "Restored $path from development branch."
+            # First try normal checkout of dev version
+            git checkout --theirs -- "$path" 2>/dev/null || true
+
+            # If missing (e.g., deleted by us), restore directly from dev
+            if [ ! -e "$path" ]; then
+                echo "Restoring missing $path from origin/development"
+                mkdir -p "$(dirname "$path")" 2>/dev/null || true
+                if git show "origin/development:$path" > "$path" 2>/dev/null; then
                     git add "$path"
                 else
-                    echo "Could not restore $path — skipping."
+                    echo "⚠️  Could not restore $path (may not exist in dev branch)."
                 fi
+            else
+                git add "$path" || true
             fi
         done
-
-        # Finally, mark all conflicts resolved
-        git status --porcelain | grep -E '^(UU|AA|DU|UD|UA|AU)' | awk '{print $2}' | while read f; do
-            echo "Force-adding unresolved file $f"
-            git add "$f" || true
-        done
-
 
         git cherry-pick --continue || true
     fi
@@ -144,11 +139,17 @@ for path in "${DEV_ONLY_FILES[@]}"; do
     git rm -rf --cached "$path" 2>/dev/null || true
 done
 
-# === Commit changes ===
+# === Final force-resolve any remaining merge conflicts ===
+if git ls-files -u | grep -q .; then
+    echo "=== Force-resolving remaining merge conflicts ==="
+    git add -A
+fi
+
+# === Merge summary ===
 echo "=== Merge summary ==="
 git status
 
 CHANGED_FILES=$(git diff --cached --numstat | wc -l)
 echo "They are $CHANGED_FILES staged files"
 
-echo "Development branch successfully merged into staging (safe mode)."
+echo "✅ Development branch successfully merged into staging (safe mode)."
