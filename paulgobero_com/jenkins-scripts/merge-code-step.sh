@@ -98,16 +98,23 @@ for commit in $COMMITS; do
             git add -A "$path" 2>/dev/null || true
         done
 
-        # Prefer dev versions for allowed paths (force restore if missing)
+        # Prefer dev versions for allowed paths
         for path in "${PATHS[@]}"; do
-            echo "Preferring dev version for: $path"
+            echo "Resolving file: $path"
 
-            # Try normal checkout from dev
+            # Special handling for Jenkinsfile to avoid repeated merge conflicts
+            if [[ "$path" == "$BASE_DIRECTORY/Jenkinsfile" ]]; then
+                echo "⚠️  Resolving Jenkinsfile conflict using development branch version"
+                git checkout origin/development -- "$path" || true
+                git add "$path" || true
+                continue
+            fi
+
+            # Normal handling for other files
             git checkout --theirs -- "$path" 2>/dev/null || true
 
-            # If still missing (deleted in staging), restore directly from dev
             if [ ! -e "$path" ]; then
-                echo "Restoring missing $path from origin/development"
+                # Restore missing file from dev
                 mkdir -p "$(dirname "$path")" 2>/dev/null || true
                 if git show "origin/development:$path" > "$path" 2>/dev/null; then
                     git add "$path"
@@ -118,6 +125,7 @@ for commit in $COMMITS; do
                 git add "$path" || true
             fi
         done
+
 
 
         git cherry-pick --continue || true
