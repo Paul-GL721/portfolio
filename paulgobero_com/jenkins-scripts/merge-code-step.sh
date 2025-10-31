@@ -100,9 +100,13 @@ for commit in $COMMITS; do
 
         # Prefer dev versions for allowed paths
         for path in "${PATHS[@]}"; do
+            echo "Preferring dev version for: $path"
             git checkout --theirs "$path" 2>/dev/null || true
             if [ -e "$path" ]; then
                 git add "$path"
+            else
+                # If still missing, explicitly add from dev branch
+                git show origin/development:"$path" > "$path" 2>/dev/null && git add "$path" || true
             fi
         done
 
