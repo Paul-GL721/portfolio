@@ -10,7 +10,7 @@ pipeline {
 
 	//reusable env variables
 	environment {
-		VERSION="2.0.${BUILD_NUMBER}"
+		VERSION="2.4.${BUILD_NUMBER}"
 		BASE_DIRECTORY='paulgobero_com'
 		REMOTE_USER='deployuser1'
 		REMOTE_DIR='STAGE_PORTFOLIO'
@@ -168,7 +168,7 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-				echo '................Would you like to create a Pull Request?....................'
+				echo '..........Would you like to create a Pull Request to Production?........'
 				input 'would you like to create a pull request?'
 				
 			}
@@ -274,7 +274,7 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-			//Execute if its the production branch
+			///Execute if its the production branch
 			when {
 				branch 'master'
 			}
