@@ -107,7 +107,10 @@ for commit in $COMMITS; do
 
         # Prefer stage versions for allowed paths
         for path in "${PATHS[@]}"; do
-            [ -e "$path" ] && git checkout --theirs "$path" && git add "$path"
+            git checkout --theirs "$path" 2>/dev/null || true
+            if [ -e "$path" ]; then
+                git add "$path"
+            fi
         done
 
         git cherry-pick --continue || true
