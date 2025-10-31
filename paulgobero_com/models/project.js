@@ -17,20 +17,6 @@ const ProjectSchema = new Schema({
     skill: [{ type: Schema.Types.ObjectId, ref: "Skill", required: true }],
     author: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     specialisation: [{ type: Schema.Types.ObjectId, ref: "Specialisation", required: true }],
-    projectDates: {
-        startDate: {type: Date },
-        endDate: {type: Date, required: false,
-            validate: {
-                validator: function (v) {
-                    if (!v) return true;
-                    if (!this.projectDates?.startDate) return true;
-                    return v >= this.projectDates.startDate;
-                },
-                message: "End date cannot be before start date",
-            },
-        },
-    },
-    checked: {type: Boolean, default: false },
     mediaName: {
         imageName: { type: String, required: true },
         videoName: { type: String, required: true }

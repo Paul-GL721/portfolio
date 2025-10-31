@@ -1,66 +1,50 @@
-function setupContactFormValidation() {
-  $("#contactForm").validate({
-    errorClass: "formValidationError",
-    
-    rules: {
-      contactname: { required: true, minlength: 3 },
-      contactemail: { required: true, email: true },
-      contactmessage: { required: true, minlength: 3 }
-    },
+$(document).ready(function() {
+	$("#contactForm").validate({
+		errorClass:"formValidationError",
+				
+		rules:{
+			contactname: {
+		      required: true,
+		      minlength: 3
+		    },
+		    contactemail: {
+		      required: true,
+		      email: true
+		    },
+		    contactmessage: {
+		      required: true,
+		      minlength: 3
+		    }
+		},
 
-    messages: {
-      contactname: {
-        required: "I need your name to address you correctly",
-        minlength: jQuery.validator.format("At least {3} characters required!")
-      },
-      contactemail: {
-        required: "I need your email address to email you back",
-        email: "Your email address must be in the format of name@domain.com"
-      },
-      contactmessage: {
-        required: "Please type your message here",
-        minlength: jQuery.validator.format("At least {3} characters required!")
-      }
-    },
+		messages:{
+			contactname: {
+		      required: "I need your name to address you correctly",
+		      minlength: jQuery.validator.format("At least {3} characters required!")
+		    },
+		    contactemail: {
+		      required: "I need your email address to email you back",
+		      email: "Your email address must be in the format of name@domain.com"
+		    },
+		    contactmessage: {
+		      required: "Please type your message here",
+		      minlength: jQuery.validator.format("At least {3} characters required!")
+		    }
+		},
+		submitHandler: function(form,e) {
+			e.preventDefault();
+			const formsdata = new FormData($("#contactForm")[0]);
+			/*console.log("formsdata is");
+			console.log(formsdata);
+			formsdata.has("contactmessage");
+			// Display the values
+			for (const value of formsdata.values()) {
+				console.log(value);
+			}*/
+			form.submit(function(){
+				alert("Message successfully sent");
 
-    submitHandler: function(form) {
-      const formData = $(form).serialize();
-	  // Show spinner
-      $("#submitSpinner").removeClass("d-none");
-      $("#submitText").text("Sending...");
-
-      $.ajax({
-        url: "/portfolio",
-        method: "POST",
-        data: formData,
-        dataType: "json",
-        success: function(response) {
-			// Replace the form content with the new partial (including success alert)
-			$("#contact_form_div").html(response.html);
-
-			// Re-bind validation to the new form
-			setupContactFormValidation();
-
-			// Smooth scroll to contact section
-			$('html, body').animate({
-				scrollTop: $('#contact_section').offset().top
-			}, 600);
-
-			// Auto-dismiss alert after 5 seconds
-			setTimeout(() => {
-				$('.alert-success').fadeOut('slow', function () {
-				$(this).remove();
-				});
-			}, 5000);
-        },
-        error: function(xhr, status, error) {
-          console.error(error);
-          alert("An error occurred");
-        }
-      });
-      return false;
-    }
-  });
-}
-
-$(document).ready(setupContactFormValidation);
+			});
+		}
+	});
+});

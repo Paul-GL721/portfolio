@@ -45,17 +45,7 @@ exports.index = async (req, res, next) => {
 							Author.findById(author_id).exec(callback);
 						},
 						author_projects(callback) {
-							Project.find({ author: author_id, checked: true }).sort({ createdAt: -1 })
-							.limit(3) 
-							.populate('author', 'name')
-							.populate({
-								path: 'skill',
-								select: ['name', 'imageName', 'imageUrl' ]})
-							.populate('specialisation', 'name')
-							.exec(callback);
-						},
-						author_all_projects(callback) {
-							Project.find({ author: author_id}).sort({ createdAt: -1 })
+							Project.find({ author: author_id }).sort({ createdAt: -1 })
 							.populate('author', 'name')
 							.populate({
 								path: 'skill',
@@ -90,12 +80,8 @@ exports.index = async (req, res, next) => {
 								}), { expiresIn: 3600 })
 							}
 						}
-						res.json(results);
-						
-						
-						
-						
-						//res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
+						//res.json(results);
+						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
 					}
 				);	
 			}
@@ -121,6 +107,9 @@ exports.index_post = [
 			//Re-render the project form with errors
 
 		} else {
+			//console.log("this is the body");
+			//console.log(req.body);
+			
 			const transporter = nodemailer.createTransport({
 				host: EMAIL_HOST,
 				port: EMAIL_PORT,
@@ -142,28 +131,20 @@ exports.index_post = [
 				text: req.body.contactmessage,
 				replyTo: req.body.contactemail
 			};
-			try {
-				transporter.sendMail(mailoptions, (error, info) => {
-					if (error) {
-						console.log("Mail error", error);
-						res.render("partial_contact_form", {alert: { type: "danger", message: "Failed to send message. Try again later." },
-						formdata: req.body
-						}, (err, html) => {
-							return res.json({ success: false, "html": html});  
-						});
-					} else {
-						console.log("Email Sent");
-						res.render("partial_contact_form", {
-						alert: { type: "success", message: "Message sent successfully!" }
-						}, (err, html) => {
-							return res.json({ success: true, "html": html }); 
-						});
-					}
-				});
-			} catch (e) {
-				console.log("Unexpected mail error:", e);
-				return res.json({ success: false, html: "<p>Server error occurred.</p>" });
-			}
+			
+			transporter.sendMail(mailoptions, (error, response) => {
+				if (error) {
+					console.log(error);
+					//res.send(error);
+					//res.jsonp({failed : true});
+					return res.status(500).json({ failed: true });	
+				} else {
+					console.log("Email Sent");
+					//res.redirect("/portfolio#contact_section");
+					return res.status(200).json({ success: true });
+
+				}
+			});
 		}
 	}
 ];
@@ -219,27 +200,9 @@ exports.project_authors = async (req, res, next) => {
 };
 
 //Display details of specific author
-exports.author_detail = async(req, res, next) => {
-	try {
-		brand = await controllerUtils.getBrandName();
-		const detailauthor = await Author .findById(req.params.id, {})
-		.exec( async function (err, details_authors) {
-			if (err) {
-				return next(err);
-			}
-			details_authors.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, details_authors.imageName, 3600 );
-			//console.log("details_authors")
-			//res.json(details_authors);
-			res.render("author_detail", { Title: "Author details", abtauthor: details_authors, brand1: brand });
-			
-			//res.render( "author_detail", { Title: "Author details", detailauthors: details_authors, brand1: brand });
-		});
-	} catch {
-		console.log("Author Detail Error occurred: ", err);	
-	}
-	
-};
-
+exports.author_detail = (req, res) => {
+	res.send(`NOT IMPLEMENTED: Author details: ${req.params.id}`);
+}
 
 //on GET request, display the author create form
 exports.author_create_get = async (req, res, next) => {
@@ -271,8 +234,6 @@ exports.author_create_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
-	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -328,8 +289,6 @@ exports.author_create_post = [
 							full_description: req.body.authorfulldesc
 						},
 						brandName: req.body.authorbrandname,
-						hostName: req.body.authorhostname,
-						yourKeyword: req.body.authorkeywords,
 						email: req.body.authoremail,
 						password: req.body.authorpassword,
 						authorStatus: req.body.authorstatus,
@@ -354,8 +313,8 @@ exports.author_create_post = [
 					//upload the actual image to s3
 					//await s3Client.send(new PutObjectCommand(s3uploadparams));
 					controllerUtils.uploadtos3bucket(s3uploadparams);
-					res.redirect(authorz.url);
-					//res.status(200).json({ "successj": true });
+					//res.redirect(Author.url);
+					res.status(200).json({ "successj": true });
 
 				}
 			}
@@ -378,8 +337,6 @@ exports.author_ownercreate_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
-	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -424,8 +381,6 @@ exports.author_ownercreate_post = [
 								full_description: req.body.authorfulldesc
 							},
 							brandName: req.body.authorbrandname,
-							hostName: req.body.authorhostname,
-							yourKeyword: req.body.authorkeywords,
 							email: req.body.authoremail,
 							password: req.body.authorpassword,
 							authorStatus: req.body.authorstatus,
@@ -539,8 +494,6 @@ exports.author_update_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
-	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
 	body("githuburl", "Github url").isURL().trim().escape(),
@@ -562,7 +515,7 @@ exports.author_update_post = [
 		} else {
 			// If user is not an admin return error
 			if (Role !== 'admin') {
-				return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
+			return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 			} else {
 				const update_author_id = req.body.authorUpdateid;
 				console.log ("The author update id is"+ update_author_id);
@@ -608,8 +561,6 @@ exports.author_update_post = [
 						full_description: req.body.authorfulldesc
 					},
 					brandName: req.body.authorbrandname,
-					hostName: req.body.authorhostname,
-					yourKeyword: req.body.authorkeywords,
 					email: req.body.authoremail,
 					password: req.body.authorpassword,
 					authorStatus: req.body.authorstatus,

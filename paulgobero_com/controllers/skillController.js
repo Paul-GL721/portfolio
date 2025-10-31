@@ -209,7 +209,7 @@ exports.skill_delete_post = async (req, res, next) => {
 				controllerUtils.deletefroms3bucket(delparams);
 			}	
 		});
-		res.json({success: "Successfully Deleted"});
+		res.json({sucess: "Successfully Deleted"});
 	}
 }
 
