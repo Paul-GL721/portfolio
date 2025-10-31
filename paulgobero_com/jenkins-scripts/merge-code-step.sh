@@ -16,8 +16,6 @@ git pull origin staging
 # Ensure our merge strategy for .gitattributes works
 git config merge.ours.driver true
 
-# === Define base directory ===
-BASE_DIRECTORY=${BASE_DIRECTORY:-paulgobero_com}
 
 # === Define folders and files ===
 APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
@@ -102,7 +100,10 @@ for commit in $COMMITS; do
 
         # Prefer dev versions for allowed paths
         for path in "${PATHS[@]}"; do
-            [ -e "$path" ] && git checkout --theirs "$path" && git add "$path"
+            git checkout --theirs "$path" 2>/dev/null || true
+            if [ -e "$path" ]; then
+                git add "$path"
+            fi
         done
 
         git cherry-pick --continue || true
