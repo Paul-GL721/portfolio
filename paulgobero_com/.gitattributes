@@ -1,0 +1,11 @@
+# Ignore merge files between dev and staging
+**/jenkins-scripts/merge-code-step.sh merge=ours
+
+# Ignore merge files between dev and staging
+**/jenkins-scripts/build-step.sh merge=ours
+
+# Ignore playbook between staging and prod
+**/ansible/portfolio-playbook.yml merge=ours
+
+# Ignore inventory between staging and prod
+**/ansible/inventory.ini merge=ours

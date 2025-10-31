@@ -6,6 +6,7 @@ def prod_staged_files
 pipeline {
 	//run script on different agents
 	agent none
+	
 
 	//reusable env variables
 	environment {
@@ -26,7 +27,7 @@ pipeline {
 			when {
 				branch 'development'
 			}
-
+			
 			//use jenkins testing node
 			agent {
 				label 'buildnode'
@@ -273,7 +274,7 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-			///Execute if its the production branch
+			//Execute if its the production branch
 			when {
 				branch 'master'
 			}
