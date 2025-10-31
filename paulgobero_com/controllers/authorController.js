@@ -90,12 +90,8 @@ exports.index = async (req, res, next) => {
 								}), { expiresIn: 3600 })
 							}
 						}
-						res.json(results);
-						
-						
-						
-						
-						//res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
+						//res.json(results);
+						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
 					}
 				);	
 			}
