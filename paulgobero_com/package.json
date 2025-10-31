@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=production node ./bin/www",
-    "devstart": "nodemon --require dotenv/config -L ./bin/www",
+    "start": "NODE_ENV=production node --require dotenv/config ./bin/www",
+    "devstart": "NODE_ENV=development nodemon --require dotenv/config -L ./bin/www",
+    "stagestart": "NODE_ENV=stage nodemon --require dotenv/config -L ./bin/www",
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
-    "test": "jest --watchAll --coverage --verbose"
+    "test:server": "NODE_ENV=test nodemon --require dotenv/config -L ./bin/www",
+    "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --watchAll --coverage --verbose",
+    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__",
+    "test:e2e": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=./__e2e__/jest.config.js --runInBand --watchAll --coverage --verbose ",
+    "test:e2e-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=./__e2e__/jest.config.js --watchAll --coverage --verbose --testPathPattern=/nodeApp/__e2e__"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.254.0",
@@ -16,8 +21,9 @@
     "child_process": "^1.0.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "~4.16.0",
+    "express": "^4.18.2",
     "express-validator": "^6.14.2",
+    "form-data": "^4.0.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.7.2",
@@ -26,18 +32,21 @@
     "nodemailer": "^6.9.1",
     "nunjucks": "^3.2.3",
     "pug": "~3.0.2",
-    "sharp": "^0.31.3"
+    "sharp": "^0.31.3",
+    "sitemap": "^8.0.0"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.1.7",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
-    "jest": "^29.5.0",
+    "jest": "^29.6.1",
     "jest-puppeteer": "^8.0.6",
     "mongodb": "^5.5.0",
     "mongodb-memory-server": "^8.12.2",
-    "nodemon": "^2.0.20",
-    "puppeteer": "^20.1.2",
-    "supertest": "^6.3.3"
+    "nodemon": "^3.0.1",
+    "puppeteer": "^20.8.2",
+    "supertest": "^6.3.3",
+    "supertest-session": "^4.1.0",
+    "wait-on": "^7.0.1"
   }
 }

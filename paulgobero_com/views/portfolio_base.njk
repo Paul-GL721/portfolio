@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {% block title %}<title>{{ Title }}</title> {% endblock %}
-    {% block csshead %}
+    {% block title %}
+        <title>{{ meta_author or 'Portfolio' }} | {{ meta_keywords or 'Full Stack Developer & DevOps Engineer' }}</title>
+    {% endblock %}
+
+    {% block mobileview %}
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">    
-        <meta name="description" content="portfolio for lwanga paul gobero">
-        <link rel="icon" type="image/jpeg" sizes="500x500" href="/images/img/testimonials-2.jpg">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    {% endblock %}
+
+    {% block primarymeta %}
+        <!-- Primary Meta -->
+        <meta name="description"
+        content="{{ meta_description or 'Portfolio of a full stack developer and DevOps engineer.' }}">
+        <meta name="keywords"
+        content="{{ meta_keywords or 'full stack developer, devops, nodejs, react, kubernetes, ci/cd, aws' }}">
+        <meta name="author" content="{{ meta_author or 'Portfolio Owner' }}">
+        <meta name="robots" content="index, follow">
+    {% endblock %}
+
+    {% block opengraph %}
+        <!-- Open Graph -->
+        <meta property="og:title"
+        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        <meta property="og:description"
+        content="{{ meta_description or 'Building scalable web applications and DevOps pipelines.' }}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ og_url or hostname or 'https://example.com' }}">
+        <meta property="og:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
+    {% endblock %}
+
+    {% block twittercard %}
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title"
+        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        <meta name="twitter:description"
+        content="{{ meta_description or 'Experienced in Node.js, React, and cloud infrastructure.' }}">
+        <meta name="twitter:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
+    {% endblock %}
+
+    {% block canonical %}
+        <!-- Canonical -->
+        <link rel="canonical" href="{{ og_url or hostname or 'https://example.com' }}">
+    {% endblock %}
+
+    {% block favicon %}
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/img/paulgobero_fav.png">
+    {% endblock %}
+
+    {% block csshead %}
         <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/bootstrap-table.min.css">
         <link rel="stylesheet" href="/stylesheets/multiselect.css">
@@ -17,6 +62,25 @@
         <link rel="stylesheet" href="/stylesheets/Contact-Details-icons.css">
         <link rel="stylesheet" href="/images/fonts/simple-line-icons.min.css">
         <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css">
+    {% endblock %}
+
+    {% block schema %}
+        <!-- Schema.org Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org/",
+                "@type": "Person",
+                "name": "{{ meta_author or 'Portfolio Owner' }}",
+                "url": "{{ hostname or 'https://example.com' }}",
+                "jobTitle": "{{ meta_description or 'Full Stack Web Developer and DevOps Engineer' }}",
+                "sameAs": [
+                {% if social.github %}"{{ social.github }}"{% if social.linkedin %}, {% endif %}{% endif %}
+                {% if social.linkedin %}"{{ social.linkedin }}"{% endif %}
+                ],
+                "image": "{{ og_image or '/images/img/default-og.jpg' }}",
+                "description": "{{ full_description or meta_description }}"
+            }
+        </script>
     {% endblock %}
 </head>
 
@@ -33,6 +97,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.projects }}">Projects</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.skills }}">Skills</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ navbarurl.contact }}">Contact</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.blog }}">Blog</a></li>
                                 </ul>
                                 {% block createOwnerbutton %}      {% endblock %}
                                 {% block loginbutton %}

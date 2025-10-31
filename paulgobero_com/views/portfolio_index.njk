@@ -1,47 +1,70 @@
 
 {% extends "portfolio_base.njk" %}
-{% set navbarurl = {id: "indexpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
+{% set navbarurl = {id: "indexpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section", blog: "https://blog.paulgobero.com" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block createDemoUserbutton %}
-    <a class="btn btn-outline-danger ml-3" role="button" id="projectcreatedemouser" data-toggle="tooltip" data-placement="top" title="Add a demo user: This will be used to quickly test live demos" href="/portfolio/signup/demouser">Create Demo User</a>
+    
 {% endblock %}
 
 {% block content %}
-	<section id="about_section" class="showcase formsection">
-	    <div class="row no-gutters">
-	        <div class="col-lg-4 text-white order-lg-2">
-	            <div><img class="rounded-circle img-fluid" src="{{ index_data.author.imageUrl }}"></div>
-	        </div>
-	        <div class="col-lg-8 my-auto order-lg-1" style="padding-left: 80px;padding-right: 50px;">
-	            <h2 class="text-wrap" style="text-align: center;">A {{ index_data.author.about.short_description | title }}</h2>
-	            <p class="lead">{{ index_data.author.about.full_description }}</p>
-	        </div>
-	    </div>
-	</section>
+    <section id="about_section" class="showcase formsection">
+        <div class="row no-gutters">
+            <div class="col-lg-4 text-white order-lg-2 text-center mb-4 mb-lg-0">
+                <img class="rounded-circle img-fluid" src="{{ index_data.author.imageUrl }}">
+            </div>
+            <div class="col-lg-8 my-auto order-lg-1 px-3 px-sm-4 px-md-5 px-lg-5">
+                <h2 class="text-wrap text-center">
+                    A {{ index_data.author.about.short_description | title }}
+                </h2>
+                <p class="lead">
+                    {{ index_data.author.about.full_description }}
+                </p>
+            </div>
+        </div>
+    </section>
 
     
     <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);padding-top: 50px; padding-bottom:0px">
         <div class="row">
-            <div class="col-lg-6 my-auto order-lg-1 showcase-text" style="padding: 30px;text-align: center;padding-top: 0px;">
-                <p class="lead mb-0" style="text-align: left;font-size: 20px;">
-                    These are three of my recent projects: but&nbsp;<a href="#allprojectmodal" data-toggle="modal">you can view all of them</a>;
-                </p> 
-                <div class="modal fade" role="dialog" tabindex="-1" id="allprojectmodal">
+            <div class="col-lg-6 my-auto order-lg-1 showcase-text px-4 text-center">
+                <p class="lead fs-5 text-start">
+                Here are three of my recent projects — but 
+                    <a href="#allprojectmodal" class="fw-semibold text-primary" data-toggle="modal">
+                        you can view all of them
+                    </a>.
+                </p>
+
+                <!-- All Projects Modal -->
+                <div class="modal fade" id="allprojectmodal" tabindex="-1" role="dialog" aria-labelledby="allProjectsLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">All Projects</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <div class="modal-content shadow-lg border-0 rounded-3">
+                            <div class="modal-header border-0 pb-0">
+                                <h3 class="modal-title fw-bold text-primary w-100 text-center" id="allProjectsLabel">
+                                All Projects
+                                </h3>
+                                <button type="button" class="close position-absolute" style="top: 0.5rem; right: 1rem; z-index: 10;" data-dismiss="modal" aria-label="Close"> 
+                                <span aria-hidden="true">&times;</span></button>
                             </div>
-                            <div class="modal-body">
-                                <section class="showcase">
+
+                            <div class="modal-body px-4">
+                                <section class="showcase text-start">
                                     <div class="container-fluid p-0">
                                         <div class="row">
-                                            <div class="col text-justify order-lg-2">
-                                                <ul class="text-wrap" >
-                                                    {% for proj in index_data.author_projects %}
-                                                        <p> <a href="{{ proj.url}}">{{ proj.ptitle | capitalize | urlize | safe }}</a> <br> {{ proj.psummary | capitalize | urlize | safe }}  </p>
+                                            <div class="col-lg-12">
+                                                <ul class="list-group list-group-flush">
+                                                    {% for proj in index_data.author_all_projects %}
+                                                        <li class="list-group-item px-0 py-3">
+                                                            <h5 class="fw-semibold mb-1">
+                                                                <a href="{{ proj.url }}" class="text-primary text-decoration-none" target="_blank">
+                                                                {{ proj.ptitle | capitalize | urlize | safe }}
+                                                                </a>
+                                                            </h5>
+                                                            <p class="text-muted mb-0">
+                                                                {{ proj.psummary | capitalize | urlize | safe }}
+                                                            </p>
+                                                        </li>
                                                     {% endfor %}
                                                 </ul>
                                             </div>
@@ -49,67 +72,110 @@
                                     </div>
                                 </section>
                             </div>
-                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                            <div class="modal-footer border-0 pt-0 justify-content-end pe-4">
+                                <button class="btn btn-outline-secondary px-4" type="button" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="row">
             {% for dindex in index_data.author_projects %}
-                {% if (loop.index <= 3) %}
-                    <div class="col-lg-4">
-                        <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                            <div><img class="img-thumbnail img-fluid bg-light border-0" style="width: 300px;height: 300px;" src="{{ dindex.mediaUrl.imageUrl }}"></div>
-                            <h3>{{ dindex.ptitle }}</h3>
-                            <p class="lead mb-0">{{ dindex.psummary | capitalize | urlize | safe }}<a href="#" class="project-modal-link" data-project-id="{{ dindex._id }}"> Read more</a></p>
-                            <div class="modal fade" role="dialog" tabindex="-1" id="projectmodal-{{ dindex._id }}">
-                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">{{ dindex.ptitle }}</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <section class="showcase">
-                                                <div class="container-fluid p-0">
-                                                    <div class="row">
-                                                        <div class="col-lg-6" style="text-align: left;">
-                                                            <p class="lead">
-                                                                {{ dindex.problemStatement | urlize | safe  }}.  
-                                                            </p>
-                                                        </div>
-                                                        <div class="col-lg-6" style="text-align: left;">
-                                                            <p class="lead">
-                                                                <b> For a solution: </b> {{ dindex.solution | urlize | safe }}.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-2"> </div>
-                                                        <div class="col-lg-8 text-white align-self-center">
-                                                            <video class="border rounded-0" width="390" height="315" controls="" style="margin-right: 10px;" src="{{ dindex.mediaUrl.videoUrl }}"></video>
-                                                        </div>
-                                                        <div class="col-lg-2"> </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6" style="text-align: left;">
-                                                            <p class="lead">
-                                                                My main role(s) included {{ dindex.role | urlize | safe }}. 
-                                                            </p>
-                                                            <p class="lead"> 
-                                                                From this project I gained skills in {% for skll in dindex.skill %} {{ skll.name }} {% endfor %}
-                                                            </p>
-                                                        </div>
-                                                        <div class="col-lg-6" style="text-align: left;">
-                                                            <p class="lead">
-                                                                You can <a href="{{ dindex.githubUrl | urlize | safe }}">test the live demo</a> or View the code at this <a href="{{ dindex.githubUrl | urlize | safe }}">Github link</a>.
-                                                            </p>
-                                                        </div>
-                                                    </div>        
+                {% if loop.index <= 3 %}
+                    <div class="col-12 col-sm-6 col-lg-4 mb-4">
+                        <div class="mx-auto text-center">
+                            <img class="img-thumbnail img-fluid bg-light border-0 mb-3"
+                                style="width: 300px; height: 300px; object-fit: cover;"
+                                src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
+                            <h4 class="fw-bold">{{ dindex.ptitle }}</h4>
+                            <p class="text-muted">
+                                {{ dindex.psummary | capitalize | urlize | safe }}
+                                <a href="#" class="project-modal-link fw-semibold" data-project-id="{{ dindex._id }}">Read more →</a>
+                            </p>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="projectmodal-{{ dindex._id }}" tabindex="-1" aria-labelledby="projectModalLabel-{{ dindex._id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                <div class="modal-content shadow-lg border-0 rounded-3">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h3 class="modal-title fw-bold text-primary" id="projectModalLabel-{{ dindex._id }}">
+                                            {{ dindex.ptitle }}
+                                        </h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <section class="showcase">
+                                            <div class="container-fluid p-0">
+                                                
+                                                <div class="mb-4">
+                                                    <h5 class="fw-semibold text-secondary">Problem Statement</h5>
+                                                    <p class="fs-6 text-dark">
+                                                        {{ dindex.problemStatement | urlize | safe }}
+                                                    </p>
                                                 </div>
-                                            </section>
-                                        </div>
-                                        <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+
+                                                <div class="mb-4">
+                                                    <h5 class="fw-semibold text-secondary">Solution</h5>
+                                                    <p class="fs-6 text-dark">
+                                                        {{ dindex.solution | urlize | safe }}
+                                                    </p>
+                                                </div>
+
+                                                {% if dindex.mediaUrl.videoUrl %}
+                                                <div class="text-center my-4">
+                                                    <video class="border rounded shadow-sm w-100" controls
+                                                        src="{{ dindex.mediaUrl.videoUrl }}">
+                                                    </video>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="mb-4">
+                                                    <h5 class="fw-semibold text-secondary">My Role</h5>
+                                                    <ul class="fs-6 text-left text-dark">
+                                                        {% for item in dindex.role.split('\n') %}
+                                                            {% if item.trim() %}
+                                                            <li>{{ item.trim() }}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <h5 class="fw-semibold text-secondary">Skills Applied</h5>
+                                                    <p class="fs-6 text-dark">
+                                                        {% for skll in dindex.skill %}
+                                                            <span class="badge bg-light text-dark border me-1 mb-1">{{ skll.name }}</span>
+                                                        {% endfor %}
+                                                    </p>
+                                                </div>
+
+                                                {% if dindex.githubUrl %}
+                                                <div class="mb-3">
+                                                    <h5 class="fw-semibold text-secondary">Project Links</h5>
+                                                    <p class="fs-6 text-dark">
+                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank">
+                                                            View on GitHub
+                                                        </a>
+                                                        {% if dindex.liveDemoUrl %}
+                                                            <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">
+                                                                Live Demo
+                                                            </a>
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </section>
+                                    </div>
+
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                            Close
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -126,79 +192,56 @@
                 <div class="container-fluid">
                     <div class="row mb-3">
                         <div class="col text-center">
-                            <h2 class="font-weight-bold">Skills</h2>
-                            <p class="lead"> This is the diverse skill set I have developed over the years that allows me to excel in various aspects of my work.</p>
+                            <h2 class="fw-bold">Skills</h2>
+                            <p class="lead">
+                                A versatile skill set that helps me design, build, and deliver reliable digital solutions.
+                            </p>
                         </div>
                     </div>
-                    <div class="row">
+
+                    <div class="row g-3 g-md-4">
                         {% set unique_skills = [] %}
                         {% for pindex in index_data.author_projects %}
                             {% for sindex in pindex.skill %}
                                 {% if sindex.name not in unique_skills %}
                                     {% set unique_skills = unique_skills + [sindex.name] %}
-                                    <div class="col-lg-3">
-                                        <div class=" features-icons-item mb-5 mb-lg-0 mb-lg-3">
-                                            <div class="lead mb-3 text-center">
-                                                <img class="img-thumbnail img-fluid bg-light border-0" style="width: 50px;height: 50px;" src="{{ sindex.imageUrl }}">
-                                                <p>{{ sindex.name }}</p>
-                                            </div>
+                                    <div class="col-4 col-lg-3 d-flex justify-content-center">
+                                        <div class="features-icons-item text-center">
+                                            <img class="img-thumbnail img-fluid bg-light border-0 mb-2"
+                                                style="width: 50px; height: 50px;"
+                                                src="{{ sindex.imageUrl }}">
+                                            <p class="mb-0">{{ sindex.name }}</p>
                                         </div>
                                     </div>
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
-                    </div>  
+                    </div>
                 </div>
             </section>
         </div>
-
-        <div class="col-md-6">
-            <section id="contact_section" class="py-4 py-xl-5">
-                <div class="container-fluid ">
-                    <div class="row mb-0">
-                        <div class="col-md-12 col-xl-12 text-center mx-3">
-                            <h2 class="font-weight-bold">Contact Me</h2>
-                            <p class="lead">Thank you for taking the time to review my portfolio. If you're interested in discussing how I can contribute to your team, I would love to hear from you. <P> 
-                            <P class="lead text-left">Please feel free to contact me to schedule a conversation and learn more about my experience and qualifications.</p>
+    
+        <div class="col-12 col-md-6">
+            <section id="contact_section" class="py-5 py-xl-5 bg-light">
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-12 text-center px-3 px-sm-4">
+                            <h2 class="fw-bold mb-3">Let’s Build Something Great Together</h2>
+                            <p class="lead">
+                                I’m always excited to collaborate on new ideas, products, and challenges. 
+                                Whether you’re looking for a developer to join your team or need help bringing a project to life, 
+                                I’d love to hear from you.
+                            </p>
+                            <p class="lead text-start text-md-center mb-4">
+                                Drop me a message below, and I’ll get back to you as soon as possible.
+                            </p>
                         </div>
                     </div>
-                    <div class="row d-flex justify-content-center">
-                        <div class="col-md-6 col-xl-6">
-                            <div>
-                                <form class="form-inline p-1 p-xl-2" id="contactForm" method="post" action="/">
-                                    <div class="mb-3">
-                                        <div class="form-group"><label for="contactname"></label><input class="form-control" type="text" id="contactname" name="contactname" placeholder="Your Name" required=""></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="form-group"><label for="contactemail"></label><input class="form-control" type="email" id="contactemail" name="contactemail" placeholder="Your Email" required=""></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="form-group"><label for="contactmessage"></label><textarea class="form-control" id="contactmessage" name="contactmessage" rows="6" placeholder="Message you want to leave me" required=""></textarea></div>
-                                    </div>
-                                    <div><button class="btn btn-primary d-block w-100" id="contactsubmitbtn" type="submit">Send Message</button></div>
-                                </form>
-                                <div class="modal fade" role="dialog" tabindex="-1" id="contactmodal">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Submission Success</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <section class="showcase">
-                                                    <div class="container-fluid p-0">
-                                                        <div class="row">
-                                                            <div class="col text-justify order-lg-2">
-                                                                <P class="lead text-left">Thank you!</p>
-                                                                <P class="lead text-left">Your message has been Successfully sent</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </section>
-                                            </div>
-                                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
-                                        </div>
-                                    </div>
-                                </div>
+
+                    <div class="row justify-content-center mt-5">
+                        <div class="col-12 col-sm-10 col-md-10 col-lg-8">
+                            <div id="contact_form_div" class="p-4 p-md-5 shadow-sm rounded bg-white">
+                                {% include "partial_contact_form.njk" %}
                             </div>
                         </div>
                     </div>

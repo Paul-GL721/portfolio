@@ -9,9 +9,13 @@ var nunjucks = require('nunjucks');
 var  database_connection = require('./configs/loadb');
 var db  = database_connection( DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ); */
 
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var portfolioRouter = require('./routes/portfolio');
+
+//SEO middleware
+var seoContext = require('./utils/seoContext');
 
 var app = express();
 
@@ -31,6 +35,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Apply the SEO middleware
+app.use(seoContext);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

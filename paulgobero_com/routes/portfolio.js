@@ -9,15 +9,15 @@ const specialisation_controller = require("../controllers/specialisationControll
 const skill_controller = require("../controllers/skillController");
 const project_controller = require("../controllers/projectController");
 const login_controller = require("../controllers/loginController");
+const sitemap_controller = require("../controllers/sitemapController");
 
 				//........AUTHOR ROUTES.....//
 //Get portfolio home page
 router.get("/", author_controller.index);
-
 //Post contact page from portfolio home page
 router.post("/", author_controller.index_post);
 
-//Get request for creating author
+//Get request for creating author page
 router.get("/author/create", login_controller.verifyToken, author_controller.author_create_get);
 
 //Post request for creating author
@@ -38,7 +38,7 @@ router.get("/author/update", login_controller.verifyToken, author_controller.aut
 //Post request for updating author
 router.post("/author/update", login_controller.verifyToken, author_controller.author_update_post);
 
-//Get request for one author
+//Get request for one authors
 router.get("/author/:id", login_controller.verifyToken, author_controller.author_detail);
 
 //Get request for all authors
@@ -138,6 +138,11 @@ router.get("/specialisation/:id", login_controller.verifyToken, specialisation_c
 
 //Get request for all specialisations
 router.get("/specialisation", login_controller.verifyToken, specialisation_controller.specialisation_list);
+
+
+//........SITEMAP ROUTES.....//
+router.get("/seo/sitemap.xml", sitemap_controller.getSitemap);
+
 
 
 				//........SKILLS ROUTES.....//
