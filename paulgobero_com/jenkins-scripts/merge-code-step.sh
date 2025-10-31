@@ -99,16 +99,32 @@ for commit in $COMMITS; do
         done
 
         # Prefer dev versions for allowed paths
+        # Prefer dev versions for allowed paths, even if deleted in staging
         for path in "${PATHS[@]}"; do
-            echo "Preferring dev version for: $path"
+            echo "Resolving conflicts for: $path"
+            # Try to checkout dev version (theirs)
             git checkout --theirs "$path" 2>/dev/null || true
+
+            # If the file now exists, add it
             if [ -e "$path" ]; then
                 git add "$path"
             else
-                # If still missing, explicitly add from dev branch
-                git show origin/development:"$path" > "$path" 2>/dev/null && git add "$path" || true
+                # If still missing, try restoring directly from development branch
+                if git show origin/development:"$path" > "$path" 2>/dev/null; then
+                    echo "Restored $path from development branch."
+                    git add "$path"
+                else
+                    echo "Could not restore $path — skipping."
+                fi
             fi
         done
+
+        # Finally, mark all conflicts resolved
+        git status --porcelain | grep -E '^(UU|AA|DU|UD|UA|AU)' | awk '{print $2}' | while read f; do
+            echo "Force-adding unresolved file $f"
+            git add "$f" || true
+        done
+
 
         git cherry-pick --continue || true
     fi
