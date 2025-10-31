@@ -1,5 +1,5 @@
 
-const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT } = require('../configs/config');
+const { BASEURL, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT, DBIMAGENAME } = require('../configs/config');
 const Skill = require('../models/skill'); 
 const Spec = require('../models/specialisation'); 
 const Author = require('../models/author'); 

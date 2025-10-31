@@ -6,7 +6,6 @@ def prod_staged_files
 pipeline {
 	//run script on different agents
 	agent none
-	
 
 	//reusable env variables
 	environment {
@@ -27,7 +26,7 @@ pipeline {
 			when {
 				branch 'development'
 			}
-			
+
 			//use jenkins testing node
 			agent {
 				label 'buildnode'
@@ -168,7 +167,7 @@ pipeline {
 			//build the docker image and push to dockerhub
 			agent any
 			steps {
-				echo '................Would you like to create a Pull Request?....................'
+				echo '..........Would you like to create a Pull Request to Production?........'
 				input 'would you like to create a pull request?'
 				
 			}
@@ -274,7 +273,7 @@ pipeline {
 				REMOTE_DIR='PORTFOLIO'
 				STACKNAME='portfolio'
 			}
-			//Execute if its the production branch
+			///Execute if its the production branch
 			when {
 				branch 'master'
 			}
