@@ -56,6 +56,10 @@ done
 for file in "${FILES[@]}"; do
     [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
 done
+# Add .gitignore manually (outside base directory)
+if [[ -f ".gitignore" ]]; then
+    PATHS+=(".gitignore")
+fi
 
 echo "=== Allowed merge paths ==="
 printf '  - %s\n' "${PATHS[@]}"
