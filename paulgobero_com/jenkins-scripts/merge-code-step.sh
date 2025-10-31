@@ -98,13 +98,27 @@ for commit in $COMMITS; do
             git add -A "$path" 2>/dev/null || true
         done
 
-        # Prefer dev versions for allowed paths
+        # Prefer dev versions for allowed paths (force restore if missing)
         for path in "${PATHS[@]}"; do
-            git checkout --theirs "$path" 2>/dev/null || true
-            if [ -e "$path" ]; then
-                git add "$path"
+            echo "Preferring dev version for: $path"
+
+            # Try normal checkout from dev
+            git checkout --theirs -- "$path" 2>/dev/null || true
+
+            # If still missing (deleted in staging), restore directly from dev
+            if [ ! -e "$path" ]; then
+                echo "Restoring missing $path from origin/development"
+                mkdir -p "$(dirname "$path")" 2>/dev/null || true
+                if git show "origin/development:$path" > "$path" 2>/dev/null; then
+                    git add "$path"
+                else
+                    echo "⚠️  Could not restore $path (may not exist in dev branch)."
+                fi
+            else
+                git add "$path" || true
             fi
         done
+
 
         git cherry-pick --continue || true
     fi
