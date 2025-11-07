@@ -235,7 +235,6 @@ exports.skill_update_get = async (req, res, next) => {
 	}
 }
 
-
 //On post update skill information 
 exports.skill_update_post = [
 	/* Delete the exiting image from s3 and add a new path
