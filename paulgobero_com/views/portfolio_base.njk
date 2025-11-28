@@ -2,7 +2,7 @@
 <html>
 <head>
     {% block title %}
-        <title>{{ meta_author or 'Portfolio' }} | {{ meta_keywords or 'Full Stack Developer & DevOps Engineer' }}</title>
+        <title>{{ meta_author or 'Portfolio' }} | {{ meta_description or 'Full Stack Developer & DevOps Engineer' }}</title>
     {% endblock %}
 
     {% block mobileview %}
@@ -13,7 +13,7 @@
     {% block primarymeta %}
         <!-- Primary Meta -->
         <meta name="description"
-        content="{{ meta_description or 'Portfolio of a full stack developer and DevOps engineer.' }}">
+        content="{{ full_description  or 'Portfolio of a full stack developer and DevOps engineer.' }}">
         <meta name="keywords"
         content="{{ meta_keywords or 'full stack developer, devops, nodejs, react, kubernetes, ci/cd, aws' }}">
         <meta name="author" content="{{ meta_author or 'Portfolio Owner' }}">
@@ -23,11 +23,11 @@
     {% block opengraph %}
         <!-- Open Graph -->
         <meta property="og:title"
-        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}-{{ meta_description }}">
         <meta property="og:description"
-        content="{{ meta_description or 'Building scalable web applications and DevOps pipelines.' }}">
+        content="{{ full_description or meta_description or 'Building scalable web applications and DevOps pipelines.' }}">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ og_url or hostname or 'https://example.com' }}">
+        <meta property="og:url" content="{{ (og_url or hostname or 'https://example.com') | safe }}">
         <meta property="og:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
     {% endblock %}
 
@@ -37,13 +37,13 @@
         <meta name="twitter:title"
         content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
         <meta name="twitter:description"
-        content="{{ meta_description or 'Experienced in Node.js, React, and cloud infrastructure.' }}">
+        content="{{ full_description or meta_description or 'Experienced in Node.js, React, and cloud infrastructure.' }}">
         <meta name="twitter:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
     {% endblock %}
 
     {% block canonical %}
         <!-- Canonical -->
-        <link rel="canonical" href="{{ og_url or hostname or 'https://example.com' }}">
+        <link rel="canonical" href="{{ (og_url or hostname or 'https://example.com') | safe }}">
     {% endblock %}
 
     {% block favicon %}
@@ -71,11 +71,11 @@
                 "@context": "https://schema.org/",
                 "@type": "Person",
                 "name": "{{ meta_author or 'Portfolio Owner' }}",
-                "url": "{{ hostname or 'https://example.com' }}",
+                "url": "{{ hostname | safe or 'https://example.com' }}",
                 "jobTitle": "{{ meta_description or 'Full Stack Web Developer and DevOps Engineer' }}",
                 "sameAs": [
-                {% if social.github %}"{{ social.github }}"{% if social.linkedin %}, {% endif %}{% endif %}
-                {% if social.linkedin %}"{{ social.linkedin }}"{% endif %}
+                {% if social.github %}"{{ social.github | safe }}"{% if social.linkedin %}, {% endif %}{% endif %}
+                {% if social.linkedin %}"{{ social.linkedin | safe }}"{% endif %}
                 ],
                 "image": "{{ og_image or '/images/img/default-og.jpg' }}",
                 "description": "{{ full_description or meta_description }}"
