@@ -105,7 +105,7 @@ exports.project_create_post = [
 				const projectDates = {};
 				if (req.body.projstartDate) projectDates.startDate = req.body.projstartDate;
 				if (req.body.projendDate) projectDates.endDate = req.body.projendDate;
-				const isChecked = req.body.checked === 'true' || req.body.checked === 'on';
+				const isChecked = !!req.body.checked; //converts 'on' to true and 'true' to true
 				//if formdata has no errors, submit the video to S3 and formdata to db
 				const projz = new Project({
 					ptitle: req.body.projtitle,
