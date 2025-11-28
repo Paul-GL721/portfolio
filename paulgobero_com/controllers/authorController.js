@@ -268,12 +268,12 @@ exports.author_create_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
-	body("githuburl", "Github url").isURL().trim().escape(),
-	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
+	body("githuburl", "Github url").isURL().trim(),
+	body("linkeninurl", "Linkedin url").isURL().trim(),
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
@@ -375,12 +375,12 @@ exports.author_ownercreate_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
-	body("githuburl", "Github url").isURL().trim().escape(),
-	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
+	body("githuburl", "Github url").isURL().trim(),
+	body("linkeninurl", "Linkedin url").isURL().trim(),
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
@@ -536,12 +536,12 @@ exports.author_update_post = [
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
-	body("authorhostname", "Url where your website is hosted").isURL().trim().escape(),
+	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
 	body("authorstatus", "Author status").trim().isLength({ min:2 }).escape(),
 	body("authorRole", "Author Role").trim().isLength({ min:2 }).escape(),
-	body("githuburl", "Github url").isURL().trim().escape(),
-	body("linkeninurl", "Linkedin url").isURL().trim().escape(),
+	body("githuburl", "Github url").isURL().trim(),
+	body("linkeninurl", "Linkedin url").isURL().trim(),
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	
