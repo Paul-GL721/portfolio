@@ -19,7 +19,7 @@ module.exports = async function seoContext(req, res, next) {
     const owner = cachedOwner;
 
     if (owner) {
-      res.locals.meta_author = `${owner.name.first} ${owner.name.last}`;
+      res.locals.meta_author = `${owner.name.first} ${owner.name.middle} ${owner.name.last}`;
       res.locals.meta_keywords = owner.yourKeyword?.join(", ");
       res.locals.meta_description =
         owner.about.short_description || "Portfolio of a full stack developer.";

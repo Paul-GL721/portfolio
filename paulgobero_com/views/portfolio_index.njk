@@ -2,7 +2,6 @@
 {% extends "portfolio_base.njk" %}
 {% set navbarurl = {id: "indexpage", about: "#about_section", services: "#services-section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section", blog: "https://blog.paulgobero.com" } %}
 
-{% block title %}<title>{{ Title }}</title> {% endblock %}
 
 {% block createDemoUserbutton %}
     
@@ -187,7 +186,7 @@
                                             <div class="container-fluid p-0">
                                                 
                                                 <div class="mb-4">
-                                                    <h5 class="fw-semibold text-secondary">Problem Statement</h5>
+                                                    <h5 class="fw-semibold text-secondary">challenge</h5>
                                                     <p class="fs-6 text-dark">
                                                         {{ dindex.problemStatement | urlize | safe }}
                                                     </p>
