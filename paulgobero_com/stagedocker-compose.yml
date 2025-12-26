@@ -31,12 +31,12 @@ services:
                 max_attempts: 10
                 window: 120s
             update_config: #how the service should be updated
-                parallelism: 2
+                parallelism: 1
                 delay: 10s
                 failure_action: rollback
                 order: start-first
             rollback_config: #how the service should be rolled back in case an update fails
-                parallelism: 2
+                parallelism: 1
                 delay: 10s                  
 
 #Communication networks between the containers
