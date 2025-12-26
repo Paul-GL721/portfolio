@@ -130,11 +130,11 @@
                             <p class="text-muted small mb-4 mb-lg-0">© {{ brand1.brandName | default("brandName", true) }} 2022. All Rights Reserved.</p>
                         </div>
                         <div class="col-lg-6 text-center text-lg-right my-auto h-100">
-                        <ul class="list-inline mb-0">
-                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.github | default('#') | urlize | safe }}"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
-                            <li class="list-inline-item"><a href="{{ brand1.socialmedia.linkedin| default('#')  | urlize | safe }}"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
-                        </ul>
-                    </div>
+                            <ul class="list-inline mb-0">
+                                <li class="list-inline-item"><a href="{{ brand1.socialmedia.github | default('#') }}"><i class="icon-social-github fa-2x fa-fw"></i></a></li>
+                                <li class="list-inline-item"><a href="{{ brand1.socialmedia.linkedin| default('#') }}"><i class="icon-social-linkedin fa-2x fa-fw"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </footer>
