@@ -20,4 +20,4 @@ RUN chmod +x /nodeApp/wait-for
 
 #7. Set the application entry point
 CMD ["npm", "run", "serverstart"]
-ENTRYPOINT ["npm", "run", "stagestart"]
+#ENTRYPOINT ["npm", "run", "stagestart"]
