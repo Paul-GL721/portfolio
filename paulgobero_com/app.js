@@ -37,11 +37,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Apply the SEO middleware
-app.use(seoContext);
+//app.use(seoContext);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/portfolio', portfolioRouter);
+app.use('/portfolio', seoContext, portfolioRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
