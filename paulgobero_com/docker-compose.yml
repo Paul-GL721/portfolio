@@ -10,7 +10,7 @@ services:
             - /glustervol/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         networks: #networks to db and reverse proxy
             - traefik_proxy-network 
-        command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 --npm run start" #wait for mongodb
+        command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 -- npm run start" #wait for mongodb
         deploy: #using swarm to scale the service to three nodes
             mode: replicated
             replicas: 3
