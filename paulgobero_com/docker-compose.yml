@@ -13,11 +13,10 @@ services:
         command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 -- npm run start" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
-            replicas: 2
+            replicas: 3
             placement:
-                constraints: #place on the manager node
-                    - node.role==manager
-                    #- node.role==worker
+                preferences:
+                  - spread: node.hostname
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
