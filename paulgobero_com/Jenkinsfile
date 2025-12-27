@@ -294,6 +294,7 @@ pipeline {
 			}
 		}
 
+
 		stage('10. Deploy to production EC2 instance') {
 			//define env variables
 			environment {
