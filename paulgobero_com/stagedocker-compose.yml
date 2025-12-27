@@ -14,7 +14,7 @@ services:
         command: bash -c "./wait-for.sh hamongodb_mongo1:27017 --timeout=600 -- npm run stagestart" #wait for mongodb
         deploy: #using swarm to scale the service
             mode: replicated
-            replicas: 2
+            replicas: 1
             placement:
                 constraints:
                     - node.role==worker
