@@ -5,7 +5,7 @@ FROM node:18.12.0-bullseye
 WORKDIR /nodeApp
 
 #3. Copy the depency information into the directory
-copy package.json package-lock.json ./
+COPY package.json package-lock.json ./
 
 #4. Install all the depencies
 RUN npm install --dependencies
@@ -27,4 +27,5 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
   CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
 
 #9. Set the application entry point
-CMD ["npm", "run", "start"]
+#CMD ["npm", "run", "start"]
+ENTRYPOINT ["npm", "run", "start"]
