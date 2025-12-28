@@ -10,6 +10,7 @@ const async = require("async"); //run async functions
 const nodemailer = require("nodemailer"); //send email from contact form
 var nunjucks = require('nunjucks');
 var env = new nunjucks.Environment(null);
+const dbState = require('../utils/dbstate');
 //s3 file upload
 const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -24,6 +25,19 @@ const generaterandomimgname = () => {
 }
 
 let brand;
+
+//check if application is healthy
+exports.health = (req, res) => {
+	res.status(200).send("OK");
+};
+
+//check if application is ready with db connection
+exports.readiness = (req, res) => {
+  if (dbState.isReady()) {
+    return res.status(200).send('READY');
+  }
+  return res.status(503).send('NOT READY');
+};
 
 //Display home portfolio page
 /* Get projects per individual author */

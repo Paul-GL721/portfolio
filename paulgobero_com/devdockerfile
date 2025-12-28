@@ -13,11 +13,19 @@ RUN npm install
 #5. Copy all the code into the work directory
 COPY . ./
 
-#6. Script to wait for the database service before starting the app
-RUN apt-get -q update && apt-get -qy install netcat
+#6. Install runtime utilities (netcat + curl)
+RUN apt-get -q update \
+ && apt-get -qy install netcat curl \
+ && rm -rf /var/lib/apt/lists/*
+
+#7. Copy wait-for script and make it executable
 COPY wait-for /nodeApp/
 RUN chmod +x /nodeApp/wait-for
 
-#7. Set the application entry point
-CMD ["npm", "run", "serverstart"]
+#8. Docker healthcheck (READINESS PROBE)
+HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
+  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
+
+#9. Set the application entry point
+#CMD ["npm", "run", "serverstart"]
 ENTRYPOINT ["npm", "run", "devstart"]

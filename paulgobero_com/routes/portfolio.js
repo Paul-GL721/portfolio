@@ -12,6 +12,10 @@ const login_controller = require("../controllers/loginController");
 const sitemap_controller = require("../controllers/sitemapController");
 
 				//........AUTHOR ROUTES.....//
+//Check if the application is healthy
+router.get("/health", author_controller.health);
+//check if the application is ready with db connection 
+router.get("/readiness", author_controller.readiness);
 //Get portfolio home page
 router.get("/", author_controller.index);
 //Post contact page from portfolio home page
