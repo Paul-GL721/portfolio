@@ -38,7 +38,7 @@ services:
                 parallelism: 1
                 delay: 10s  
 
-#create the communication networks between the containers
+#create the networks between the containers
 networks:
     traefik_proxy-network:
         external: true
