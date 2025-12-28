@@ -47,4 +47,4 @@
       ansible.builtin.shell:
       args:
         chdir: /home/{{ REMOTE_USER }}/{{ REMOTE_DIR }}/{{ REMOTE_FOLDER }}
-        cmd: docker stack deploy -c docker-compose.yml --with-registry-auth {{ STACKNAME }}
+        cmd: docker stack deploy -c docker-compose.yml {{ STACKNAME }}
