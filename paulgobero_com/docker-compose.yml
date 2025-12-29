@@ -15,7 +15,7 @@ services:
         #command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 npm run start" #wait for mongodb
         deploy: #using swarm to scale the service to 3 server nodes
             mode: replicated
-            replicas: 3
+            replicas: 2
             placement:
                 preferences:
                   - spread: node.hostname
