@@ -6,6 +6,8 @@ services:
         build:
             context: .
             dockerfile: prodDockerfile
+        environment:
+            NODE_PORT: 3000
         volumes:
             - /glustervol/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         networks: #networks to db and reverse proxy
