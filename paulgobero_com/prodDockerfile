@@ -27,7 +27,7 @@ RUN chmod +x /nodeApp/wait-for
   #CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
 
 #8. Docker healthcheck (LIVINESS PROBE)
-HEALTHCHECK --interval=15s --timeout=3s --start-period=90s --retries=5 \
+HEALTHCHECK --interval=15s --timeout=3s --start-period=80s --retries=5 \
   CMD curl -fs http://localhost:${NODE_PORT}/health || exit 1
 
 
