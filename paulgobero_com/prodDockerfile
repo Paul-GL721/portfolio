@@ -23,8 +23,13 @@ COPY wait-for /nodeApp/
 RUN chmod +x /nodeApp/wait-for
 
 #8. Docker healthcheck (READINESS PROBE)
-HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
+#HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
+  #CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
+
+#8. Docker healthcheck (LIVINESS PROBE)
+HEALTHCHECK --interval=15s --timeout=3s --start-period=90s --retries=5 \
+  CMD curl -fs http://localhost:${NODE_PORT}/health || exit 1
+
 
 #9. Set the application entry point
 #CMD ["npm", "run", "start"]
