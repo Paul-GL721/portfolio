@@ -1,6 +1,6 @@
 //####### Connect mongodb to nodejs #####
 
-//import required modules
+/*//import required modules
 const mongoose = require('mongoose');
 const dbState = require('../utils/dbstate');
 
@@ -43,7 +43,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       return false; // Connection failed
    }
 };
-/* Event handlers for mongoose connection states */
+// Event handlers for mongoose connection states 
 // Temporary loss (replica re-election, network issue)
 mongoose.connection.on('disconnected', () => {
   console.warn('MongoDB disconnected');
@@ -55,4 +55,67 @@ mongoose.connection.on('error', (err) => {
   console.error('MongoDB error:', err);
   dbState.setNotReady();
 });
+module.exports = database_connection;*/
+
+
+
+const mongoose = require('mongoose');
+const dbState = require('../utils/dbstate');
+
+let db = null;
+
+// Disable mongoose buffering (VERY IMPORTANT)
+mongoose.set('bufferCommands', false);
+mongoose.set('bufferTimeoutMS', 0);
+
+const database_connection = async (db_name, db_user, db_passwd, db_host, db_port) => {
+
+  const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000,
+    connectTimeoutMS: 30000,
+  };
+
+  const env = process.env.NODE_ENV;
+  let mongoDBurl;
+
+  if (env === 'production' || env === 'stage') {
+    mongoDBurl =
+      `mongodb://${db_user}:${db_passwd}@${db_host}/${db_name}` +
+      `?authSource=admin&replicaSet=replicaset&readPreference=primary`;
+  } else {
+    mongoDBurl =
+      `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
+  }
+
+  try {
+    if (!db) {
+      console.log('Connecting to MongoDB...');
+      db = await mongoose.connect(mongoDBurl, options);
+    }
+
+    dbState.setReady();
+    console.log('SUCCESSFULLY CONNECTED TO MONGODB');
+    return true;
+
+  } catch (error) {
+    dbState.setNotReady();
+    console.error('FAILED TO CONNECT TO MONGODB');
+    console.error(error);
+    throw error; // 🔥 IMPORTANT
+  }
+};
+
+// Connection state listeners
+mongoose.connection.on('disconnected', () => {
+  console.warn('MongoDB disconnected');
+  dbState.setNotReady();
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB error:', err);
+  dbState.setNotReady();
+});
+
 module.exports = database_connection;
