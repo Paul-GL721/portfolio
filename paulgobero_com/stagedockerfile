@@ -22,9 +22,9 @@ RUN apt-get -q update \
 COPY wait-for /nodeApp/
 RUN chmod +x /nodeApp/wait-for
 
-#8. Docker healthcheck (READINESS PROBE)
+#8. Docker healthcheck (LIVINESS PROBE)
 HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/readiness || exit 1
+  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/health || exit 1
 
 #9. Set the application entry point
 CMD ["npm", "run", "serverstart"]
