@@ -26,12 +26,13 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.stageapp.rule=Host(`stagingwww.paulgobero.com`)"
-                - "traefik.http.services.stageapp-service.loadbalancer.server.port=3001"
                 - "traefik.http.routers.stageapp.entrypoints=web,websecure"
                 - "traefik.http.routers.stageapp.tls=true" #enable tls
                 - "traefik.http.routers.stageapp.tls.certresolver=production" #certificate
-                - "traefik.http.services.stageapp.loadbalancer.healthcheck.path=/portfolio/readiness"
-                - "traefik.http.services.stageapp.loadbalancer.healthcheck.interval=10s"
+                - "traefik.http.routers.stageapp.service=stageapp-service"
+                - "traefik.http.services.stageapp-service.loadbalancer.server.port=3001"
+                - "traefik.http.services.stageapp-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                - "traefik.http.services.stageapp-service.loadbalancer.healthcheck.interval=10s"
 
             restart_policy: #how to restart containers when they exit
                 condition: any
