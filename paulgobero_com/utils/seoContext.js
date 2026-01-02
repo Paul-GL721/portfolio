@@ -1,5 +1,6 @@
 // utils/seoContext.js
 const Author = require("../models/author");
+const mongoose = require('mongoose');
 
 let cachedOwner = null;
 let lastFetched = 0;
