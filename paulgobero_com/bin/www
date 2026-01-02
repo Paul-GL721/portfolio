@@ -3,78 +3,101 @@
 /**
  * Module dependencies.
  */
-const { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_NAME, TEST_DB_HOST, TEST_DB_PORT, TEST_NODE_PORT, TEST_NODE_ENV,  NODE_PORT, NODE_ENV, DBIMAGENAME } = require('../configs/config');
-const  database_connection = require('../configs/loadb'); //testdb module
-var app = require('../app');
-var debug = require('debug')('paulgobero-com:server');
-var http = require('http');
+const {
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME,
+  DB_HOST,
+  DB_PORT,
+  TEST_DB_USER,
+  TEST_DB_PASSWORD,
+  TEST_DB_NAME,
+  TEST_DB_HOST,
+  TEST_DB_PORT,
+  TEST_NODE_PORT,
+  NODE_PORT
+} = require('../configs/config');
+
+const database_connection = require('../configs/loadb');
+const app = require('../app');
+const debug = require('debug')('paulgobero-com:server');
+const http = require('http');
 
 /**
- * Get port from environment and store in Express.
+ * Environment
  */
-
-//let port = NODE_ENV === 'test' ? TEST_NODE_PORT : NODE_PORT;
-let port;
 const env = process.env.NODE_ENV || 'development';
-console.log('env defind is', env);
+console.log('env defined is', env);
 
-//const env = NODE_ENV || TEST_NODE_ENV 
-// Load environment-specific configuration
-if (env  === 'development') {
-  port = normalizePort( NODE_PORT);
-  database_connection( DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ); 
-} 
-if (env  === 'test') {
-  // Load test-specific configuration
+/**
+ * Port selection
+ */
+let port;
+
+if (env === 'test') {
   port = normalizePort(TEST_NODE_PORT);
-  database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-} 
-if (env === 'stage') {
-  // Load staging-specific configuration
-  port = normalizePort( NODE_PORT);
-  database_connection( DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ); 
+} else {
+  port = normalizePort(NODE_PORT);
 }
-if (env === 'production') {
-  // Load production-specific configuration
-  port = normalizePort( NODE_PORT);
-  database_connection( DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ); 
-}
-console.log('env is', process.env.NODE_ENV);
+
 console.log('port is', port);
-//const port = normalizePort(NODE_ENV === 'test' ? TEST_NODE_PORT : NODE_PORT || '2999');
-//var port = normalizePort( NODE_PORT || '2999');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Bootstrap application
+ * IMPORTANT: DB connection must succeed BEFORE server starts
  */
+async function startServer() {
+  try {
+    if (env === 'test') {
+      await database_connection(
+        TEST_DB_NAME,
+        TEST_DB_USER,
+        TEST_DB_PASSWORD,
+        TEST_DB_HOST,
+        TEST_DB_PORT
+      );
+    } else {
+      await database_connection(
+        DB_NAME,
+        DB_USER,
+        DB_PASSWORD,
+        DB_HOST,
+        DB_PORT
+      );
+    }
 
-var server = http.createServer(app);
+    /**
+     * Create HTTP server
+     */
+    const server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+    /**
+     * Listen on provided port, on all network interfaces
+     */
+    server.listen(port, '0.0.0.0');
+    server.on('error', onError);
+    server.on('listening', () => onListening(server));
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+    console.log(`Server started successfully on port ${port}`);
+
+  } catch (err) {
+    console.error('❌ Application startup failed');
+    console.error(err);
+    process.exit(1); // REQUIRED for Docker Swarm / Traefik
+  }
+}
+
+startServer();
 
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
 
   return false;
 }
@@ -82,26 +105,20 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+  if (error.syscall !== 'listen') throw error;
 
-  var bind = typeof port === 'string'
+  const bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
-      break;
     case 'EADDRINUSE':
       console.error(bind + ' is already in use');
       process.exit(1);
-      break;
     default:
       throw error;
   }
@@ -110,10 +127,9 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
+function onListening(server) {
+  const addr = server.address();
+  const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
