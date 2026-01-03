@@ -1,5 +1,5 @@
 #1. From the nodejs base image
-FROM node:18.12.0-bullseye
+FROM node:25-bullseye-slim
 
 #2. Create a work directory
 WORKDIR /nodeApp
@@ -28,4 +28,4 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
 
 #9. Set the application entry point
 #CMD ["npm", "run", "serverstart"]
-ENTRYPOINT ["npm", "run", "devstart"]
+CMD ["npm", "run", "devstart"]

@@ -1,6 +1,6 @@
 #1. base image that includes Chrome
 #FROM zenika/alpine-chrome:with-node
-FROM node:18.12.0-bullseye
+FROM node:25-bullseye-slim
 #FROM davidjeddy/docker_puppeteer_jest
 #FROM node:slim
 
@@ -24,6 +24,6 @@ RUN chmod +x /nodeApp/wait-for
 
 #7. Set the application entry point
 #ENTRYPOINT ["npm", "run", "devstart"]
-ENTRYPOINT ["npm", "run", "test:unit-inside-docker"]
+CMD ["npm", "run", "test:unit-inside-docker"]
 #ENTRYPOINT ["npm", "run", "test:e2e-inside-docker"]
 #ENTRYPOINT ["sh", "-c", "npm run test:unit-inside-docker && npm run test:e2e-inside-docker"]
