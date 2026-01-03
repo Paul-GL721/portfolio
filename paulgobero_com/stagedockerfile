@@ -27,4 +27,4 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=50s --retries=5 \
   CMD curl -fs http://localhost:${NODE_PORT}/portfolio/health || exit 1
 
 #9. Set the application entry point
-ENTRYPOINT ["npm", "run", "stagestart"]
+CMD ["npm", "run", "stagestart"]
