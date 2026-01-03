@@ -1,11 +1,11 @@
 #1. From the nodejs base image
-FROM node:18.12.0-bullseye
+FROM node:25-bullseye-slim
 
 #2. Create a work directory
 WORKDIR /nodeApp
 
 #3. Copy the depency information into the directory
-copy package.json package-lock.json ./
+COPY package.json package-lock.json ./
 
 #4. Install all the depencies
 RUN npm install
@@ -24,8 +24,7 @@ RUN chmod +x /nodeApp/wait-for
 
 #8. Docker healthcheck (LIVINESS PROBE)
 HEALTHCHECK --interval=10s --timeout=3s --start-period=50s --retries=5 \
-  CMD curl -fs http://localhost:3001/portfolio/health || exit 1
+  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/health || exit 1
 
 #9. Set the application entry point
-#CMD ["npm", "run", "serverstart"]
 ENTRYPOINT ["npm", "run", "stagestart"]
