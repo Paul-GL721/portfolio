@@ -1,5 +1,6 @@
 // utils/seoContext.js
 const Author = require("../models/author");
+const mongoose = require('mongoose');
 
 let cachedOwner = null;
 let lastFetched = 0;
@@ -7,6 +8,11 @@ const CACHE_DURATION = 60 * 60 * 1000; // 60 minutes
 
 module.exports = async function seoContext(req, res, next) {
   try {
+    // If Mongo is not connected, skip DB access
+    if (mongoose.connection.readyState !== 1) {
+      return next();
+    }
+
     const now = Date.now();
 
     // Reuse cached owner if still fresh
