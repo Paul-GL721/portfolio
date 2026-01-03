@@ -22,14 +22,13 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
-                - "traefik.http.services.app-service.loadbalancer.server.port=3000"
                 - "traefik.http.routers.app.entrypoints=web,websecure"
                 - "traefik.http.routers.app.tls=true" #enable tls
                 - "traefik.http.routers.app.tls.certresolver=production" #certificate
-                - "traefik.http.services.app.loadbalancer.healthcheck.path=/portfolio/readiness"
-                - "traefik.http.services.app.loadbalancer.healthcheck.interval=10s"
-
-
+                - "traefik.http.routers.app.service=app-service"
+                - "traefik.http.services.app-service.loadbalancer.server.port=3000"
+                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                - "traefik.http.services.app-service.loadbalancer.healthcheck.interval=10s"
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 20s
