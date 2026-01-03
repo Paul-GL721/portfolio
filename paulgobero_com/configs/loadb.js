@@ -43,7 +43,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       return false; // Connection failed
    }
 };
-/* Event handlers for mongoose connection states */
+// Event handlers for mongoose connection states 
 // Temporary loss (replica re-election, network issue)
 mongoose.connection.on('disconnected', () => {
   console.warn('MongoDB disconnected');
