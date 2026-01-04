@@ -21,7 +21,7 @@ pipeline {
 	}
 
 	stages {
-		stage('1. Run unit Tests') {
+		/*stage('1. Run unit Tests') {
 			//Execute tests if its development branch
 			when {
 				branch 'development'
@@ -76,7 +76,67 @@ pipeline {
 					}
 				}
 			}
+		}*/
+		stage('1. Run unit Tests') {
+			when {
+				branch 'development'
+			}
+
+			agent {
+				label 'buildnode'
+			}
+
+			environment {
+				ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test"
+			}
+
+			steps {
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					script {
+						// Setup git config
+						sh "git config --global user.email 'lwangapaul23@gmail.com'"
+						sh "git config --global user.name 'jenkinsagent2'"
+
+						// Fetch latest changes
+						sh 'git fetch origin'
+						sh 'git merge --no-commit origin/development'
+
+						// Check if merge has conflicts
+						def mergeExitCode = sh(script: 'git ls-files --unmerged | wc -l', returnStatus: true)
+						if (mergeExitCode != 0) {
+							echo "Merge conflicts detected. Please resolve them first."
+							currentBuild.result = 'FAILURE'
+							error("Stopping pipeline due to merge conflicts")
+						}
+
+						// Build and start the Docker Compose test environment
+						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
+
+						// Run the tests inside the container and capture output & exit code
+						def testExitCode = sh(
+							script: "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker",
+							returnStatus: true
+						)
+
+						// Stop and remove containers after tests
+						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down"
+
+						// Fail the build if tests failed
+						if (testExitCode != 0) {
+							echo "Unit tests failed! Reverting merge..."
+							sh 'git reset --hard HEAD@{1}'
+							sh 'git push --force origin development'
+							currentBuild.result = 'FAILURE'
+							error("Stopping pipeline due to failing tests")
+						} else {
+							echo "Unit tests passed successfully!"
+						}
+					}
+				}
+			}
 		}
+
 		
 
 		stage('2. Merge development and staging branches') {
