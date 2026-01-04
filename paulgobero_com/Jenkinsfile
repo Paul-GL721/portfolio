@@ -77,7 +77,7 @@ pipeline {
 				}
 			}
 		}*/
-		stage('1. Run Unit Tests') {
+		stage('1. Run unit Tests') {
 			when {
 				branch 'development'
 			}
@@ -91,46 +91,47 @@ pipeline {
 			}
 
 			steps {
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+				sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					// Set Git user info
+					sh "git config --global user.email 'lwangapaul23@gmail.com'"
+					sh "git config --global user.name 'jenkinsagent2'"
+					sh 'git fetch origin'
+
+					// Dry-run merge
+					sh 'git merge --no-commit origin/development'
+
 					script {
-						// Set Git config
-						sh "git config --global user.email 'lwangapaul23@gmail.com'"
-						sh "git config --global user.name 'jenkinsagent2'"
-
-						// Checkout development explicitly
-						sh 'git fetch origin development'
-						sh 'git checkout development'
-						sh 'git reset --hard origin/development'
-
-						// Merge latest development (dry run)
-						sh 'git merge --no-commit origin/development || true'
-
-						echo "Building Docker test environment..."
-						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
-
-						// Run unit tests inside Docker with output streaming
-						echo "Running unit tests..."
-						def testExitCode = sh(
-							script: "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker",
-							//returnStatus: true
-						)
-
-						// Stop containers
-						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down"
-
-						// Fail build if tests failed
-						if (testExitCode != 0) {
-							echo "Unit tests failed! Check above logs for failed tests."
+						// Check if merge succeeded
+						def mergeExitCode = sh(script: 'git ls-files --unmerged | wc -l', returnStatus: true)
+						if (mergeExitCode != 0) {
+							echo "Merge failed. Please resolve conflicts and try again."
 							currentBuild.result = 'FAILURE'
-							error("Stopping pipeline due to failing tests")
-						} else {
-							echo "All unit tests passed!"
+							error("Merge conflict detected.")
+						}
+
+						try {
+							// Build and start Docker test environment
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
+
+							// Run tests inside Docker and stream output
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker"
+
+						} catch (err) {
+							echo "Unit tests failed! Reverting merge..."
+							// Reverse the merge if tests failed
+							sh 'git reset --hard HEAD@{1}'
+							sh 'git push --force origin development || true' // ignore push errors
+							error("Tests failed. See above logs for details.")
+						} finally {
+							// Always clean up Docker containers
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down"
 						}
 					}
 				}
 			}
 		}
+
 
 
 		
