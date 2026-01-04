@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -11,6 +12,7 @@ services:
         ports:
             - "3002:3002"
         depends_on:
+        
             - testmongodb 
         command: bash -c "./wait-for-it.sh testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker"
         networks:

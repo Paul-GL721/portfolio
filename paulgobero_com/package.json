@@ -9,11 +9,12 @@
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
     "test:server": "NODE_ENV=test nodemon --require dotenv/config -L ./bin/www",
     "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --watchAll --coverage --verbose",
-    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__ --testLocationInResults",
+    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__",
     "test:e2e": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --runInBand --watchAll --coverage --verbose ",
     "test:e2e-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --watchAll --coverage --verbose --testPathPattern=/nodeApp/__e2e__"
   },
   "dependencies": {
+    
     "@aws-sdk/client-s3": "^3.254.0",
     "@aws-sdk/s3-request-presigner": "^3.254.0",
     "async": "^3.2.4",
@@ -33,8 +34,7 @@
     "nunjucks": "^3.2.3",
     "pug": "~3.0.2",
     "sharp": "^0.32.6",
-    "sitemap": "^8.0.0",
-    "superagent": "^10.2.3"
+    "sitemap": "^8.0.0"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.1.7",
@@ -45,8 +45,8 @@
     "mongodb": "^5.5.0",
     "mongodb-memory-server": "^8.12.2",
     "nodemon": "^3.0.1",
-    "puppeteer": "^24.15.0",
-    "supertest": "^7.1.4",
+    "puppeteer": "^20.8.2",
+    "supertest": "^6.3.3",
     "supertest-session": "^4.1.0",
     "wait-on": "^7.0.1"
   }
