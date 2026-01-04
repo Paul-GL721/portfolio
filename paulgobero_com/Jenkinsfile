@@ -77,7 +77,7 @@ pipeline {
 				}
 			}
 		}*/
-		stage('1. Run unit Tests') {
+		stage('1. Run Unit Tests') {
 			when {
 				branch 'development'
 			}
@@ -93,49 +93,45 @@ pipeline {
 			steps {
 				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
-						// Setup git config
+						// Set Git config
 						sh "git config --global user.email 'lwangapaul23@gmail.com'"
 						sh "git config --global user.name 'jenkinsagent2'"
 
-						// Fetch latest changes
-						sh 'git fetch origin'
-						sh 'git merge --no-commit origin/development'
+						// Checkout development explicitly
+						sh 'git fetch origin development'
+						sh 'git checkout development'
+						sh 'git reset --hard origin/development'
 
-						// Check if merge has conflicts
-						def mergeExitCode = sh(script: 'git ls-files --unmerged | wc -l', returnStatus: true)
-						if (mergeExitCode != 0) {
-							echo "Merge conflicts detected. Please resolve them first."
-							currentBuild.result = 'FAILURE'
-							error("Stopping pipeline due to merge conflicts")
-						}
+						// Merge latest development (dry run)
+						sh 'git merge --no-commit origin/development || true'
 
-						// Build and start the Docker Compose test environment
+						echo "Building Docker test environment..."
 						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
 						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
 
-						// Run the tests inside the container and capture output & exit code
+						// Run unit tests inside Docker with output streaming
+						echo "Running unit tests..."
 						def testExitCode = sh(
 							script: "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker",
 							returnStatus: true
 						)
 
-						// Stop and remove containers after tests
+						// Stop containers
 						sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down"
 
-						// Fail the build if tests failed
+						// Fail build if tests failed
 						if (testExitCode != 0) {
-							echo "Unit tests failed! Reverting merge..."
-							sh 'git reset --hard HEAD@{1}'
-							sh 'git push --force origin development'
+							echo "Unit tests failed! Check above logs for failed tests."
 							currentBuild.result = 'FAILURE'
 							error("Stopping pipeline due to failing tests")
 						} else {
-							echo "Unit tests passed successfully!"
+							echo "All unit tests passed!"
 						}
 					}
 				}
 			}
 		}
+
 
 		
 
