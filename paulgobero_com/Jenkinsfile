@@ -113,7 +113,7 @@ pipeline {
 						echo "Running unit tests..."
 						def testExitCode = sh(
 							script: "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker",
-							returnStatus: true
+							//returnStatus: true
 						)
 
 						// Stop containers
