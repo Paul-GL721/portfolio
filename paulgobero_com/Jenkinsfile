@@ -21,7 +21,7 @@ pipeline {
 	}
 
 	stages {
-		/*stage('1. Run unit Tests') {
+		stage('1. Run unit Tests') {
 			//Execute tests if its development branch
 			when {
 				branch 'development'
@@ -76,65 +76,7 @@ pipeline {
 					}
 				}
 			}
-		}*/
-		stage('1. Run unit Tests') {
-			when {
-				branch 'development'
-			}
-
-			agent {
-				label 'buildnode'
-			}
-
-			environment {
-				ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test"
-			}
-
-			steps {
-				sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					// Set Git user info
-					sh "git config --global user.email 'lwangapaul23@gmail.com'"
-					sh "git config --global user.name 'jenkinsagent2'"
-					sh 'git fetch origin'
-
-					// Dry-run merge
-					sh 'git merge --no-commit origin/development'
-
-					script {
-						// Check if merge succeeded
-						def mergeExitCode = sh(script: 'git ls-files --unmerged | wc -l', returnStatus: true)
-						if (mergeExitCode != 0) {
-							echo "Merge failed. Please resolve conflicts and try again."
-							currentBuild.result = 'FAILURE'
-							error("Merge conflict detected.")
-						}
-
-						try {
-							// Build and start Docker test environment
-							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d"
-
-							// Run tests inside Docker and stream output
-							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp npm run test:unit-inside-docker"
-
-						} catch (err) {
-							echo "Unit tests failed! Reverting merge..."
-							// Reverse the merge if tests failed
-							sh 'git reset --hard HEAD@{1}'
-							sh 'git push --force origin development || true' // ignore push errors
-							error("Tests failed. See above logs for details.")
-						} finally {
-							// Always clean up Docker containers
-							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down"
-						}
-					}
-				}
-			}
 		}
-
-
-
-		
 
 		stage('2. Merge development and staging branches') {
 			//Execute if its the develpment branch
