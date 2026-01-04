@@ -1,6 +1,6 @@
 #1. base image that includes Chrome
 #FROM zenika/alpine-chrome:with-node
-FROM node:25-bullseye-slim
+FROM node:18.12.0-bullseye
 #FROM davidjeddy/docker_puppeteer_jest
 #FROM node:slim
 
