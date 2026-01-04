@@ -28,12 +28,12 @@ DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
     "$BASE_DIRECTORY/devdocker-compose.yml"
     "$BASE_DIRECTORY/jest-mongodb-config.js"
-    "$BASE_DIRECTORY/jest.config.js"
+    "$BASE_DIRECTORY/jest.e2e.config.js"
     "$BASE_DIRECTORY/devdockerfile"
     "$BASE_DIRECTORY/testdocker-compose.yml"
     "$BASE_DIRECTORY/testdockerfile"
     "$BASE_DIRECTORY/mongodb"
-    "$BASE_DIRECTORY/e2e"
+    "$BASE_DIRECTORY/__e2e__"
     "$BASE_DIRECTORY/__tests__"
 )
 
