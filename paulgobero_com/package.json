@@ -9,7 +9,7 @@
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
     "test:server": "NODE_ENV=test nodemon --require dotenv/config -L ./bin/www",
     "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --watchAll --coverage --verbose",
-    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__",
+    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose",
     "test:e2e": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --runInBand --watchAll --coverage --verbose ",
     "test:e2e-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --watchAll --coverage --verbose --testPathPattern=/nodeApp/__e2e__"
   },
