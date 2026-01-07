@@ -81,13 +81,6 @@ beforeAll(function (done) {
     })
 });
 
-afterAll(async () => {
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
-});
-
 
 describe('Login Post Route', function () {
     it('Get the login form', function (done) {

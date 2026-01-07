@@ -45,6 +45,8 @@ beforeAll(function (done) {
             full_description: 'This is the site owner'
         },
         brandName: 'TestOwner',
+        hostName: 'https://jestjs.io/docs/mongodb',
+        yourKeyword: ['testKeyword'],
         email: 'test@gmail.com',
         password: 'test567',
         authorStatus: 'owner',
@@ -65,6 +67,8 @@ beforeAll(function (done) {
           full_description: 'User created to test select options'
       },
       brandName: 'Johnny',
+      hostName: 'https://jestjs.io/docs/mongodb3',
+      yourKeyword: ['testKeyworder', 'testKeyword2'],
       email: 'mitch3@jonny.com',
       password: 'jony67',
       authorStatus: 'normaluser',
@@ -95,6 +99,11 @@ beforeAll(function (done) {
     skill: sampleSkill._id,
     author: sampleSkill._id,
     specialisation: sampleSpecialisation._id,
+    projectDates: {
+      startDate: '2022-01-01',
+      endDate: '2022-12-31',
+    },
+    checked: true,
     mediaName: {
       imageName:  imageToString('../public/images/img/project1.jpg'),
       videoName: imageToString('../public/videos/video1.mp4')
@@ -111,13 +120,6 @@ beforeAll(function (done) {
         authenticatedSession = testSession;
         return done();
     })
-});
-
-afterAll(async () => {
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
 });
 
 

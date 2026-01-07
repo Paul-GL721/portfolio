@@ -35,6 +35,8 @@ beforeAll(function (done) {
             full_description: 'This is the site owner'
         },
         brandName: 'TestOwner',
+        hostName: 'https://jestjs.io/docs/mongodb',
+        yourKeyword: ['testKeyword'],
         email: 'test@gmail.com',
         password: 'test567',
         authorStatus: 'owner',
@@ -55,6 +57,8 @@ beforeAll(function (done) {
           full_description: 'User created to test select options'
       },
       brandName: 'Johnny',
+      hostName: 'https://jestjs.io/docs/mongodb3',
+      yourKeyword: ['testKeyworder', 'testKeyword2'],
       email: 'mitch3@jonny.com',
       password: 'jony67',
       authorStatus: 'normaluser',
@@ -77,6 +81,8 @@ beforeAll(function (done) {
         full_description: 'User created to test select options'
     },
     brandName: 'Johnny',
+    hostName: 'https://jestjs.io/docs/mongodb4',
+    yourKeyword: ['testKeyworder', 'testKeyword2'],
     email: 'testmitch3@jonny.com',
     password: 'testjony67',
     authorStatus: 'normaluser',
@@ -100,13 +106,6 @@ beforeAll(function (done) {
     })
 });
 
-afterAll(async () => {
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
-});
-
 
 describe('Acessing authenticated pages', function () {
   it('Get the Author form', function (done) {
@@ -124,6 +123,8 @@ describe('Acessing authenticated pages', function () {
       .field("authorshortdesc", "test short description about you")
       .field("authorfulldesc", "test more about yourself")
       .field("authorbrandname", "test brand name")
+      .field("authorhostname", "https://jestjs.io/docs/mongodb4")
+      .field("authorkeywords", "testKeyworder,testKeyword2")
       .field("authorstatus", "testAuthorStatus")
       .field("authorRole", "testAuthorRole")
       .field("authorpassword", "testAuthorRole")
@@ -184,6 +185,8 @@ describe('Acessing authenticated pages', function () {
         .field("authorshortdesc", "test short description about you")
         .field("authorfulldesc", "up Technically Ability to deploy to apps")
         .field("authorbrandname", "test brand name")
+        .field("authorhostname", "https://jestjs.io/docs/mongodb4")
+        .field("authorkeywords", "testKeyworder,testKeyword2")
         .field("authorstatus", "testAuthorStatus")
         .field("authorRole", "testAuthorRole")
         .field("authorpassword", "testAuthorRole")

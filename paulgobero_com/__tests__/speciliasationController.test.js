@@ -83,13 +83,6 @@ beforeAll(function (done) {
         })
 });
 
-afterAll(async () => {
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
-});
-
 describe('Acessing authenticated pages', function () {
     it('Get the specialisation form', function (done) {
         authenticatedSession.get('/portfolio/specialisation/create')
