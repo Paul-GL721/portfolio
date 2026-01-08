@@ -55,7 +55,15 @@ pipeline {
 							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
 							// Capture the exit code of the tests
-							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
+							//def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
+							def testExitCode = sh(
+								script: '''
+								docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp \
+								npm run test:unit-inside-docker
+								''',
+								returnStatus: true
+							)
+
 
 							//def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
 							if (testExitCode != 0) {
