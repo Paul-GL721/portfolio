@@ -37,7 +37,9 @@ beforeAll(function (done) {
                 full_description: 'This is the site owner'
             },
             brandName: 'TestOwner',
-            email: 'test@gmail.com',
+            hostName: 'https://jestjs.io/docs/mongodb7',
+            yourKeyword: ['testKeyworder', 'testKeyword2'],
+            email: 'test1@gmail.com',
             password: 'test567',
             authorStatus: 'owner',
             authorRole: 'admin',
@@ -74,7 +76,7 @@ beforeAll(function (done) {
 
     testSession = session(myApp);
     testSession.post('/portfolio/login')
-        .send({ email: "test@gmail.com", password: "test567" })
+        .send({ email: "test1@gmail.com", password: "test567" })
         .expect(200)
         .end(function (err) {
             if (err) return done(err);
@@ -236,7 +238,7 @@ const { BASEURL } = require('../configs/config');
 
 jest.setTimeout(600000);
 let isConnected;
-const authoremail = "test@gmail.com";
+const authoremail = "test1@gmail.com";
 const authorpassword = "test567";
 
 describe('Test that links on Specialisation Authenticated page work', () => {

@@ -37,7 +37,7 @@ beforeAll(function (done) {
         brandName: 'TestOwner',
         hostName: 'https://jestjs.io/docs/mongodb',
         yourKeyword: ['testKeyword'],
-        email: 'test@gmail.com',
+        email: 'test5@gmail.com',
         password: 'test567',
         authorStatus: 'owner',
         authorRole: 'admin',
@@ -97,7 +97,7 @@ beforeAll(function (done) {
 
   testSession = session(myApp);
   testSession.post('/portfolio/login')
-    .send({ email: "test@gmail.com", password: "test567" })
+    .send({ email: "test5@gmail.com", password: "test567" })
     .expect(200)
     .end(function (err) {
         if (err) return done(err);
@@ -265,7 +265,7 @@ const testutils = require('../utils/testUtils');
 
 jest.setTimeout(600000);
 let isConnected;
-const authoremail = "test@gmail.com";
+const authoremail = "test5@gmail.com";
 const authorpassword = "test567";*/
 
 
@@ -369,7 +369,7 @@ async function testNavbarBtns(about, project, skill, contact, gotopage) {
 /*describe('Test that links on Author Authenticated page work', () => {
   let isConnected;
 
-  const authoremail = "test@gmail.com";
+  const authoremail = "test5@gmail.com";
   const authorpassword = "test567";
 
   async function testAuthLinkNavigation(about, project, skill, contact, gotopage) {
@@ -383,7 +383,7 @@ async function testNavbarBtns(about, project, skill, contact, gotopage) {
     for (const link of links) {
       test(`Clicking the ${link.label} link should navigate to the ${link.section} section`, async () => {
         if(isConnected) {
-          const authoremail = "test@gmail.com";
+          const authoremail = "test5@gmail.com";
           const authorpassword = "test567";
         
           await testutils.loginAndNavigate(authoremail, authorpassword);

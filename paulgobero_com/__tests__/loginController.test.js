@@ -38,7 +38,9 @@ beforeAll(function (done) {
             full_description: 'This is the site owner'
         },
         brandName: 'TestOwner',
-        email: 'test@gmail.com',
+        hostName: 'https://jestjs.io/docs/mongodb5',
+        yourKeyword: ['testKeyworder', 'testKeyword2'],
+        email: 'test3@gmail.com',
         password: 'test567',
         authorStatus: 'owner',
         authorRole: 'admin',
@@ -58,6 +60,8 @@ beforeAll(function (done) {
           full_description: 'User created to test select options'
       },
       brandName: 'Johnny',
+      hostName: 'https://jestjs.io/docs/mongodb4',
+      yourKeyword: ['testKeyworder', 'testKeyword2'],
       email: 'mitch3@jonny.com',
       password: 'jony67',
       authorStatus: 'normaluser',
@@ -72,7 +76,7 @@ beforeAll(function (done) {
 
   testSession = session(myApp);
   testSession.post('/portfolio/login')
-    .send({ email: "test@gmail.com", password: "test567" })
+    .send({ email: "test3@gmail.com", password: "test567" })
     .expect(200)
     .end(function (err) {
         if (err) return done(err);
@@ -91,7 +95,7 @@ describe('Login Post Route', function () {
     it('should log in a user and return a JWT token', async () => {
         const response = await supertest(myApp)
             .post('/portfolio/login')
-            .send({ email: "test@gmail.com", password: "test567" });
+            .send({ email: "test3@gmail.com", password: "test567" });
     
         expect(response.status).toBe(200);
     });
@@ -119,7 +123,7 @@ jest.setTimeout(6000000);
 describe('Testing login functionality', () => {
     let isConnected;
     console.log(isConnected);
-    const authoremail = "test@gmail.com";
+    const authoremail = "test3@gmail.com";
     const authorpassword = "test567"
 
     test('Saves a user with owner status to the database', async () => {  

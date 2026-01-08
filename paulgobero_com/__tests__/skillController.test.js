@@ -35,7 +35,9 @@ beforeAll(function (done) {
                 full_description: 'This is the site owner'
             },
             brandName: 'TestOwner',
-            email: 'test@gmail.com',
+            hostName: 'https://jestjs.io/docs/mongodb5',
+            yourKeyword: ['testKeyworder', 'testKeyword2'],
+            email: 'test2@gmail.com',
             password: 'test567',
             authorStatus: 'owner',
             authorRole: 'admin',
@@ -72,7 +74,7 @@ beforeAll(function (done) {
 
     testSession = session(myApp);
     testSession.post('/portfolio/login')
-        .send({ email: "test@gmail.com", password: "test567" })
+        .send({ email: "test2@gmail.com", password: "test567" })
         .expect(200)
         .end(function (err) {
             if (err) return done(err);
@@ -234,7 +236,7 @@ jest.setTimeout(600000);
 
 describe('Test that links on Skill Authenticated page work', () => {
     let isConnected;
-    const authoremail = "test@gmail.com";
+    const authoremail = "test2@gmail.com";
     const authorpassword = "test567";
   
     async function testAuthLinkNavigation(label, section, goto) {
@@ -279,7 +281,7 @@ describe('Test CRUD operations on the Skill model', () => {
     /*beforeAll(testutils.beforeAllTests);
     afterAll(testutils.afterAllTests);
   
-    const authoremail = "test@gmail.com";
+    const authoremail = "test2@gmail.com";
     const authorpassword = "test567";
     testutils.loginAndNavigate;
   

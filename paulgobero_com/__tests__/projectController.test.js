@@ -47,7 +47,7 @@ beforeAll(function (done) {
         brandName: 'TestOwner',
         hostName: 'https://jestjs.io/docs/mongodb',
         yourKeyword: ['testKeyword'],
-        email: 'test@gmail.com',
+        email: 'test4@gmail.com',
         password: 'test567',
         authorStatus: 'owner',
         authorRole: 'admin',
@@ -113,7 +113,7 @@ beforeAll(function (done) {
 
   testSession = session(myApp);
   testSession.post('/portfolio/login')
-    .send({ email: "test@gmail.com", password: "test567" })
+    .send({ email: "test4@gmail.com", password: "test567" })
     .expect(200)
     .end(function (err) {
         if (err) return done(err);
@@ -283,7 +283,7 @@ const { BASEURL } = require('../configs/config');
 jest.setTimeout(600000);
 describe('Test that links on Project Authenticated page work', () => {
     let isConnected;
-    const authoremail = "test@gmail.com";
+    const authoremail = "test4@gmail.com";
     const authorpassword = "test567";
   
     async function testAuthLinkNavigation(label, section, goto) {
@@ -328,7 +328,7 @@ describe('Test CRUD operations on the Project model', () => {
     /*beforeAll(testutils.beforeAllTests);
     afterAll(testutils.afterAllTests);
   
-    const authoremail = "test@gmail.com";
+    const authoremail = "test4@gmail.com";
     const authorpassword = "test567";
     testutils.loginAndNavigate;
   
