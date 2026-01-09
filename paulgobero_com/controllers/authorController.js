@@ -291,11 +291,6 @@ exports.author_create_post = [
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
-		/*// Set response headers
-		res.setHeader('Content-Type', 'application/json');
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');*/
-
 		// Get role from decoded cookie token
 		const Role = req.userinfo.role;
 		const subemail = req.body.authoremail;
