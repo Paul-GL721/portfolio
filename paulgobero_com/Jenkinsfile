@@ -79,34 +79,40 @@ pipeline {
 		}
 
 		stage('2. Merge development and staging branches') {
+			//Execute if its the develpment branch
 			when {
 				branch 'development'
 			}
+			//where to execute
 			agent {
 				label 'buildnode'
 			}
 			steps {
-				echo '..................Merging development into staging (safe mode)................'
-
-				sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+				echo '..................Merging if anyfiles have changed................'
+				//with github credentials stored in jenkins server
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
 					script {
-
+						//make the build script executable
 						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
+						//build the image
+						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
 
-						// Run safe merge (handles commit internally)
-						sh './${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
+						//Uncomment if they are changes made and commited to the staging branch directly
+						sh('git stash')
+						sh('git pull')
+						sh('git push ${GIT_REPO}')
 
-						// Check if staging moved forward
-						def ahead = sh(
-							script: 'git rev-list --count origin/staging..HEAD',
-							returnStdout: true
-						).trim().toInteger()
+						//Find the number of staged files 
+						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
 
-						if (ahead > 0) {
-							echo "Staging branch updated by ${ahead} commit(s). Pushing…"
-							sh 'git push origin staging'
-						} else {
-							echo "No changes to push to staging."
+						//if staged_files are more than zero, commit the files and push to remote repo
+						if(staged_files > 0) {
+							echo "They are ${staged_files} staged files"
+							sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
+							sh('git push ${GIT_REPO}')
+						}
+						else {
+							echo "There no commits to make to staging"
 						}
 					}
 				}
