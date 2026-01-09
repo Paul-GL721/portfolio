@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=production node --require dotenv/config ./bin/www",
     "devstart": "NODE_ENV=development nodemon --require dotenv/config -L ./bin/www",
-    "stagestart": "NODE_ENV=stage nodemon --require dotenv/config -L ./bin/www",
+    "stagestart": "NODE_ENV=stage node --require dotenv/config ./bin/www",
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
     "test:server": "NODE_ENV=test nodemon --require dotenv/config -L ./bin/www",
     "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --runInBand --watchAll --coverage --verbose",
