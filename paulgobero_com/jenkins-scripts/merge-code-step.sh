@@ -108,28 +108,33 @@ echo "$COMMITS"
 for commit in $COMMITS; do
   echo "Cherry-picking $commit"
 
-  if ! git cherry-pick "$commit"; then
-    echo "Conflict detected — resolving safely"
-
-    # Jenkinsfile → always from development
-    git checkout origin/development -- paulgobero_com/Jenkinsfile 2>/dev/null || true
-    git add paulgobero_com/Jenkinsfile 2>/dev/null || true
-
-    # Restore staging-only paths
-    for path in "${STAGING_ONLY_PATHS[@]}"; do
-      git checkout origin/staging -- "$path" 2>/dev/null || true
-      git add "$path" 2>/dev/null || true
-    done
-
-    # Remove dev-only paths if staged
-    for path in "${DEV_ONLY_PATHS[@]}"; do
-      git rm -rf --cached "$path" 2>/dev/null || true
-      rm -rf "$path" 2>/dev/null || true
-    done
-
-    git cherry-pick --continue
+  if git cherry-pick -n "$commit"; then
+    git commit -m "chore(staging): merge safe app changes from development"
+    continue
   fi
+
+  echo "Conflict detected — resolving safely"
+
+  # Jenkinsfile → dev wins
+  git checkout origin/development -- paulgobero_com/Jenkinsfile
+  git add paulgobero_com/Jenkinsfile
+
+  # Restore staging-only paths
+  for path in "${STAGING_ONLY_PATHS[@]}"; do
+    git checkout origin/staging -- "$path" 2>/dev/null || true
+    git add "$path" 2>/dev/null || true
+  done
+
+  # Remove dev-only paths
+  for path in "${DEV_ONLY_PATHS[@]}"; do
+    rm -rf "$path" 2>/dev/null || true
+    git rm -rf --cached "$path" 2>/dev/null || true
+  done
+
+  # Finish without editor
+  git commit -m "chore(staging): merge safe app changes from development"
 done
+
 
 ############################################
 # Final safety cleanup
