@@ -2,153 +2,152 @@
 set -e
 set -o pipefail
 
-############################################
-# Safe merge: development → staging
-# - NO commits here (pipeline commits)
-# - Dev-only paths are excluded
-# - Staging-only paths are preserved
-############################################
+### Safe merge script: merges selected files from 'development' into 'staging'
+### Preserves staging-only files and removes dev-only ones.
 
 git config --global user.name "server2"
 git config --global user.email "lwangapaul23@gmail.com"
 
-echo "=== Fetching branches ==="
+echo "=== Checking out staging branch ==="
 git fetch origin staging development
-
-echo "=== Checking out staging ==="
 git checkout -f staging
 git pull origin staging
 
-############################################
-# Allowed application paths (repo-relative)
-############################################
+# Ensure our merge strategy for .gitattributes works
+git config merge.ours.driver true
 
-APP_FOLDERS=(
-  "paulgobero_com/bin"
-  "paulgobero_com/configs"
-  "paulgobero_com/controllers"
-  "paulgobero_com/routes"
-  "paulgobero_com/uploads"
-  "paulgobero_com/models"
-  "paulgobero_com/views"
-  "paulgobero_com/public"
-  "paulgobero_com/utils"
+
+# === Define folders and files ===
+APP_FOLDERS=("bin" "configs" "controllers" "routes" "uploads" "models" "views" "public" "utils")
+FILES=("app.js" "package.json" "package-lock.json" "Jenkinsfile" ".gitignore" ".gitattributes" "wait-for")
+
+# === Development-only files (never merge to staging) ===
+DEV_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/test-step.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/merge-code.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/pull-request-step.sh"
+    "$BASE_DIRECTORY/devdocker-compose.yml"
+    "$BASE_DIRECTORY/jest-mongodb-config.js"
+    "$BASE_DIRECTORY/jest.config.js"
+    "$BASE_DIRECTORY/jest.e2e.config.js"
+    "$BASE_DIRECTORY/devdockerfile"
+    "$BASE_DIRECTORY/testdocker-compose.yml"
+    "$BASE_DIRECTORY/testdockerfile"
+    "$BASE_DIRECTORY/mongodb"
+    "$BASE_DIRECTORY/__e2e__"
+    "$BASE_DIRECTORY/__tests__"
 )
 
-FILES=(
-  "paulgobero_com/app.js"
-  "paulgobero_com/package.json"
-  "paulgobero_com/package-lock.json"
-  "paulgobero_com/Jenkinsfile"
-  "paulgobero_com/.gitattributes"
-  "paulgobero_com/wait-for"
-  ".gitignore"
+# === Staging-only files (preserve them) ===
+STAGING_ONLY_FILES=(
+    "$BASE_DIRECTORY/jenkins-scripts/merge-code-step.sh"
+    "$BASE_DIRECTORY/jenkins-scripts/build-step.sh"
+    "$BASE_DIRECTORY/stagedocker-compose.yml"
+    "$BASE_DIRECTORY/stagedockerfile"
+    "$BASE_DIRECTORY/ansible"
 )
 
-############################################
-# Dev-only paths (ABSOLUTELY NEVER MERGE)
-############################################
-
-DEV_ONLY_PATHS=(
-  "paulgobero_com/__tests__"
-  "paulgobero_com/__e2e__"
-  "paulgobero_com/jest.config.js"
-  "paulgobero_com/jest.e2e.config.js"
-  "paulgobero_com/jest.globalSetup.js"
-  "paulgobero_com/jest.globalTeardown.js"
-  "paulgobero_com/jest-mongodb-config.js"
-  "paulgobero_com/devdocker-compose.yml"
-  "paulgobero_com/devdockerfile"
-  "paulgobero_com/testdocker-compose.yml"
-  "paulgobero_com/testdockerfile"
-  "paulgobero_com/mongodb"
-  "paulgobero_com/jenkins-scripts"
-)
-
-############################################
-# Staging-only paths (ALWAYS KEEP)
-############################################
-
-STAGING_ONLY_PATHS=(
-  "paulgobero_com/jenkins-scripts/build-step.sh"
-  "paulgobero_com/jenkins-scripts/merge-code-step.sh"
-  "paulgobero_com/stagedocker-compose.yml"
-  "paulgobero_com/stagedockerfile"
-  "paulgobero_com/ansible"
-)
-
-############################################
-# Build exclude arguments
-############################################
-
-EXCLUDE_ARGS=()
-for path in "${DEV_ONLY_PATHS[@]}"; do
-  EXCLUDE_ARGS+=( ":(exclude)$path" )
+# === Build allowed merge path list ===
+PATHS=()
+for folder in "${APP_FOLDERS[@]}"; do
+    [[ -d "$BASE_DIRECTORY/$folder" ]] && PATHS+=("$BASE_DIRECTORY/$folder")
 done
-
-############################################
-# Collect SAFE commits only
-############################################
-
-echo "=== Collecting safe commits ==="
-
-COMMITS=$(git log --reverse --pretty=format:"%H" \
-  staging..origin/development \
-  -- "${APP_FOLDERS[@]}" "${FILES[@]}" "${EXCLUDE_ARGS[@]}")
-
-if [[ -z "$COMMITS" ]]; then
-  echo "No safe commits to merge."
-  exit 0
+for file in "${FILES[@]}"; do
+    [[ -f "$BASE_DIRECTORY/$file" ]] && PATHS+=("$BASE_DIRECTORY/$file")
+done
+# Add .gitignore manually (outside base directory)
+if [[ -f ".gitignore" ]]; then
+    PATHS+=(".gitignore")
 fi
 
+echo "=== Allowed merge paths ==="
+printf '  - %s\n' "${PATHS[@]}"
+
+# === Get commits from development not yet in staging ===
+COMMITS=$(git log --reverse --pretty=format:"%H" staging..origin/development -- "${PATHS[@]}")
 echo "=== Commits to cherry-pick ==="
 echo "$COMMITS"
 
-############################################
-# Cherry-pick with safety guards (NO COMMIT)
-############################################
-
+# === Cherry-pick commits ===
 for commit in $COMMITS; do
-  echo "Cherry-picking $commit"
+    echo "Cherry-picking commit $commit"
+    if ! git cherry-pick -n "$commit"; then
+        echo "Conflict detected — resolving automatically..."
 
-  if git cherry-pick -n "$commit"; then
-    continue
-  fi
+        # Keep staging version of .gitattributes
+        if [ -f "$BASE_DIRECTORY/.gitattributes" ]; then
+            git checkout --ours "$BASE_DIRECTORY/.gitattributes"
+            git add "$BASE_DIRECTORY/.gitattributes"
+        fi
 
-  echo "⚠️ Conflict detected — resolving safely"
+        # Preserve staging-only files
+        for path in "${STAGING_ONLY_FILES[@]}"; do
+            echo "Preserving staging-only: $path"
+            git checkout origin/staging -- "$path" 2>/dev/null || git checkout --ours "$path" 2>/dev/null || true
+            git add "$path" || true
+        done
 
-  # Jenkinsfile → development version wins
-  git checkout origin/development -- paulgobero_com/Jenkinsfile
-  git add paulgobero_com/Jenkinsfile
+        # Exclude dev-only files
+        for path in "${DEV_ONLY_FILES[@]}"; do
+            echo "Ignoring dev-only: $path"
+            if git ls-tree -r --name-only HEAD | grep -q "^${path#$BASE_DIRECTORY/}$"; then
+                git checkout --ours "$path" 2>/dev/null || true
+            else
+                git rm -rf --cached "$path" 2>/dev/null || true
+                rm -rf "$path" 2>/dev/null || true
+            fi
+            git add -A "$path" 2>/dev/null || true
+        done
 
-  # Restore staging-only paths
-  for path in "${STAGING_ONLY_PATHS[@]}"; do
+        # Prefer dev versions for allowed paths
+        for path in "${PATHS[@]}"; do
+            echo "Resolving file: $path"
+
+            # Special handling for Jenkinsfile to avoid repeated merge conflicts
+            if [[ "$path" == "$BASE_DIRECTORY/Jenkinsfile" ]]; then
+                echo "Resolving Jenkinsfile conflict using development branch version"
+                git checkout origin/development -- "$path" || true
+                git add "$path" || true
+                continue
+            fi
+
+            # Normal handling for other files
+            git checkout --theirs -- "$path" 2>/dev/null || true
+
+            if [ ! -e "$path" ]; then
+                # Restore missing file from dev
+                mkdir -p "$(dirname "$path")" 2>/dev/null || true
+                if git show "origin/development:$path" > "$path" 2>/dev/null; then
+                    git add "$path"
+                else
+                    echo "Could not restore $path (may not exist in dev branch)."
+                fi
+            else
+                git add "$path" || true
+            fi
+        done
+
+        git cherry-pick --continue || true
+    fi
+done
+
+# === Final restore for staging-only files ===
+echo "=== Restoring staging-only files to last known good state ==="
+for path in "${STAGING_ONLY_FILES[@]}"; do
     git checkout origin/staging -- "$path" 2>/dev/null || true
-    git add "$path" 2>/dev/null || true
-  done
+    git add "$path" || true
+done
 
-  # Remove dev-only paths
-  for path in "${DEV_ONLY_PATHS[@]}"; do
+# === Cleanup dev-only files just in case ===
+echo "=== Cleaning up any stray dev-only files ==="
+for path in "${DEV_ONLY_FILES[@]}"; do
     rm -rf "$path" 2>/dev/null || true
     git rm -rf --cached "$path" 2>/dev/null || true
-  done
 done
 
-############################################
-# Final safety cleanup (idempotent)
-############################################
-
-echo "=== Final cleanup of dev-only paths ==="
-for path in "${DEV_ONLY_PATHS[@]}"; do
-  rm -rf "$path" 2>/dev/null || true
-  git rm -rf --cached "$path" 2>/dev/null || true
-done
-
-############################################
-# Summary (pipeline commits & pushes)
-############################################
-
+# === Commit changes ===
 echo "=== Merge summary ==="
 git status
 
-echo "✅ Merge preparation complete (pipeline will commit & push)"
+CHANGED_FILES=$(git diff --cached --numstat | wc -l)
+echo "They are $CHANGED_FILES staged files"
