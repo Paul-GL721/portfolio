@@ -8,10 +8,10 @@
     "stagestart": "NODE_ENV=stage nodemon --require dotenv/config -L ./bin/www",
     "serverstart": "DEBUG=paulgobero-com:* npm run devstart",
     "test:server": "NODE_ENV=test nodemon --require dotenv/config -L ./bin/www",
-    "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --watchAll --coverage --verbose",
-    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --watchAll --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__",
-    "test:e2e": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=./__e2e__/jest.config.js --runInBand --watchAll --coverage --verbose ",
-    "test:e2e-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=./__e2e__/jest.config.js --watchAll --coverage --verbose --testPathPattern=/nodeApp/__e2e__"
+    "test:unit": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest ./__tests__ --runInBand --watchAll --coverage --verbose",
+    "test:unit-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --coverage --verbose --detectOpenHandles --runInBand --bail --testPathPattern=/nodeApp/__tests__",
+    "test:e2e": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --runInBand --watchAll --coverage --verbose ",
+    "test:e2e-inside-docker": "NODE_ENV=test node ./bin/www & wait-on tcp:3002 && jest --config=jest.e2e.config.js --watchAll --coverage --verbose --testPathPattern=/nodeApp/__e2e__"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.254.0",
@@ -27,12 +27,12 @@
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.7.2",
-    "morgan": "~1.9.0",
+    "morgan": "^1.10.1",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.1",
+    "nodemailer": "^7.0.12",
     "nunjucks": "^3.2.3",
     "pug": "~3.0.2",
-    "sharp": "^0.31.3",
+    "sharp": "^0.32.6",
     "sitemap": "^8.0.0"
   },
   "devDependencies": {
