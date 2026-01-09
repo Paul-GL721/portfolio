@@ -4,6 +4,9 @@ set -o pipefail
 
 ############################################
 # Safe merge: development → staging
+# - NO commits here (pipeline commits)
+# - Dev-only paths are excluded
+# - Staging-only paths are preserved
 ############################################
 
 git config --global user.name "server2"
@@ -43,7 +46,7 @@ FILES=(
 )
 
 ############################################
-# Dev-only paths (NEVER MERGE)
+# Dev-only paths (ABSOLUTELY NEVER MERGE)
 ############################################
 
 DEV_ONLY_PATHS=(
@@ -102,20 +105,19 @@ echo "=== Commits to cherry-pick ==="
 echo "$COMMITS"
 
 ############################################
-# Cherry-pick with safety guards
+# Cherry-pick with safety guards (NO COMMIT)
 ############################################
 
 for commit in $COMMITS; do
   echo "Cherry-picking $commit"
 
   if git cherry-pick -n "$commit"; then
-    git commit -m "chore(staging): merge safe app changes from development"
     continue
   fi
 
-  echo "Conflict detected — resolving safely"
+  echo "⚠️ Conflict detected — resolving safely"
 
-  # Jenkinsfile → dev wins
+  # Jenkinsfile → development version wins
   git checkout origin/development -- paulgobero_com/Jenkinsfile
   git add paulgobero_com/Jenkinsfile
 
@@ -130,14 +132,10 @@ for commit in $COMMITS; do
     rm -rf "$path" 2>/dev/null || true
     git rm -rf --cached "$path" 2>/dev/null || true
   done
-
-  # Finish without editor
-  git commit -m "chore(staging): merge safe app changes from development"
 done
 
-
 ############################################
-# Final safety cleanup
+# Final safety cleanup (idempotent)
 ############################################
 
 echo "=== Final cleanup of dev-only paths ==="
@@ -147,16 +145,10 @@ for path in "${DEV_ONLY_PATHS[@]}"; do
 done
 
 ############################################
-# Commit
+# Summary (pipeline commits & pushes)
 ############################################
 
 echo "=== Merge summary ==="
 git status
 
-if git diff --cached --quiet; then
-  echo "No changes to commit."
-else
-  git commit -m "chore(staging): merge safe application changes from development"
-fi
-
-echo "✅ Development successfully merged into staging (safe mode)"
+echo "✅ Merge preparation complete (pipeline will commit & push)"
