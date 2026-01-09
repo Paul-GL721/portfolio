@@ -22,77 +22,61 @@ pipeline {
 
 	stages {
 		stage('1. Run unit Tests') {
-
-			// Execute tests only on development branch
+			//Execute tests if its development branch
 			when {
 				branch 'development'
 			}
-
-			// Jenkins agent
+			
+			//use jenkins testing node
 			agent {
 				label 'buildnode'
 			}
 
 			environment {
-				// Path to test env file
-				ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test"
-			}
-
+                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
+                ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test" 
+            }
+			
 			steps {
-				sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+					// Fetch the latest state of the remote branches
+					sh "git config --global user.email 'lwangapaul23@gmail.com'"
+					sh "git config --global user.name 'jenkinsagent2'"
+					sh 'git fetch origin'
+					// Perform a dry run merge
+					sh 'git merge --no-commit origin/development'
 
+					// Check if the merge was successful
 					script {
+						def mergeExitCode = sh script: 'git ls-files --unmerged | wc -l', returnStatus: true
+						if (mergeExitCode == 0) {
+							// Start the required services defined in the Docker Compose file
+							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
 
-						// -------------------------
-						// Git setup
-						// -------------------------
-						sh "git config --global user.email 'lwangapaul23@gmail.com'"
-						sh "git config --global user.name 'jenkinsagent2'"
-						sh "git fetch origin"
+							// Capture the exit code of the tests
+							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
 
-						// Dry-run merge
-						sh "git merge --no-commit origin/development"
+							//def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
+							if (testExitCode != 0) {
+								echo "Tests failed. Reverted the changes."
+								// Reverse the merge if tests failed
+								sh 'git reset --hard HEAD@{1}'
+								// Push the changes back to the development branch to revert the merge
+								sh 'git push --force origin development'
+								currentBuild.result = 'FAILURE' // Mark the build as failed
+							}
 
-						// Check merge conflicts
-						def mergeConflicts = sh(
-							script: 'git ls-files --unmerged | wc -l',
-							returnStdout: true
-						).trim()
-
-						if (mergeConflicts != "0") {
-							error("Merge conflicts detected. Aborting test stage.")
-						}
-
-						try {
-							// -------------------------
-							// Build images
-							// -------------------------
-							sh """
-								docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build
-							"""
-
-							// -------------------------
-							// RUN TESTS (THIS IS THE KEY FIX)
-							// -------------------------
-							sh """
-								docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up \
-								--abort-on-container-exit \
-								--exit-code-from testapp
-							"""
-
-						} finally {
-							// -------------------------
-							// Always cleanup
-							// -------------------------
-							sh """
-								docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down -v
-							"""
+							// Stop and remove the containers after the tests
+							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
+						} else {
+							echo "Merge failed. Please resolve conflicts and try again."
+							currentBuild.result = 'FAILURE' // Mark the build as failed
 						}
 					}
 				}
 			}
 		}
-
 
 		stage('2. Merge development and staging branches') {
 			//Execute if its the develpment branch
