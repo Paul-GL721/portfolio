@@ -77,7 +77,6 @@ pipeline {
 				}
 			}
 		}
-		
 
 		stage('2. Merge development and staging branches') {
 			//Execute if its the develpment branch
@@ -113,7 +112,7 @@ pipeline {
 							sh('git push ${GIT_REPO}')
 						}
 						else {
-							echo "There no commits to make"
+							echo "There no commits to make to staging"
 						}
 					}
 				}
