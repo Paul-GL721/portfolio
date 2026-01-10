@@ -24,7 +24,7 @@ RUN chmod +x /nodeApp/wait-for
 
 #8. Docker healthcheck (LIVINESS PROBE)
 HEALTHCHECK --interval=10s --timeout=3s --start-period=50s --retries=5 \
-  CMD curl -fs http://localhost:${NODE_PORT}/portfolio/health || exit 1
+  CMD curl -fs http://localhost:3001/portfolio/health || exit 1
 
 #9. Set the application entry point
 CMD ["npm", "run", "stagestart"]
