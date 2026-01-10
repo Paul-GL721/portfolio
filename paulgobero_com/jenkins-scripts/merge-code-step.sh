@@ -30,6 +30,8 @@ DEV_ONLY_FILES=(
     "$BASE_DIRECTORY/jest-mongodb-config.js"
     "$BASE_DIRECTORY/jest.config.js"
     "$BASE_DIRECTORY/jest.e2e.config.js"
+    "$BASE_DIRECTORY/jest.globalSetup.js"
+    "$BASE_DIRECTORY/jest.globalTeardown.js"
     "$BASE_DIRECTORY/devdockerfile"
     "$BASE_DIRECTORY/testdocker-compose.yml"
     "$BASE_DIRECTORY/testdockerfile"
