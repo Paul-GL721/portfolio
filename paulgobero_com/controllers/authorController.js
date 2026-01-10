@@ -274,7 +274,6 @@ exports.author_create_get = async (req, res, next) => {
 exports.author_create_post = [
 	//multer upload image
 	uploadimg.single('photo1'),
-
 	//validate and sanitize the form fields
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
