@@ -1,5 +1,5 @@
 #1. From the nodejs base image
-FROM node:18.12.0-bullseye
+FROM node:20-bullseye-slim
 
 #2. Create a work directory
 WORKDIR /nodeApp
