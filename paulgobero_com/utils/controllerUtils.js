@@ -58,7 +58,7 @@ async function getBrandName() {
 	try {
 		const brand = await Author.findOne({ authorStatus: 'owner' });
 		console.log('brand is');
-		console.log(brand);
+		//console.log(brand);
 		// Do something with the brand
 		if (!brand) {
 			console.log("No brand");
