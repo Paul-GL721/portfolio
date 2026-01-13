@@ -274,7 +274,6 @@ exports.author_create_get = async (req, res, next) => {
 exports.author_create_post = [
 	//multer upload image
 	uploadimg.single('photo1'),
-
 	//validate and sanitize the form fields
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
@@ -291,11 +290,6 @@ exports.author_create_post = [
 	body("authoremail", "Author email is required").isEmail().trim().escape(),
 
 	async (req, res, next) => {
-		/*// Set response headers
-		res.setHeader('Content-Type', 'application/json');
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');*/
-
 		// Get role from decoded cookie token
 		const Role = req.userinfo.role;
 		const subemail = req.body.authoremail;
