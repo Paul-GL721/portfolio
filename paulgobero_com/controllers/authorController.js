@@ -52,7 +52,7 @@ exports.index = async (req, res, next) => {
 				res.render("default_index", { Title: "Default Page", brandname:'brandname' });
 			} else {
 				const author_id = available_owner._id;
-				console.log(author_id)
+				//console.log(author_id)
 				async.parallel(
 					{
 						author(callback) {
