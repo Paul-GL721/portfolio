@@ -31,7 +31,6 @@ pipeline {
 			agent {
 				label 'buildnode'
 			}
-
 			environment {
                 // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
                 ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test" 
