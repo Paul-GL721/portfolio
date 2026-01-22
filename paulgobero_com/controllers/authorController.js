@@ -31,13 +31,26 @@ exports.health = (req, res) => {
 	res.status(200).send("OK");
 };
 
-//check if application is ready with db connection
+/*/check if application is ready with db connection
 exports.readiness = (req, res) => {
   if (dbState.isReady()) {
     return res.status(200).send('READY');
   }
   return res.status(503).send('NOT READY');
+};*/
+exports.readiness = async (req, res) => {
+	try {
+		if (!dbState.isReady()) {
+		return res.status(503).send('NOT READY');
+		}
+
+		await mongoose.connection.db.admin().ping();
+		return res.status(200).send('READY');
+	} catch {
+		return res.status(503).send('NOT READY');
+	}
 };
+
 
 //Display home portfolio page
 /* Get projects per individual author */
