@@ -1,81 +1,58 @@
+//####### Connect mongodb to nodejs #####
+
+//import required modules
 const mongoose = require('mongoose');
 const dbState = require('../utils/dbstate');
 
 let db = null;
+//let isConnectedDB = false;
 
 const database_connection = async (db_name, db_user, db_passwd, db_host, db_port) => {
-   const env = process.env.NODE_ENV || 'development';
-
-   const mongoDBurl =
-      env === 'production' || env === 'stage'
-         ? `mongodb://${db_user}:${db_passwd}@${db_host}/${db_name}?authSource=admin&replicaSet=replicaset`
-         : `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
-
+    // Set mongoose connection options
    const options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // short initial timeout
-      socketTimeoutMS: 45000,
+      connectTimeoutMS: 60000, 
    };
+   //set mongoose connection
+   let mongoDBurl;
 
-   let retries = 5;
-   while (retries > 0) {
-      try {
-         if (!db) {
-            db = await mongoose.connect(mongoDBurl, options);
-            console.log(`[MongoDB] Connected to ${env} DB`);
-         }
-         dbState.setReady();
-         break; // success, exit loop
-      } catch (error) {
-         console.error('[MongoDB] Initial connection failed:', error.message);
-         dbState.setNotReady();
-         retries--;
-         if (retries > 0) await new Promise(r => setTimeout(r, 5000)); // wait 5s
-      }
+   const env = process.env.NODE_ENV;
+
+   if (env === 'production' || env === 'stage') {
+      // Replica Set connection via Traefik in prod/staging/test
+      mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}/${db_name}?authSource=admin&replicaSet=replicaset`;
+   } else {
+      // Local development connection
+      mongoDBurl = `mongodb://${db_user}:${db_passwd}@${db_host}:${db_port}/${db_name}?authSource=admin`;
    }
-   if (!dbState.isReady()) {
-      console.error('[MongoDB] Could not connect after retries — exiting');
-      process.exit(1); // fail fast in production
+
+   //connection to mongo container
+   try {
+      if (!db) {
+         db = await mongoose.connect(mongoDBurl, options); 
+      }
+      dbState.setReady();
+      console.log('SUCCESSFULLY CONNECTED TO MONGODB');
+      return true; // Connection successful
+   } catch (error) {
+      dbState.setNotReady();
+      console.error('FAILED TO CONNECT');
+      console.error('MongoDBurl is', mongoDBurl);
+      console.error('Error connecting to MongoDB', error);
+      return false; // Connection failed
    }
 };
-
-/* === Connection lifecycle === */
-mongoose.connection.on('connected', () => {
-   console.log('[MongoDB] Connected');
-   dbState.setReady();
-});
-
-mongoose.connection.on('reconnected', () => {
-   console.log('[MongoDB] Reconnected');
-   dbState.setReady();
-});
-
+// Event handlers for mongoose connection states 
+// Temporary loss (replica re-election, network issue)
 mongoose.connection.on('disconnected', () => {
-   console.warn('[MongoDB] Disconnected — retrying...');
-   dbState.setNotReady();
+  console.warn('MongoDB disconnected');
+  dbState.setNotReady();
 });
 
+// Fatal errors
 mongoose.connection.on('error', (err) => {
-   console.error('[MongoDB] Error:', err);
-   dbState.setNotReady();
+  console.error('MongoDB error:', err);
+  dbState.setNotReady();
 });
-
-//Ping periodically to verify primary db is reachable
-setInterval(async () => {
-   if (mongoose.connection.readyState === 1) return; // already connected
-   try {
-      await mongoose.connection.db.admin().ping();
-      if (!dbState.isReady()) {
-         dbState.setReady();
-         console.log('[MongoDB] Ping successful — marked READY');
-      }
-   } catch {
-      if (dbState.isReady()) {
-         dbState.setNotReady();
-         console.warn('[MongoDB] Ping failed — marked NOT READY');
-      }
-   }
-}, 15000); // every 10 seconds
-
 module.exports = database_connection;
