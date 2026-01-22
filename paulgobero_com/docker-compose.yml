@@ -27,7 +27,7 @@ services:
                 - "traefik.http.routers.app.tls.certresolver=production" #certificate
                 - "traefik.http.routers.app.service=app-service"
                 - "traefik.http.services.app-service.loadbalancer.server.port=3000"
-                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/health"
                 - "traefik.http.services.app-service.loadbalancer.healthcheck.interval=10s"
             restart_policy: #how to restart containers when they exit
                 condition: any
