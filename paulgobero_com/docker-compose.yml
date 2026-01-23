@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-    app: #node.js app
+    portfolioapp: #node.js app
         image: paulgl721/nodejs-portfolio:prodappVJVERSION
         build:
             context: .
@@ -23,15 +23,15 @@ services:
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
                 - "traefik.docker.network=traefik_proxy-network" #specifiy a network to use
-                - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
-                - "traefik.http.routers.app.entrypoints=web,websecure"
-                - "traefik.http.routers.app.tls=true" #enable tls
-                - "traefik.http.routers.app.tls.certresolver=production" #certificate
-                - "traefik.http.routers.app.service=app-service"
-                - "traefik.http.services.app-service.loadbalancer.server.port=3000"
-                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/readiness"
-                - "traefik.http.services.app-service.loadbalancer.healthcheck.interval=10s"
-                - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.timeout=10s"
+                - "traefik.http.routers.portfolioapp.rule=Host(`www.paulgobero.com`)"
+                - "traefik.http.routers.portfolioapp.entrypoints=web,websecure"
+                - "traefik.http.routers.portfolioapp.tls=true" #enable tls
+                - "traefik.http.routers.portfolioapp.tls.certresolver=production" #certificate
+                - "traefik.http.routers.portfolioapp.service=portfolioapp-service"
+                - "traefik.http.services.portfolioapp-service.loadbalancer.server.port=3000"
+                - "traefik.http.services.portfolioapp-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                - "traefik.http.services.portfolioapp-service.loadbalancer.healthcheck.interval=10s"
+                - "traefik.http.services.portfolioapp-service.loadbalancer.healthcheck.timeout=10s"
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 25s
