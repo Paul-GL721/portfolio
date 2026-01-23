@@ -25,7 +25,7 @@ services:
                 - "traefik.http.routers.stageportfolio.entrypoints=web,websecure"
                 - "traefik.http.routers.stageportfolio.tls=true" #enable tls
                 - "traefik.http.routers.stageportfolio.tls.certresolver=production" #certificate
-                - "traefik.http.routers.stageportfolio.service=stageapp-service"
+                - "traefik.http.routers.stageportfolio.service=stageportfolio-service"
                 - "traefik.http.services.stageportfolio-service.loadbalancer.server.port=3001"
                 #- "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.path=/portfolio/readiness"
                 #- "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.interval=10s"
