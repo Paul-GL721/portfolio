@@ -12,6 +12,7 @@ services:
             - /glustervol/portfolio/paulgobero/configs/.env.prod:/nodeApp/configs/.env.prod
         networks: #networks to db and reverse proxy
             - traefik_proxy-network 
+            - hamongodb_mongodb-network
         #command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 npm run start" #wait for mongodb
         deploy: #using swarm to scale the service to 3 server nodes
             mode: replicated
@@ -21,6 +22,7 @@ services:
                   - spread: node.hostname
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
+                - "traefik.docker.network=traefik_proxy-network" #specifiy a network to use
                 - "traefik.http.routers.app.rule=Host(`www.paulgobero.com`)"
                 - "traefik.http.routers.app.entrypoints=web,websecure"
                 - "traefik.http.routers.app.tls=true" #enable tls
@@ -47,4 +49,6 @@ services:
 #create the networks between the containers
 networks:
     traefik_proxy-network:
+        external: true
+    hamongodb_mongodb-network:
         external: true
