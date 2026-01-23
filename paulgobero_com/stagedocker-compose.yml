@@ -10,7 +10,7 @@ services:
             - /glustervol/portfolio/paulgobero/configs/.env.stage:/nodeApp/configs/.env.stage
         networks: #networks to db and reverse proxy
             - traefik_proxy-network
-            #- hamongodb_mongodb-network
+            - hamongodb_mongodb-network
         #command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 -- npm run stagestart" #wait for mongodb service
         deploy: #using swarm to scale the staging service to 1 replica
             mode: replicated
@@ -27,8 +27,8 @@ services:
                 - "traefik.http.routers.stageapp.tls.certresolver=production" #certificate
                 - "traefik.http.routers.stageapp.service=stageapp-service"
                 - "traefik.http.services.stageapp-service.loadbalancer.server.port=3001"
-                - "traefik.http.services.stageapp-service.loadbalancer.healthcheck.path=/portfolio/readiness"
-                - "traefik.http.services.stageapp-service.loadbalancer.healthcheck.interval=10s"
+                #- "traefik.http.services.stageapp-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                #- "traefik.http.services.stageapp-service.loadbalancer.healthcheck.interval=10s"
 
             restart_policy: #how to restart containers when they exit
                 condition: any
@@ -48,6 +48,6 @@ services:
 networks:
     traefik_proxy-network:
         external: true
-    #hamongodb_mongodb-network:
-        #external: true
+    hamongodb_mongodb-network:
+        external: true
 
