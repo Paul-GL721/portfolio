@@ -34,7 +34,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       }
       dbState.setReady();
       console.log('SUCCESSFULLY CONNECTED TO MONGODB');
-      console.log('MongoDBurl is', mongoDBurl);
+      //console.log('MongoDBurl is', mongoDBurl);
       return true; // Connection successful
    } catch (error) {
       dbState.setNotReady();
