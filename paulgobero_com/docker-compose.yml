@@ -32,7 +32,7 @@ services:
                 - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.timeout=10s"
             restart_policy: #how to restart containers when they exit
                 condition: any
-                delay: 20s
+                delay: 25s
                 max_attempts: 10
                 window: 120s
             update_config: #how the service should be updated
