@@ -34,6 +34,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       }
       dbState.setReady();
       console.log('SUCCESSFULLY CONNECTED TO MONGODB');
+      console.log('MongoDBurl is', mongoDBurl);
       return true; // Connection successful
    } catch (error) {
       dbState.setNotReady();
@@ -43,16 +44,33 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
       return false; // Connection failed
    }
 };
-// Event handlers for mongoose connection states 
-// Temporary loss (replica re-election, network issue)
+let disconnectTimer = null;
+
 mongoose.connection.on('disconnected', () => {
-  console.warn('MongoDB disconnected');
-  dbState.setNotReady();
+   console.warn('[MongoDB] Disconnected');
+
+   disconnectTimer = setTimeout(() => {
+      console.warn('[MongoDB] Disconnected too long — NOT READY');
+      dbState.setNotReady();
+   }, 15000); // 15s grace period
 });
 
-// Fatal errors
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB error:', err);
-  dbState.setNotReady();
+mongoose.connection.on('connected', () => {
+   if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+   }
+   console.log('[MongoDB] Connected');
+   dbState.setReady();
 });
+
+mongoose.connection.on('reconnected', () => {
+   if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+   }
+   console.log('[MongoDB] Reconnected');
+   dbState.setReady();
+});
+
 module.exports = database_connection;
