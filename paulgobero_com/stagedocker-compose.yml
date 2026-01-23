@@ -12,7 +12,7 @@ services:
             - traefik_proxy-network
             - hamongodb_mongodb-network   
         #command: bash -c "./wait-for hamongodb_mongo1:27017 --timeout=600 -- npm run stagestart" #wait for mongodb service
-        deploy: #using swarm to scale the staging service to 1 replica
+        deploy: #using swarm to scale the staging service to 2 replicas
             mode: replicated
             replicas: 2
             placement:
