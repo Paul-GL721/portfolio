@@ -27,7 +27,7 @@ services:
                 - "traefik.http.routers.stageportfolio.tls.certresolver=production" #certificate
                 - "traefik.http.routers.stageportfolio.service=stageportfolio-service"
                 - "traefik.http.services.stageportfolio-service.loadbalancer.server.port=3001"
-                - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.path=/portfolio/readiness"
+                - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.path=/portfolio/health"
                 - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.interval=10s"
                 - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.timeout=5s"
 
