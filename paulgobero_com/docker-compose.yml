@@ -27,8 +27,9 @@ services:
                 - "traefik.http.routers.app.tls.certresolver=production" #certificate
                 - "traefik.http.routers.app.service=app-service"
                 - "traefik.http.services.app-service.loadbalancer.server.port=3000"
-                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/health"
+                - "traefik.http.services.app-service.loadbalancer.healthcheck.path=/portfolio/readiness"
                 - "traefik.http.services.app-service.loadbalancer.healthcheck.interval=10s"
+                - "traefik.http.services.stageportfolio-service.loadbalancer.healthcheck.timeout=10s"
             restart_policy: #how to restart containers when they exit
                 condition: any
                 delay: 20s
@@ -36,7 +37,7 @@ services:
                 window: 120s
             update_config: #how the service should be updated
                 parallelism: 1
-                delay: 10s
+                delay: 30s
                 failure_action: rollback
                 order: start-first
             rollback_config: #how the service should be rolled back in case an update fails
