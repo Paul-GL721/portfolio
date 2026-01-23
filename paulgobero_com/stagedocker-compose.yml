@@ -20,6 +20,7 @@ services:
                     - node.role==worker
             labels: #generate configurations for the reverse proxy
                 - "traefik.enable=true" # Enable the service
+                - "traefik.docker.network=traefik_proxy-network" #specifiy a network to use
                 - "traefik.http.routers.stageapp.rule=Host(`stagingwww.paulgobero.com`)"
                 - "traefik.http.routers.stageapp.entrypoints=web,websecure"
                 - "traefik.http.routers.stageapp.tls=true" #enable tls
