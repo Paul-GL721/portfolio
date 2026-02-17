@@ -117,6 +117,7 @@ exports.index = async (req, res, next) => {
     }
 };
 
+
 //Send email from contact form
 exports.index_post = [
 	//validate and sanitize the form fields
