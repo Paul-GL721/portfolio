@@ -124,6 +124,7 @@ exports.index_post = [
 	body("contactemail", "Contact email is required").isEmail().trim().escape(),
 	body("contactmessage", "Contact message is required").trim().isLength({ min:3 }).escape(),
 
+	
     async (req, res, next) => {
 		//check for validation errors
 		const errors = validationResult(req);
