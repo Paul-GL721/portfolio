@@ -1,227 +1,222 @@
-
 {% extends "portfolio_base.njk" %}
 {% set navbarurl = {id: "indexpage", about: "#about_section", services: "#services-section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section", blog: "https://blog.paulgobero.com" } %}
 
-
 {% block createDemoUserbutton %}
-    
 {% endblock %}
 
 {% block content %}
-    <section id="about_section" class="showcase formsection">
-        <div class="row no-gutters">
-            <div class="col-lg-4 text-white order-lg-2 text-center mb-4 mb-lg-0">
-                <img class="rounded-circle img-fluid" src="{{ index_data.author.imageUrl }}">
-            </div>
-            <div class="col-lg-8 my-auto order-lg-1 px-3 px-sm-4 px-md-5 px-lg-5">
-                <h2 class="text-wrap text-center">
-                    A {{ index_data.author.about.short_description | title }}
-                </h2>
-                <p class="lead">
-                    {{ index_data.author.about.full_description }}
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!--<section id="services-section" class="content-section">
-        <div class="container">
-            <div class="content-section-heading text-center">
-                <h3 class="text-secondary mb-0">Services</h3>
-                <h2 class="mb-5">What I Can Do For You</h2>
-            </div>
-
-            <div class="row no-gutters">
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>End-to-End Digital Transformation</h2>
-                                <p class="lead font-weight-light text-white text-center py-2" style="font-size:1.4rem;">
-                                    Are you struggling with paper-based workflows or fragmented Excel sheets that make real-time decisions impossible? <br> 
-                                    I can help you transition to a secure, centralised digital platform where data is captured once, key business processes are automated, 
-                                    redundancies are eliminated, and you gain real-time insights to make faster, smarter decisions.
-                                </p>
+    <main class="portfolio-home">
+        <section id="about_section" class="portfolio-hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 hero-copy">
+                        <p class="eyebrow">Full-stack engineering and DevOps</p>
+                        <h1>{{ index_data.author.about.short_description | title }}</h1>
+                        <p class="hero-lead">{{ index_data.author.about.full_description }}</p>
+                        <div class="hero-actions">
+                            <a class="btn btn-primary btn-lg" href="#project_section">View Work</a>
+                            <a class="btn btn-outline-dark btn-lg" href="#contact_section">Start a Project</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="hero-portrait-wrap">
+                            <img class="hero-portrait" src="{{ index_data.author.imageUrl }}" alt="{{ meta_author or brand1.brandName or 'Portfolio owner' }}">
+                            <div class="hero-snapshot">
+                                <span>Building useful software</span>
+                                <strong>From idea to stable release</strong>
                             </div>
                         </div>
-                        <img class="img-fluid" src="/images/img/services-7.jpg">
-                    </a>
-                </div>
-
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Custom Software Development and Enterprise Integration</h2>
-                                <p class="lead font-weight-light text-white text-center py-2" style="font-size:1.4rem;">
-                                    Maybe you already have some digital systems in place, but they don’t talk to each other, causing delays and errors.<br>
-                                    I develop custom web and mobile applications tailored to your business and integrate them with your existing  
-                                    systems—ERP, CRM, POS, or cloud platforms—so your processes run efficiently, and you can focus on growing your business.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-2.jpg">
-                    </a>
-                </div>
-
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Cloud Migration and Scalable Deployment</h2>
-                                <p class="lead font-weight-light text-white text-center py-2" style="font-size:1.4rem;">
-                                    Perhaps your software is running, but you’re worried about downtime, scaling, or security in the cloud.<br>
-                                    I design and implement scalable, secure, and cost-effective cloud architectures.
-                                    I ensure your systems run smoothly, stay highly available, and perform optimally at all times.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-5.jpg">
-                    </a>
-                </div>
-
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Automation and DevOps Solutions</h2>
-                                <p class="lead font-weight-light text-white text-center py-2" style="font-size:1.4rem;">
-                                    Maybe you already have cloud systems and integrated applications, 
-                                    but repetitive tasks or slow deployments are holding you back. <br>
-                                    I implement automation for deployments, monitoring, and infrastructure management 
-                                    so you can reduce manual work, accelerate release cycles, and maintain reliable, high-performance systems.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-4.jpg">
-                    </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section> -->
-    <section id="services-section" class="content-section">
-        <div class="container">
-            <div class="content-section-heading text-center">
-                <h3 class="text-secondary mb-0">Services</h3>
-                <h2 class="mb-5">What I Can Do For You</h2>
+        </section>
+
+        <section id="services-section" class="home-section services-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Services</p>
+                    <h2>How I Can Help</h2>
+                    <p>I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <article class="service-card">
+                            <img src="/images/img/services-7.jpg" alt="Digital Transformation">
+                            <div class="service-card-body">
+                                <span class="service-number">01</span>
+                                <h3>Digital Transformation</h3>
+                                <p>Turn manual and disconnected processes into unified platforms with cleaner workflows, better data capture, and useful real-time insight.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <article class="service-card">
+                            <img src="/images/img/services-2.jpg" alt="Custom Software Development">
+                            <div class="service-card-body">
+                                <span class="service-number">02</span>
+                                <h3>Custom Software</h3>
+                                <p>Build web and mobile applications tailored to business needs, then connect them with ERP, CRM, POS, cloud, or internal systems.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <article class="service-card">
+                            <img src="/images/img/services-5.jpg" alt="Cloud Migration">
+                            <div class="service-card-body">
+                                <span class="service-number">03</span>
+                                <h3>Cloud Deployment</h3>
+                                <p>Move applications onto secure, scalable infrastructure designed for availability, performance, maintainability, and growth.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <article class="service-card">
+                            <img src="/images/img/services-4.jpg" alt="Automation and DevOps">
+                            <div class="service-card-body">
+                                <span class="service-number">04</span>
+                                <h3>DevOps Automation</h3>
+                                <p>Automate deployments, monitoring, and infrastructure tasks so releases become faster, safer, and easier to repeat.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="row no-gutters">
-
-                <!-- Service 1 -->
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>End-to-End Digital Transformation</h2>
-
-                                <p class="service-description text-white text-center py-2">
-                                    Transform manual and disconnected processes into a unified digital platform that automates workflows, improves efficiency, and delivers real-time insights for better decision-making.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-7.jpg" alt="Digital Transformation">
-                    </a>
+        <section id="project_section" class="home-section projects-section">
+            <div class="container">
+                <div class="section-heading section-heading-split">
+                    <div>
+                        <p class="eyebrow">Selected Work</p>
+                        <h2>Recent Projects</h2>
+                    </div>
+                    <p>
+                        A few examples of recent builds.
+                        <a href="#allprojectmodal" data-toggle="modal">View all projects</a>
+                    </p>
                 </div>
 
-                <!-- Service 2 -->
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Custom Software Development & Integration</h2>
+                <div class="row">
+                    {% for dindex in index_data.author_projects %}
+                        {% if loop.index <= 3 %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <article class="project-card">
+                                    <img src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
+                                    <div class="project-card-body">
+                                        <h3>{{ dindex.ptitle }}</h3>
+                                        <p>{{ dindex.psummary | capitalize | urlize | safe | truncate(190, true, '...') }}</p>
+                                        <div class="project-skill-list">
+                                            {% for skll in dindex.skill %}
+                                                {% if loop.index <= 3 %}
+                                                    <span>{{ skll.name }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <a href="#" class="project-modal-link project-card-link" data-project-id="{{ dindex._id }}">Read Case Study</a>
+                                    </div>
+                                </article>
 
-                                <p class="service-description text-white text-center py-2">
-                                    Build custom web and mobile applications tailored to your business and seamlessly integrate them with ERP, CRM, POS, and cloud systems.
-                                </p>
+                                <div class="modal fade" id="projectmodal-{{ dindex._id }}" tabindex="-1" aria-labelledby="projectModalLabel-{{ dindex._id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                        <div class="modal-content shadow-lg border-0 rounded-3">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h3 class="modal-title fw-bold text-primary" id="projectModalLabel-{{ dindex._id }}">
+                                                    {{ dindex.ptitle }}
+                                                </h3>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <section class="showcase">
+                                                    <div class="container-fluid p-0">
+                                                        <div class="mb-4">
+                                                            <h5 class="fw-semibold text-secondary">Challenge</h5>
+                                                            <p class="fs-6 text-dark">{{ dindex.problemStatement | urlize | safe }}</p>
+                                                        </div>
+
+                                                        <div class="mb-4">
+                                                            <h5 class="fw-semibold text-secondary">Solution</h5>
+                                                            <p class="fs-6 text-dark">{{ dindex.solution | urlize | safe }}</p>
+                                                        </div>
+
+                                                        {% if dindex.mediaUrl.videoUrl %}
+                                                            <div class="text-center my-4">
+                                                                <video class="border rounded shadow-sm w-100" controls src="{{ dindex.mediaUrl.videoUrl }}"></video>
+                                                            </div>
+                                                        {% endif %}
+
+                                                        <div class="mb-4">
+                                                            <h5 class="fw-semibold text-secondary">My Role</h5>
+                                                            <ul class="fs-6 text-left text-dark">
+                                                                {% for item in dindex.role.split('\n') %}
+                                                                    {% if item.trim() %}
+                                                                        <li>{{ item.trim() }}</li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </div>
+
+                                                        <div class="mb-4">
+                                                            <h5 class="fw-semibold text-secondary">Skills Applied</h5>
+                                                            <p class="fs-6 text-dark">
+                                                                {% for skll in dindex.skill %}
+                                                                    <span class="skill-pill">{{ skll.name }}</span>
+                                                                {% endfor %}
+                                                            </p>
+                                                        </div>
+
+                                                        {% if dindex.githubUrl or dindex.liveDemoUrl %}
+                                                            <div class="mb-3">
+                                                                <h5 class="fw-semibold text-secondary">Project Links</h5>
+                                                                <p class="fs-6 text-dark project-modal-links">
+                                                                    {% if dindex.githubUrl %}
+                                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank">View on GitHub</a>
+                                                                    {% endif %}
+                                                                    {% if dindex.liveDemoUrl %}
+                                                                        <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">Live Demo</a>
+                                                                    {% endif %}
+                                                                </p>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </section>
+                                            </div>
+
+                                            <div class="modal-footer border-0 pt-0">
+                                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-2.jpg" alt="Custom Software Development">
-                    </a>
+                        {% endif %}
+                    {% endfor %}
                 </div>
 
-                <!-- Service 3 -->
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Cloud Migration & Scalable Deployment</h2>
-
-                                <p class="service-description text-white text-center py-2">
-                                    Move your applications to secure, scalable cloud infrastructure designed for high availability, performance, and future growth.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-5.jpg" alt="Cloud Migration">
-                    </a>
-                </div>
-
-                <!-- Service 4 -->
-                <div class="col-lg-6">
-                    <a class="portfolio-item" href="#">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <h2>Automation & DevOps Solutions</h2>
-
-                                <p class="service-description text-white text-center py-2">
-                                    Automate deployments, monitoring, and infrastructure management to reduce manual effort, speed up releases, and improve system reliability.
-                                </p>
-                            </div>
-                        </div>
-                        <img class="img-fluid" src="/images/img/services-4.jpg" alt="Automation and DevOps">
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-    
-    <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);padding-top: 50px; padding-bottom:0px">
-        <div class="row">
-            <div class="col-lg-6 my-auto order-lg-1 showcase-text px-4 text-center">
-                <p class="lead fs-5 text-start">
-                Here are three of my recent projects — but 
-                    <a href="#allprojectmodal" class="fw-semibold text-primary" data-toggle="modal">
-                        you can view all of them
-                    </a>.
-                </p>
-
-                <!-- All Projects Modal -->
                 <div class="modal fade" id="allprojectmodal" tabindex="-1" role="dialog" aria-labelledby="allProjectsLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                         <div class="modal-content shadow-lg border-0 rounded-3">
                             <div class="modal-header border-0 pb-0">
-                                <h3 class="modal-title fw-bold text-primary w-100 text-center" id="allProjectsLabel">
-                                All Projects
-                                </h3>
-                                <button type="button" class="close position-absolute" style="top: 0.5rem; right: 1rem; z-index: 10;" data-dismiss="modal" aria-label="Close"> 
-                                <span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title fw-bold text-primary w-100 text-center" id="allProjectsLabel">All Projects</h3>
+                                <button type="button" class="close position-absolute" style="top: 0.5rem; right: 1rem; z-index: 10;" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
 
                             <div class="modal-body px-4">
-                                <section class="showcase text-start">
-                                    <div class="container-fluid p-0">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <ul class="list-group list-group-flush">
-                                                    {% for proj in index_data.author_all_projects %}
-                                                        <li class="list-group-item px-0 py-3">
-                                                            <h5 class="fw-semibold mb-1">
-                                                                <a href="{{ proj.url }}" class="text-primary text-decoration-none" target="_blank">
-                                                                {{ proj.ptitle | capitalize | urlize | safe }}
-                                                                </a>
-                                                            </h5>
-                                                            <p class="text-muted mb-0">
-                                                                {{ proj.psummary | capitalize | urlize | safe }}
-                                                            </p>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
+                                <ul class="list-group list-group-flush all-project-list">
+                                    {% for proj in index_data.author_all_projects %}
+                                        <li class="list-group-item px-0 py-3">
+                                            <h5 class="fw-semibold mb-1">
+                                                <a href="{{ proj.url }}" class="text-primary text-decoration-none" target="_blank">{{ proj.ptitle | capitalize | urlize | safe }}</a>
+                                            </h5>
+                                            <p class="text-muted mb-0">{{ proj.psummary | capitalize | urlize | safe }}</p>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
+
                             <div class="modal-footer border-0 pt-0 justify-content-end pe-4">
                                 <button class="btn btn-outline-secondary px-4" type="button" data-dismiss="modal">Close</button>
                             </div>
@@ -229,176 +224,54 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="row">
-            {% for dindex in index_data.author_projects %}
-                {% if loop.index <= 3 %}
-                    <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                        <div class="mx-auto text-center">
-                            <img class="img-thumbnail img-fluid bg-light border-0 mb-3"
-                                style="width: 300px; height: 300px; object-fit: cover;"
-                                src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
-                            <h4 class="fw-bold">{{ dindex.ptitle }}</h4>
-                            <p class="lead text-muted">
-                                {{ dindex.psummary | capitalize | urlize | safe | truncate(250, true, '...') }}
-                                <a href="#" class="project-modal-link fw-semibold" data-project-id="{{ dindex._id }}">Read more →</a>
-                            </p>
-                        </div>
+        <section id="skill_section" class="home-section skills-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Toolbox</p>
+                    <h2>Skills I Use to Ship</h2>
+                    <p>A practical stack for building applications, integrations, infrastructure, and reliable delivery workflows.</p>
+                </div>
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="projectmodal-{{ dindex._id }}" tabindex="-1" aria-labelledby="projectModalLabel-{{ dindex._id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                                <div class="modal-content shadow-lg border-0 rounded-3">
-                                    <div class="modal-header border-0 pb-0">
-                                        <h3 class="modal-title fw-bold text-primary" id="projectModalLabel-{{ dindex._id }}">
-                                            {{ dindex.ptitle }}
-                                        </h3>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <section class="showcase">
-                                            <div class="container-fluid p-0">
-                                                
-                                                <div class="mb-4">
-                                                    <h5 class="fw-semibold text-secondary">challenge</h5>
-                                                    <p class="fs-6 text-dark">
-                                                        {{ dindex.problemStatement | urlize | safe }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="mb-4">
-                                                    <h5 class="fw-semibold text-secondary">Solution</h5>
-                                                    <p class="fs-6 text-dark">
-                                                        {{ dindex.solution | urlize | safe }}
-                                                    </p>
-                                                </div>
-
-                                                {% if dindex.mediaUrl.videoUrl %}
-                                                <div class="text-center my-4">
-                                                    <video class="border rounded shadow-sm w-100" controls
-                                                        src="{{ dindex.mediaUrl.videoUrl }}">
-                                                    </video>
-                                                </div>
-                                                {% endif %}
-
-                                                <div class="mb-4">
-                                                    <h5 class="fw-semibold text-secondary">My Role</h5>
-                                                    <ul class="fs-6 text-left text-dark">
-                                                        {% for item in dindex.role.split('\n') %}
-                                                            {% if item.trim() %}
-                                                            <li>{{ item.trim() }}</li>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-
-                                                <div class="mb-4">
-                                                    <h5 class="fw-semibold text-secondary">Skills Applied</h5>
-                                                    <p class="fs-6 text-dark">
-                                                        {% for skll in dindex.skill %}
-                                                            <span class="badge bg-light text-dark border me-1 mb-1">{{ skll.name }}</span>
-                                                        {% endfor %}
-                                                    </p>
-                                                </div>
-
-                                                {% if dindex.githubUrl %}
-                                                <div class="mb-3">
-                                                    <h5 class="fw-semibold text-secondary">Project Links</h5>
-                                                    <p class="fs-6 text-dark">
-                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank">
-                                                            View on GitHub
-                                                        </a>
-                                                        {% if dindex.liveDemoUrl %}
-                                                            <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">
-                                                                Live Demo
-                                                            </a>
-                                                        {% endif %}
-                                                    </p>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </section>
-                                    </div>
-
-                                    <div class="modal-footer border-0 pt-0">
-                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
-                                            Close
-                                        </button>
-                                    </div>
+                <div class="skills-grid">
+                    {% set unique_skills = [] %}
+                    {% for pindex in index_data.author_projects %}
+                        {% for sindex in pindex.skill %}
+                            {% if sindex.name not in unique_skills %}
+                                {% set unique_skills = unique_skills + [sindex.name] %}
+                                <div class="skill-card">
+                                    <img src="{{ sindex.imageUrl }}" alt="{{ sindex.name }}">
+                                    <span>{{ sindex.name }}</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </section>
-
-    <div class="row">
-        <div class="col-md-6">
-            <section id="skill_section" class="py-4 py-xl-5">
-                <div class="container-fluid">
-                    <div class="row mb-3">
-                        <div class="col text-center">
-                            <h2 class="fw-bold">Skills</h2>
-                            <p class="lead">
-                                A versatile skill set that helps me design, build, and deliver reliable digital solutions.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="row g-3 g-md-4">
-                        {% set unique_skills = [] %}
-                        {% for pindex in index_data.author_projects %}
-                            {% for sindex in pindex.skill %}
-                                {% if sindex.name not in unique_skills %}
-                                    {% set unique_skills = unique_skills + [sindex.name] %}
-                                    <div class="col-4 col-lg-3 d-flex justify-content-center">
-                                        <div class="features-icons-item text-center">
-                                            <img class="img-thumbnail img-fluid bg-light border-0 mb-2"
-                                                style="width: 50px; height: 50px;"
-                                                src="{{ sindex.imageUrl }}">
-                                            <p class="mb-0">{{ sindex.name }}</p>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
+                            {% endif %}
                         {% endfor %}
-                    </div>
+                    {% endfor %}
                 </div>
-            </section>
-        </div>
-    
-        <div class="col-12 col-md-6">
-            <section id="contact_section" class="py-5 py-xl-5 bg-light">
-                <div class="container-fluid">
-                    <div class="row mb-4">
-                        <div class="col-12 text-center px-3 px-sm-4">
-                            <h2 class="fw-bold mb-3">Let’s Build Something Great Together</h2>
-                            <p class="lead">
-                                I’m always excited to collaborate on new ideas, products, and challenges. 
-                                Whether you’re looking for a developer to join your team or need help bringing a project to life, 
-                                I’d love to hear from you.
-                            </p>
-                            <p class="lead text-start text-md-center mb-4">
-                                Drop me a message below, and I’ll get back to you as soon as possible.
-                            </p>
-                        </div>
-                    </div>
+            </div>
+        </section>
 
-                    <div class="row justify-content-center mt-5">
-                        <div class="col-12 col-sm-10 col-md-10 col-lg-8">
-                            <div id="contact_form_div" class="p-4 p-md-5 shadow-sm rounded bg-white">
-                                {% include "partial_contact_form.njk" %}
-                            </div>
+        <section id="contact_section" class="home-section contact-section">
+            <div class="container">
+                <div class="row align-items-start">
+                    <div class="col-lg-5 mb-4 mb-lg-0">
+                        <p class="eyebrow">Contact</p>
+                        <h2>Let us build something useful together.</h2>
+                        <p class="contact-copy">
+                            Share the idea, workflow, integration, or product you are thinking about. I will get back to you and help shape the next practical step.
+                        </p>
+                        <div class="contact-note">
+                            <strong>Good fit for</strong>
+                            <span>New product builds, cloud moves, process automation, internal tools, and system integrations.</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div id="contact_form_div" class="contact-form-shell">
+                            {% include "partial_contact_form.njk" %}
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-    </div>   
+            </div>
+        </section>
+    </main>
 {% endblock %}
-
-
