@@ -107,7 +107,7 @@ exports.index = async (req, res, next) => {
 						}
 						//res.json(results);
 						
-						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand });
+						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand, current_year: new Date().getFullYear() });
 					}
 				);	
 			}
