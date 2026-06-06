@@ -165,7 +165,7 @@
                                 src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
                             <h4 class="fw-bold">{{ dindex.ptitle }}</h4>
                             <p class="lead text-muted">
-                                {{ dindex.psummary | capitalize | urlize | safe }}
+                                {{ dindex.psummary | capitalize | urlize | safe | truncate(250, true, '...') }}
                                 <a href="#" class="project-modal-link fw-semibold" data-project-id="{{ dindex._id }}">Read more →</a>
                             </p>
                         </div>
