@@ -5,7 +5,8 @@ $(document).ready(function() {
   //submitForm('#contactForm', '#contactmodal', '/portfolio');
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
-  $('.project-modal-link').on('click', function() {
+  $('.project-modal-link').on('click', function(event) {
+    event.preventDefault();
     var projectId = $(this).data('project-id');
     $('#projectmodal-' + projectId).modal()
   });
