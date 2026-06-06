@@ -24,7 +24,7 @@
         </div>
     </section>
 
-    <section id="services-section" class="content-section">
+    <!--<section id="services-section" class="content-section">
         <div class="container">
             <div class="content-section-heading text-center">
                 <h3 class="text-secondary mb-0">Services</h3>
@@ -98,6 +98,82 @@
                 </div>
             </div>
         </div>
+    </section> -->
+    <section id="services-section" class="content-section">
+        <div class="container">
+            <div class="content-section-heading text-center">
+                <h3 class="text-secondary mb-0">Services</h3>
+                <h2 class="mb-5">What I Can Do For You</h2>
+            </div>
+
+            <div class="row no-gutters">
+
+                <!-- Service 1 -->
+                <div class="col-lg-6">
+                    <a class="portfolio-item" href="#">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <h2>End-to-End Digital Transformation</h2>
+
+                                <p class="service-description text-white text-center py-2">
+                                    Transform manual and disconnected processes into a unified digital platform that automates workflows, improves efficiency, and delivers real-time insights for better decision-making.
+                                </p>
+                            </div>
+                        </div>
+                        <img class="img-fluid" src="/images/img/services-7.jpg" alt="Digital Transformation">
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="col-lg-6">
+                    <a class="portfolio-item" href="#">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <h2>Custom Software Development & Integration</h2>
+
+                                <p class="service-description text-white text-center py-2">
+                                    Build custom web and mobile applications tailored to your business and seamlessly integrate them with ERP, CRM, POS, and cloud systems.
+                                </p>
+                            </div>
+                        </div>
+                        <img class="img-fluid" src="/images/img/services-2.jpg" alt="Custom Software Development">
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="col-lg-6">
+                    <a class="portfolio-item" href="#">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <h2>Cloud Migration & Scalable Deployment</h2>
+
+                                <p class="service-description text-white text-center py-2">
+                                    Move your applications to secure, scalable cloud infrastructure designed for high availability, performance, and future growth.
+                                </p>
+                            </div>
+                        </div>
+                        <img class="img-fluid" src="/images/img/services-5.jpg" alt="Cloud Migration">
+                    </a>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="col-lg-6">
+                    <a class="portfolio-item" href="#">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <h2>Automation & DevOps Solutions</h2>
+
+                                <p class="service-description text-white text-center py-2">
+                                    Automate deployments, monitoring, and infrastructure management to reduce manual effort, speed up releases, and improve system reliability.
+                                </p>
+                            </div>
+                        </div>
+                        <img class="img-fluid" src="/images/img/services-4.jpg" alt="Automation and DevOps">
+                    </a>
+                </div>
+
+            </div>
+        </div>
     </section>
     
     <section class="text-center bg-light features-icons" id="project_section" style="background: rgb(248, 249, 250);padding-top: 50px; padding-bottom:0px">
@@ -165,7 +241,7 @@
                                 src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
                             <h4 class="fw-bold">{{ dindex.ptitle }}</h4>
                             <p class="lead text-muted">
-                                {{ dindex.psummary | capitalize | urlize | safe }}
+                                {{ dindex.psummary | capitalize | urlize | safe | truncate(250, true, '...') }}
                                 <a href="#" class="project-modal-link fw-semibold" data-project-id="{{ dindex._id }}">Read more →</a>
                             </p>
                         </div>
