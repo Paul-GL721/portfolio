@@ -25,8 +25,19 @@ module.exports = async function seoContext(req, res, next) {
     const owner = cachedOwner;
 
     if (owner) {
+      const fallbackTopics = [
+        "Full Stack Development",
+        "DevOps",
+        "Cloud Computing",
+        "AWS",
+        "Docker",
+        "CI/CD"
+      ];
+      const knowsAbout = owner.yourKeyword?.length ? owner.yourKeyword : fallbackTopics;
+
       res.locals.meta_author = `${owner.name.first} ${owner.name.middle} ${owner.name.last}`;
       res.locals.meta_keywords = owner.yourKeyword?.join(", ");
+      res.locals.knows_about_json = JSON.stringify(knowsAbout);
       res.locals.meta_description =
         owner.about.short_description || "Portfolio of a full stack developer.";
       res.locals.og_url = owner.hostName;
