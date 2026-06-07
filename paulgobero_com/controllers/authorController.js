@@ -106,7 +106,7 @@ exports.index = async (req, res, next) => {
 							}
 						}
 						//res.json(results);
-						
+						//console.log(results.author.about.full_description);
 						res.render("portfolio_index", { Title: "Portfolio", index_data: results, brand1: brand, current_year: new Date().getFullYear() });
 					}
 				);	
@@ -131,8 +131,7 @@ exports.index_post = [
 		if (!errors.isEmpty()) { //if formdata has errors
 			console.log("The data has errors");
 			console.log(errors);
-			//Re-render the project form with errors
-
+			return res.status(400).json({ errors: errors.array() });
 		} else {
 			const transporter = nodemailer.createTransport({
 				host: EMAIL_HOST,
@@ -280,8 +279,8 @@ exports.author_create_post = [
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
-	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
-	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -382,8 +381,8 @@ exports.author_ownercreate_post = [
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
-	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
-	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -517,13 +516,16 @@ exports.author_update_get = async (req, res, next) => {
 	  return res.status(403).send({ message: 'Unauthorized User Trying to Login' });
 	} else {
 		//find a document with the specified id
-		update_doc_id = req.query.updateid;
+		const update_doc_id = req.query.updateid;
 		console.log("The id to update is" + update_doc_id);
 
 		const updateauthor = await Author.findOne({ _id: update_doc_id })
 		.exec(async function (err, update_author) {
 			if (err) {
 				return next(err);
+			}
+			if (!update_author) {
+				return res.status(404).send({ message: "Author not found" });
 			}
 			update_author.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, update_author.imageName, 3600 );
 			res.json(update_author);
@@ -543,8 +545,8 @@ exports.author_update_post = [
 	body("authorfirstname", "First name is required").trim().isLength({ min:2 }).escape(),
 	body("authormiddlename", "Middle name").trim().escape(),
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
-	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }).escape(),
-	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }).escape(),
+	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
+	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -573,38 +575,16 @@ exports.author_update_post = [
 			} else {
 				const update_author_id = req.body.authorUpdateid;
 				console.log ("The author update id is"+ update_author_id);
-				const upprofilepic = "author"+generaterandomimgname();//image name
 
-				//resize the image file
-				const upfilebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
-				//upload new image to S3
-				const updates3uploadparams = {
-					Bucket: BUCKET_NAME,
-					Body: upfilebuffer,
-					Key: upprofilepic,
-					ContentType: upfilebuffer.mimetype
-				};
+				const existingAuthor = await Author.findById(update_author_id, "imageName");
+				if (!existingAuthor) {
+					return res.status(404).send({ message: "Author not found" });
+				}
 
-				//1.delete image from s3 bucket
-				const delauthor = await Author.findOne({_id: update_author_id}, 'imageName').exec((err, updelresult) => {
-					if (err){
-						console.log(err);
-					}
-					else if (updelresult) {
-						console.log("the object to delete is"+updelresult.imageName);
-						const delparams = {
-							Bucket: BUCKET_NAME,
-							Key: updelresult.imageName
-						}
-						controllerUtils.deletefroms3bucket(delparams);
-					}	
-				});
-
-				//2.update object in database
 				const update_filter = {
 					_id: update_author_id 
 				};
-				const update_authorz = { $set: {
+				const update_authorz = {
 					name: {
 						first: req.body.authorfirstname,
 						middle: req.body.authormiddlename,
@@ -624,18 +604,39 @@ exports.author_update_post = [
 					socialmedia: {
 						github: req.body.githuburl,
 						linkedin: req.body.linkeninurl
-					},
-					imageName: upprofilepic
-				}};
-				await Author.findOneAndUpdate(update_filter, update_authorz, {
+					}
+				};
+
+				let updates3uploadparams;
+				if (req.file) {
+					const upprofilepic = "author"+generaterandomimgname();//image name
+					const upfilebuffer = await sharp(req.file.buffer).resize({ height: 400, width: 350, fit: "fill"}).toBuffer();
+					updates3uploadparams = {
+						Bucket: BUCKET_NAME,
+						Body: upfilebuffer,
+						Key: upprofilepic,
+						ContentType: req.file.mimetype
+					};
+					update_authorz.imageName = upprofilepic;
+				}
+
+				await Author.findOneAndUpdate(update_filter, { $set: update_authorz }, {
 					new: true,
 					upsert: true,
 					rawResult: true,
 					runValidators: true
 				});
 
-				//3.upload to s3 bucket
-				controllerUtils.uploadtos3bucket(updates3uploadparams);
+				if (updates3uploadparams) {
+					if (existingAuthor.imageName) {
+						const delparams = {
+							Bucket: BUCKET_NAME,
+							Key: existingAuthor.imageName
+						}
+						controllerUtils.deletefroms3bucket(delparams);
+					}
+					controllerUtils.uploadtos3bucket(updates3uploadparams);
+				}
 				console.log("Updated Successfully");
 				res.redirect("/portfolio/author");
 			}

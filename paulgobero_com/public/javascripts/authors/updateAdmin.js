@@ -1,4 +1,28 @@
 $(document).ready(function(){
+	function fillAuthorForm(data) {
+		const githubUrl = data.socialmedia && data.socialmedia.github ? data.socialmedia.github : "";
+		const linkedinUrl = data.socialmedia && data.socialmedia.linkedin ? data.socialmedia.linkedin : "";
+		const keywords = Array.isArray(data.yourKeyword) ? data.yourKeyword.join(", ") : (data.yourKeyword || "");
+
+		$("#authorUpdateModal").modal('show');
+		$("#authorfirstname").val(data.name.first);
+		$("#authormiddlename").val(data.name.middle);
+		$("#authorlastname").val(data.name.last);
+		$("#authorshortdesc").val(data.about.short_description);
+		$("#authorfulldesc").val(data.about.full_description);
+		$("#authorbrandname").val(data.brandName);
+		$("#authorhostname").val(data.hostName);
+		$("#authorkeywords").val(keywords);
+		$("#authoremail").val(data.email);
+		$("#githuburl").val(githubUrl.replace(/&#x2F;/g, '/'));
+		$("#linkeninurl").val(linkedinUrl.replace(/&#x2F;/g, '/'));
+		$("#div1").attr("src", data.imageUrl);
+		$("#authorUpdateid").val(data._id);
+		$("#authorpassword").val(data.password);
+		$("#authorstatus").val(data.authorStatus);
+		$("#authorRole").val(data.authorRole);
+	}
+
 	$(document).on("click", ".authoredit", function(){
 		//get value of second column
 		$(this).parents("tr").find("td").slice(1,2).each(function(){
@@ -8,25 +32,7 @@ $(document).ready(function(){
 				url: "author/update",
 				data: { updateid:updateid },
 				success: function(data){
-					$("#authorUpdateModal").modal('show');					
-					$("#authorfirstname").val(data.name.first);
-					$("#authormiddlename").val(data.name.middle);
-					$("#authorlastname").val(data.name.last);
-					$("#authorshortdesc").val(data.about.short_description);
-					$("#authorfulldesc").val(data.about.full_description);
-					$("#authorbrandname").val(data.brandName);
-					$("#authoremail").val(data.email);
-					var originalgitUrl = data.socialmedia.github;
-					var originallinkUrl = data.socialmedia.linkedin;
-					$("#githuburl").val(originalgitUrl.replace(/&#x2F;/g, '/'));
-					$("#linkeninurl").val(originallinkUrl.replace(/&#x2F;/g, '/'));
-					$("#div1").attr("src", data.imageUrl);
-					$("#authorUpdateid").val(data._id);
-					$("#authorpassword").val(data.password);
-					$("#authorstatus").val(data.authorStatus);
-					$("#authorRole").val(data.authorRole);
-					
-					
+					fillAuthorForm(data);
 				}
 			});
 		});
@@ -41,23 +47,7 @@ $(document).ready(function(){
 			url: "update",
 			data: { updateid:updateid },
 			success: function(data){
-				$("#authorUpdateModal").modal('show');					
-				$("#authorfirstname").val(data.name.first);
-				$("#authormiddlename").val(data.name.middle);
-				$("#authorlastname").val(data.name.last);
-				$("#authorshortdesc").val(data.about.short_description);
-				$("#authorfulldesc").val(data.about.full_description);
-				$("#authorbrandname").val(data.brandName);
-				$("#authoremail").val(data.email);
-				var originalgitUrl = data.socialmedia.github;
-				var originallinkUrl = data.socialmedia.linkedin;
-				$("#githuburl").val(originalgitUrl.replace(/&#x2F;/g, '/'));
-				$("#linkeninurl").val(originallinkUrl.replace(/&#x2F;/g, '/'));
-				$("#div1").attr("src", data.imageUrl);
-				$("#authorUpdateid").val(data._id);
-				$("#authorpassword").val(data.password);
-				$("#authorstatus").val(data.authorStatus);
-				$("#authorRole").val(data.authorRole);	
+				fillAuthorForm(data);
 			}
 		});
 	});
