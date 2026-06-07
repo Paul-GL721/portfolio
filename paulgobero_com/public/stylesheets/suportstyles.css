@@ -89,6 +89,8 @@
   font-size: 1.2rem;
   line-height: 1.8;
   max-width: 760px;
+  white-space: pre-line;
+  line-height: 1.8;
 }
 
 .eyebrow {
