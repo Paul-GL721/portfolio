@@ -222,7 +222,7 @@
   background: var(--soft);
 }
 
-.service-card,
+.service-row,
 .project-card,
 .skill-card,
 .contact-form-shell,
@@ -232,45 +232,70 @@
   border-radius: 8px;
 }
 
-.service-card,
 .project-card {
   height: 100%;
   overflow: hidden;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.service-card:hover,
 .project-card:hover {
   border-color: rgba(11, 122, 117, 0.34);
   box-shadow: 0 18px 40px rgba(23, 32, 42, 0.11);
   transform: translateY(-4px);
 }
 
-.service-card img,
 .project-card img {
   width: 100%;
   object-fit: cover;
   display: block;
 }
 
-.service-card img {
-  height: 170px;
-}
-
-.service-card-body,
 .project-card-body {
   padding: 1.25rem;
+}
+
+.service-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.service-row {
+  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 64px 64px minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 1.35rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.service-row:hover {
+  border-color: rgba(11, 122, 117, 0.34);
+  box-shadow: 0 18px 40px rgba(23, 32, 42, 0.09);
+  transform: translateY(-3px);
 }
 
 .service-number {
   color: var(--warm);
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 900;
-  margin-bottom: 0.6rem;
+  padding-top: 0.45rem;
 }
 
-.service-card h3,
+.service-icon {
+  align-items: center;
+  background: #edf6f5;
+  border: 1px solid #c9e5e2;
+  border-radius: 8px;
+  color: var(--accent-dark);
+  display: flex;
+  font-size: 1.55rem;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+}
+
+.service-copy h3,
 .project-card h3 {
   color: var(--ink);
   font-size: 1.22rem;
@@ -278,11 +303,29 @@
   margin-bottom: 0.75rem;
 }
 
-.service-card p,
+.service-copy p,
 .project-card p {
   color: var(--muted);
   line-height: 1.65;
   margin-bottom: 0;
+}
+
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.service-tags span {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0.35rem 0.65rem;
 }
 
 .projects-section {
@@ -457,6 +500,23 @@
   .section-heading h2,
   .contact-section h2 {
     font-size: 2rem;
+  }
+
+  .service-row {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 0.75rem 1rem;
+    padding: 1.1rem;
+  }
+
+  .service-icon {
+    grid-column: 1;
+    height: 42px;
+    width: 42px;
+    font-size: 1.15rem;
+  }
+
+  .service-copy {
+    grid-column: 1 / -1;
   }
 
   .project-card-body {
