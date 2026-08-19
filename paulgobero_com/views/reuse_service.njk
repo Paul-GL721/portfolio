@@ -1,0 +1,26 @@
+    <div class="form-group">
+        <label for="servicetitle"><strong>Service title</strong></label>
+        <input class="form-control" id="servicetitle" name="servicetitle" maxlength="120" value="{{ service.title or '' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="servicedescription"><strong>Description</strong></label>
+        <textarea class="form-control" id="servicedescription" name="servicedescription" rows="5" maxlength="700" required>{{ service.description or '' }}</textarea>
+        <small class="form-text text-muted">Explain the operational outcome rather than only listing technologies.</small>
+    </div>
+    <div class="form-group">
+        <label for="serviceicon"><strong>Icon class</strong></label>
+        <input class="form-control" id="serviceicon" name="serviceicon" value="{{ service.icon or 'icon-layers' }}" pattern="icon-[a-z0-9-]+">
+        <small class="form-text text-muted">For example: icon-layers, icon-location-pin, icon-cloud-upload.</small>
+    </div>
+    <div class="form-group">
+        <label for="servicetags"><strong>Tags</strong></label>
+        <textarea class="form-control" id="servicetags" name="servicetags" rows="3" placeholder="One per line or comma-separated">{% if service.tags %}{{ service.tags | join('\n') }}{% endif %}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="servicedisplayorder"><strong>Display order</strong></label>
+        <input class="form-control" type="number" min="1" id="servicedisplayorder" name="servicedisplayorder" value="{{ service.displayOrder or 1 }}" required>
+    </div>
+    <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="servicepublished" name="servicepublished" value="true" {% if service.published %}checked{% endif %}>
+        <label class="form-check-label" for="servicepublished">Publish on the portfolio homepage</label>
+    </div>
