@@ -10,6 +10,27 @@
             <div><h1 class="h2 mb-1">Services</h1><p class="text-muted mb-0">Control what the portfolio owner offers and how it appears.</p></div>
             <a class="btn btn-primary" href="/portfolio/service/create">Add service</a>
         </div>
+        <section class="card mb-5" aria-labelledby="service-section-content-title">
+            <div class="card-body">
+                <h2 class="h4" id="service-section-content-title">Section introduction</h2>
+                <p class="text-muted">This content appears above the service cards on the public homepage.</p>
+                <form action="/portfolio/service/section" method="post">
+                    <div class="form-group">
+                        <label for="serviceeyebrow"><strong>Section label</strong></label>
+                        <input class="form-control" id="serviceeyebrow" name="serviceeyebrow" maxlength="60" value="{{ section.eyebrow or 'Services' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceheading"><strong>Heading</strong></label>
+                        <input class="form-control" id="serviceheading" name="serviceheading" maxlength="120" value="{{ section.heading or 'How I Can Help' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceintroduction"><strong>Introduction</strong></label>
+                        <textarea class="form-control" id="serviceintroduction" name="serviceintroduction" rows="4" maxlength="700" required>{{ section.introduction or 'I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations.' }}</textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Save section introduction</button>
+                </form>
+            </div>
+        </section>
         <div class="table-responsive">
             <table class="table table-striped service-admin-table">
                 <thead><tr><th>Order</th><th>Service</th><th>Description</th><th>Tags</th><th>Status</th><th>Actions</th></tr></thead>
