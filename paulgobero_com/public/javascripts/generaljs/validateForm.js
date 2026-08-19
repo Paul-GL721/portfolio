@@ -3,12 +3,16 @@ function setupContactFormValidation() {
     errorClass: "formValidationError",
     
     rules: {
+      contactreason: { required: true },
       contactname: { required: true, minlength: 3 },
       contactemail: { required: true, email: true },
       contactmessage: { required: true, minlength: 3 }
     },
 
     messages: {
+      contactreason: {
+        required: "Please select the reason for contacting"
+      },
       contactname: {
         required: "I need your name to address you correctly",
         minlength: jQuery.validator.format("At least {3} characters required!")

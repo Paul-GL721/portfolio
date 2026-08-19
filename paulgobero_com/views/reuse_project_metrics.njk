@@ -1,0 +1,10 @@
+{% if project.metrics and project.metrics.length %}
+    <dl class="metric-grid" aria-label="Project results">
+        {% for metric in project.metrics %}
+            <div class="metric">
+                <dd>{{ metric.value }}</dd>
+                <dt>{{ metric.label }}</dt>
+            </div>
+        {% endfor %}
+    </dl>
+{% endif %}

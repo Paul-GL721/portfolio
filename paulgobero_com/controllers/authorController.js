@@ -60,8 +60,13 @@ exports.index = async (req, res, next) => {
 							Author.findById(author_id).exec(callback);
 						},
 						author_projects(callback) {
-							Project.find({ author: author_id, checked: true }).sort({ createdAt: -1 })
-							.limit(3) 
+							Project.find({
+								author: author_id,
+								$or: [
+									{ status: "published" },
+									{ checked: true, status: { $exists: false } }
+								]
+							}).sort({ createdAt: -1 })
 							.populate('author', 'name')
 							.populate({
 								path: 'skill',
@@ -84,6 +89,15 @@ exports.index = async (req, res, next) => {
 							return next(err);
 						}
 						//console.log(results);
+						//Explicit flagship rank wins; legacy checked projects remain as fallbacks.
+						results.author_projects = results.author_projects
+							.sort((a, b) => {
+								const aRank = a.featuredRank ?? Number.MAX_SAFE_INTEGER;
+								const bRank = b.featuredRank ?? Number.MAX_SAFE_INTEGER;
+								return aRank - bRank || b.createdAt - a.createdAt;
+							})
+							.slice(0, 3);
+
 						//create video and image signed Urls
 						results.author.imageUrl = await  getSignedUrl(controllerUtils.s3Client, new GetObjectCommand({
 							Bucket: BUCKET_NAME,
@@ -123,11 +137,16 @@ exports.index_post = [
 	body("contactname", "Contact name is required").trim().isLength({ min:3 }).escape(),
 	body("contactemail", "Contact email is required").isEmail().trim().escape(),
 	body("contactmessage", "Contact message is required").trim().isLength({ min:3 }).escape(),
+	body("contactreason", "Select a reason for contacting").isIn(["role", "project", "collaboration"]),
+	body("contactcompany").optional({ checkFalsy: true }).isEmpty(),
 
 	
     async (req, res, next) => {
 		//check for validation errors
 		const errors = validationResult(req);
+		if (req.body.contactcompany) {
+			return res.status(200).json({ success: true, html: "" });
+		}
 		if (!errors.isEmpty()) { //if formdata has errors
 			console.log("The data has errors");
 			console.log(errors);
@@ -150,8 +169,8 @@ exports.index_post = [
 					address: EMAIL_USER,
 				},
 				to:  EMAIL_USER,
-				subject: `Message from ${req.body.contactname}`,
-				text: req.body.contactmessage,
+					subject: `${req.body.contactreason}: Message from ${req.body.contactname}`,
+					text: `Reason: ${req.body.contactreason}\n\n${req.body.contactmessage}`,
 				replyTo: req.body.contactemail
 			};
 			try {
