@@ -1,5 +1,6 @@
 const nunjucks = require("nunjucks");
 const Service = require("../models/service");
+const ServiceSection = Service.ServiceSection;
 
 describe("Reusable portfolio services", () => {
   test("validates service content and presentation settings", () => {
@@ -29,6 +30,16 @@ describe("Reusable portfolio services", () => {
     expect(error.errors.icon).toBeDefined();
   });
 
+  test("validates reusable service section content", () => {
+    const section = new ServiceSection({
+      introduction: "I help organisations turn operational problems into practical systems."
+    });
+
+    expect(section.validateSync()).toBeUndefined();
+    expect(section.eyebrow).toBe("Services");
+    expect(section.heading).toBe("How I Can Help");
+  });
+
   test("renders database services instead of legacy fallback content", () => {
     const env = nunjucks.configure("views", { autoescape: true });
     const html = env.render("portfolio_index.njk", {
@@ -40,6 +51,11 @@ describe("Reusable portfolio services", () => {
           icon: "icon-location-pin",
           tags: ["GIS", "Spatial analysis"]
         }],
+        service_section: {
+          eyebrow: "Capabilities",
+          heading: "From problem to production",
+          introduction: "Understand, design, build and support practical operational systems."
+        },
         author_projects: [],
         author_all_projects: []
       },
@@ -48,6 +64,7 @@ describe("Reusable portfolio services", () => {
     });
 
     expect(html).toContain("Geospatial systems and location intelligence");
+    expect(html).toContain("From problem to production");
     expect(html).toContain("Spatial analysis");
     expect(html).not.toContain("Custom Software &amp; Integration");
   });
