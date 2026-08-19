@@ -18,3 +18,12 @@ ServiceSchema.set("toObject", { virtuals: true });
 ServiceSchema.index({ published: 1, displayOrder: 1 });
 
 module.exports = mongoose.model("Service", ServiceSchema);
+
+const ServiceSectionSchema = new Schema({
+    key: { type: String, required: true, unique: true, default: "homepage-services" },
+    eyebrow: { type: String, required: true, trim: true, maxLength: 60, default: "Services" },
+    heading: { type: String, required: true, trim: true, maxLength: 120, default: "How I Can Help" },
+    introduction: { type: String, required: true, trim: true, maxLength: 700 }
+}, { timestamps: true });
+
+module.exports.ServiceSection = mongoose.model("ServiceSection", ServiceSectionSchema);

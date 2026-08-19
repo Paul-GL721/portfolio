@@ -28,6 +28,7 @@ router.post("/service/create", login_controller.verifyToken, service_controller.
 router.get("/service/update", login_controller.verifyToken, service_controller.service_update_get);
 router.post("/service/update", login_controller.verifyToken, service_controller.service_update_post);
 router.post("/service/delete", login_controller.verifyToken, service_controller.service_delete_post);
+router.post("/service/section", login_controller.verifyToken, service_controller.service_section_update_post);
 router.get("/service", login_controller.verifyToken, service_controller.service_list);
 
 //Get request for creating author page

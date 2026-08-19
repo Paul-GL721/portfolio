@@ -1,4 +1,5 @@
 const Service = require("../models/service");
+const ServiceSection = Service.ServiceSection;
 const { body, validationResult } = require("express-validator");
 const controllerUtils = require("../utils/controllerUtils");
 
@@ -10,6 +11,12 @@ const serviceValidators = [
     body("servicetags").optional({ checkFalsy: true }).trim(),
     body("servicedisplayorder").isInt({ min: 1 }).toInt(),
     body("servicepublished").optional().toBoolean()
+];
+
+const sectionValidators = [
+    body("serviceeyebrow", "Section label is required").trim().isLength({ min: 2, max: 60 }),
+    body("serviceheading", "Section heading is required").trim().isLength({ min: 2, max: 120 }),
+    body("serviceintroduction", "Section introduction is required").trim().isLength({ min: 10, max: 700 })
 ];
 
 const serviceFromRequest = req => ({
@@ -32,13 +39,35 @@ const ensureAdmin = (req, res) => {
 exports.service_list = async (req, res, next) => {
     if (!ensureAdmin(req, res)) return;
     try {
-        const [brand, services] = await Promise.all([
+        const [brand, services, section] = await Promise.all([
             controllerUtils.getBrandName(),
-            Service.find({}).sort({ displayOrder: 1, createdAt: -1 })
+            Service.find({}).sort({ displayOrder: 1, createdAt: -1 }),
+            ServiceSection.findOne({ key: "homepage-services" })
         ]);
-        res.render("service_Admin", { Title: "Manage Services", services, brand1: brand });
+        res.render("service_Admin", { Title: "Manage Services", services, section, brand1: brand });
     } catch (err) { next(err); }
 };
+
+exports.service_section_update_post = [
+    ...sectionValidators,
+    async (req, res, next) => {
+        if (!ensureAdmin(req, res)) return;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        try {
+            await ServiceSection.findOneAndUpdate(
+                { key: "homepage-services" },
+                { $set: {
+                    eyebrow: req.body.serviceeyebrow,
+                    heading: req.body.serviceheading,
+                    introduction: req.body.serviceintroduction
+                } },
+                { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
+            );
+            res.redirect("/portfolio/service");
+        } catch (err) { next(err); }
+    }
+];
 
 exports.service_create_get = async (req, res, next) => {
     if (!ensureAdmin(req, res)) return;
