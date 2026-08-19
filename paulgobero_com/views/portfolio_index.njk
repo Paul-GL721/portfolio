@@ -40,6 +40,23 @@
                 </div>
 
                 <div class="service-list">
+                    {% if index_data.services and index_data.services.length %}
+                        {% for service in index_data.services %}
+                            <article class="service-row">
+                                <span class="service-number">{% if loop.index < 10 %}0{% endif %}{{ loop.index }}</span>
+                                <div class="service-icon" aria-hidden="true"><i class="{{ service.icon or 'icon-layers' }}"></i></div>
+                                <div class="service-copy">
+                                    <h3>{{ service.title }}</h3>
+                                    <p>{{ service.description }}</p>
+                                    {% if service.tags and service.tags.length %}
+                                        <div class="service-tags">
+                                            {% for tag in service.tags %}<span>{{ tag }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
                     <article class="service-row">
                         <span class="service-number">01</span>
                         <div class="service-icon">
@@ -103,6 +120,7 @@
                             </div>
                         </div>
                     </article>
+                    {% endif %}
                 </div>
             </div>
         </section>

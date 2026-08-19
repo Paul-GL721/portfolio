@@ -2,6 +2,7 @@
 
 const Author = require("../models/author"); //author model
 const Project = require("../models/project"); //project model
+const Service = require("../models/service");
 const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
 const { body, validationResult } = require("express-validator"); //form validator
@@ -59,7 +60,7 @@ exports.index = async (req, res, next) => {
 						author(callback) {
 							Author.findById(author_id).exec(callback);
 						},
-						author_projects(callback) {
+							author_projects(callback) {
 							Project.find({
 								author: author_id,
 								$or: [
@@ -81,9 +82,14 @@ exports.index = async (req, res, next) => {
 								path: 'skill',
 								select: ['name', 'imageName', 'imageUrl' ]})
 							.populate('specialisation', 'name')
-							.exec(callback);
+								.exec(callback);
+							},
+							services(callback) {
+								Service.find({ published: true })
+									.sort({ displayOrder: 1, createdAt: 1 })
+									.exec(callback);
+							},
 						},
-					},
 					async (err, results) => {
 						if (err) {
 							return next(err);
