@@ -103,6 +103,9 @@ router.post("/project/update", login_controller.verifyToken, project_controller.
 //Get request for one project
 router.get("/project/:id", project_controller.project_detail);
 
+//Public, shareable case study
+router.get("/projects/:slug", project_controller.public_case_study);
+
 //Get request for all projects
 router.get("/project", login_controller.verifyToken, project_controller.project_list);
 
