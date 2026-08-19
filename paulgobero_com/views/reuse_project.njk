@@ -7,6 +7,99 @@
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projsummary"><strong>Summary:</strong></label></div>
                         <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projsummary" name="projsummary" placeholder="Summarize the project" rows="3" cols="10"></textarea></div>
                     </div>
+                    <fieldset class="case-study-admin-fields">
+                        <legend>Public case study</legend>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projslug"><strong>URL slug:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" id="projslug" name="projslug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="apartment-operations-platform"><small class="form-text text-muted">Required before publishing; leave blank for legacy drafts.</small></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projsubtitle"><strong>Outcome subtitle:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" id="projsubtitle" name="projsubtitle" placeholder="A concise outcome-focused statement"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projindustry"><strong>Industry:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" id="projindustry" name="projindustry"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projtype"><strong>Project type:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" id="projtype" name="projtype" placeholder="Web platform, mobile application, data system..."></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projstatus"><strong>Publication:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8">
+                                <select class="form-control" id="projstatus" name="projstatus">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projfeaturedrank"><strong>Flagship rank:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="number" min="1" id="projfeaturedrank" name="projfeaturedrank" placeholder="1, 2 or 3"><small class="form-text text-muted">Lower ranks appear first. Leave blank for non-flagship projects.</small></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projcontext"><strong>Operational context:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projcontext" name="projcontext" rows="5"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projconstraints"><strong>Constraints:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projconstraints" name="projconstraints" rows="4" placeholder="One constraint per line"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projarchitecture"><strong>Architecture:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projarchitecture" name="projarchitecture" rows="5"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projarchitectureurl"><strong>Diagram URL:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="url" id="projarchitectureurl" name="projarchitectureurl"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projmetrics"><strong>Verified metrics:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projmetrics" name="projmetrics" rows="5" placeholder="70% | Reduction in rent arrears | Source note"></textarea><small class="form-text text-muted">One metric per line: value | label | private evidence note.</small></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projdecisions"><strong>Decisions:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projdecisions" name="projdecisions" rows="6" placeholder="Offline-first sync | Poor field connectivity | Local queue with retry | Eventual consistency"></textarea><small class="form-text text-muted">One per line: title | context | decision | trade-off.</small></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projresults"><strong>Results:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projresults" name="projresults" rows="5" placeholder="One verified result per line"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projlessons"><strong>Lessons learned:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projlessons" name="projlessons" rows="4" placeholder="One lesson per line"></textarea></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><strong>Operational proof:</strong></div>
+                            <div class="col-7 col-sm-7 col-md-8">
+                                <input class="form-control mb-2" type="number" min="0" id="projusercount" name="projusercount" placeholder="Number of users">
+                                <input class="form-control mb-2" type="number" min="0" id="projrecordcount" name="projrecordcount" placeholder="Number of records">
+                                <input class="form-control mb-2" type="date" id="projoperationalsince" name="projoperationalsince">
+                                <input class="form-control mb-2" id="projavailability" name="projavailability" placeholder="Availability or performance measurement">
+                                <input class="form-control" id="projdeploymentscale" name="projdeploymentscale" placeholder="Deployment scale">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projtestimonial"><strong>Testimonial:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8">
+                                <textarea class="form-control mb-2" id="projtestimonial" name="projtestimonial" rows="4" placeholder="Approved client quote"></textarea>
+                                <input class="form-control mb-2" id="projtestimonialperson" name="projtestimonialperson" placeholder="Person">
+                                <input class="form-control mb-2" id="projtestimonialrole" name="projtestimonialrole" placeholder="Role">
+                                <input class="form-control mb-2" id="projtestimonialorg" name="projtestimonialorg" placeholder="Organisation">
+                                <label><input type="checkbox" id="projtestimonialapproved" name="projtestimonialapproved" value="true"> Approved for public display</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><label for="projarticle"><strong>Technical article:</strong></label></div>
+                            <div class="col-7 col-sm-7 col-md-8"><input class="form-control" type="url" id="projarticle" name="projarticle"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-5 col-sm-5 col-md-4"><strong>Confidential:</strong></div>
+                            <div class="col-7 col-sm-7 col-md-8"><label><input type="checkbox" id="projconfidential" name="projconfidential" value="true"> Hide code and demo links publicly</label></div>
+                        </div>
+                    </fieldset>
                     <div class="form-group row">
                         <div class="col-5 col-sm-5 col-md-4"><label class="col-form-label" for="projproblem"><strong>Problem:</strong></label></div>
                         <div class="col-7 col-sm-7 col-md-8"><textarea class="form-control" id="projproblem" name="projproblem" placeholder="What was the problem?" rows="5" cols="10"></textarea></div>
