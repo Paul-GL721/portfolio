@@ -3,6 +3,7 @@
 const Author = require("../models/author"); //author model
 const Project = require("../models/project"); //project model
 const Service = require("../models/service");
+const ServiceSection = Service.ServiceSection;
 const crypto = require("crypto"); //generate random names
 const sharp = require("sharp"); //resize images
 const { body, validationResult } = require("express-validator"); //form validator
@@ -54,7 +55,7 @@ exports.index = async (req, res, next) => {
 				res.render("default_index", { Title: "Default Page", brandname:'brandname' });
 			} else {
 				const author_id = available_owner._id;
-				//console.log(author_id)
+				console.log(author_id)
 				async.parallel(
 					{
 						author(callback) {
@@ -89,12 +90,15 @@ exports.index = async (req, res, next) => {
 									.sort({ displayOrder: 1, createdAt: 1 })
 									.exec(callback);
 							},
+							service_section(callback) {
+								ServiceSection.findOne({ key: "homepage-services" }).exec(callback);
+							},
 						},
 					async (err, results) => {
 						if (err) {
 							return next(err);
 						}
-						//console.log(results);
+						//console.log(results.author.password);
 						//Explicit flagship rank wins; legacy checked projects remain as fallbacks.
 						results.author_projects = results.author_projects
 							.sort((a, b) => {

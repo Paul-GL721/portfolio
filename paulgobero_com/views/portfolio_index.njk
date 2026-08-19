@@ -34,9 +34,9 @@
         <section id="services-section" class="home-section services-section">
             <div class="container">
                 <div class="section-heading">
-                    <p class="eyebrow">Services</p>
-                    <h2>How I Can Help</h2>
-                    <p>I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations.</p>
+                    <p class="eyebrow">{{ index_data.service_section.eyebrow or "Services" }}</p>
+                    <h2>{{ index_data.service_section.heading or "How I Can Help" }}</h2>
+                    <p>{{ index_data.service_section.introduction or "I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations." }}</p>
                 </div>
 
                 <div class="service-list">
