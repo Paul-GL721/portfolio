@@ -1,0 +1,203 @@
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {
+    id: "caseStudyPage",
+    about: "/portfolio/#about_section",
+    services: "/portfolio/#services-section",
+    projects: "/portfolio/#project_section",
+    skills: "/portfolio/#skill_section",
+    contact: "/portfolio/#contact_section",
+    blog: "https://blog.paulgobero.com"
+} %}
+
+{% block title %}<title>{{ Title }}</title>{% endblock %}
+{% block loginoutModal %}{% endblock %}
+
+{% block content %}
+<main class="case-study-page">
+    <header class="case-study-hero">
+        <div class="container">
+            <a class="case-study-back" href="/portfolio/#project_section">&larr; Selected work</a>
+            <p class="eyebrow">
+                {{ project.industry or "Case study" }}
+                {% if project.projectType %} · {{ project.projectType }}{% endif %}
+            </p>
+            <h1>{{ project.ptitle }}</h1>
+            {% if project.subtitle %}<p class="case-study-subtitle">{{ project.subtitle }}</p>{% endif %}
+            <p class="case-study-summary">{{ project.psummary }}</p>
+            {% set project = project %}
+            {% include "reuse_project_metrics.njk" %}
+        </div>
+    </header>
+
+    {% if project.mediaUrl.imageUrl %}
+        <div class="container case-study-cover">
+            <img src="{{ project.mediaUrl.imageUrl }}" alt="Overview of {{ project.ptitle }}" width="1200" height="675">
+        </div>
+    {% endif %}
+
+    <div class="container case-study-layout">
+        <article class="case-study-content">
+            {% if project.context %}
+                <section>
+                    <p class="eyebrow">Context</p>
+                    <h2>Operational context</h2>
+                    <p class="case-study-copy">{{ project.context }}</p>
+                </section>
+            {% endif %}
+
+            <section>
+                <p class="eyebrow">Challenge</p>
+                <h2>The problem</h2>
+                <p class="case-study-copy">{{ project.problemStatement }}</p>
+                {% if project.constraints and project.constraints.length %}
+                    <h3>Constraints</h3>
+                    <ul>
+                        {% for constraint in project.constraints %}<li>{{ constraint }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+
+            {% if project.architectureSummary or project.architectureDiagramUrl %}
+                <section>
+                    <p class="eyebrow">Architecture</p>
+                    <h2>System design</h2>
+                    {% if project.architectureSummary %}
+                        <p class="case-study-copy">{{ project.architectureSummary }}</p>
+                    {% endif %}
+                    {% if project.architectureDiagramUrl %}
+                        <figure class="architecture-figure">
+                            <img src="{{ project.architectureDiagramUrl }}" alt="Architecture diagram for {{ project.ptitle }}" loading="lazy">
+                            <figcaption>System architecture for {{ project.ptitle }}</figcaption>
+                        </figure>
+                    {% endif %}
+                </section>
+            {% endif %}
+
+            <section>
+                <p class="eyebrow">Solution</p>
+                <h2>What was built</h2>
+                <p class="case-study-copy">{{ project.solution }}</p>
+            </section>
+
+            {% if project.decisions and project.decisions.length %}
+                <section>
+                    <p class="eyebrow">Engineering judgement</p>
+                    <h2>Decisions and trade-offs</h2>
+                    <div class="decision-list">
+                        {% for decision in project.decisions %}
+                            <article class="decision-card">
+                                <h3>{{ decision.title }}</h3>
+                                {% if decision.context %}<p><strong>Context:</strong> {{ decision.context }}</p>{% endif %}
+                                <p><strong>Decision:</strong> {{ decision.choice }}</p>
+                                {% if decision.tradeoff %}<p><strong>Trade-off:</strong> {{ decision.tradeoff }}</p>{% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            <section>
+                <p class="eyebrow">Contribution</p>
+                <h2>My role</h2>
+                <ul>
+                    {% for item in project.role.split('\n') %}
+                        {% if item.trim() %}<li>{{ item.trim() }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            </section>
+
+            {% if project.mediaUrl.videoUrl %}
+                <section>
+                    <p class="eyebrow">Product demonstration</p>
+                    <h2>See the system in use</h2>
+                    <video class="case-study-video" controls preload="metadata" src="{{ project.mediaUrl.videoUrl }}"></video>
+                </section>
+            {% endif %}
+
+            {% if project.results and project.results.length %}
+                <section>
+                    <p class="eyebrow">Results</p>
+                    <h2>Operational impact</h2>
+                    <ul>
+                        {% for result in project.results %}<li>{{ result }}</li>{% endfor %}
+                    </ul>
+                </section>
+            {% endif %}
+
+            {% if project.testimonial.approvedForPublication and project.testimonial.quote %}
+                <blockquote class="case-study-testimonial">
+                    <p>“{{ project.testimonial.quote }}”</p>
+                    <footer>
+                        {{ project.testimonial.person }}
+                        {% if project.testimonial.role %}, {{ project.testimonial.role }}{% endif %}
+                        {% if project.testimonial.organisation %} · {{ project.testimonial.organisation }}{% endif %}
+                    </footer>
+                </blockquote>
+            {% endif %}
+
+            {% if project.lessonsLearned and project.lessonsLearned.length %}
+                <section>
+                    <p class="eyebrow">Reflection</p>
+                    <h2>Lessons learned</h2>
+                    <ul>
+                        {% for lesson in project.lessonsLearned %}<li>{{ lesson }}</li>{% endfor %}
+                    </ul>
+                </section>
+            {% endif %}
+        </article>
+
+        <aside class="case-study-sidebar" aria-label="Project details">
+            {% if project.projectDates.startDate %}
+                <div><strong>Project period</strong><span>{{ project.projectDates.startDate }}</span></div>
+            {% endif %}
+            {% if project.skill and project.skill.length %}
+                <div>
+                    <strong>Technologies</strong>
+                    <span>{% for skill in project.skill %}{{ skill.name }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                </div>
+            {% endif %}
+            {% if project.operationalProof.userCount %}
+                <div><strong>Users</strong><span>{{ project.operationalProof.userCount }}</span></div>
+            {% endif %}
+            {% if project.operationalProof.recordCount %}
+                <div><strong>Records</strong><span>{{ project.operationalProof.recordCount }}</span></div>
+            {% endif %}
+            {% if project.operationalProof.deploymentScale %}
+                <div><strong>Deployment</strong><span>{{ project.operationalProof.deploymentScale }}</span></div>
+            {% endif %}
+            {% if not project.confidential %}
+                <div class="case-study-links">
+                    {% if project.githubUrl %}<a href="{{ project.githubUrl }}" target="_blank" rel="noopener noreferrer">Source code</a>{% endif %}
+                    {% if project.livelinkUrl %}<a href="{{ project.livelinkUrl }}" target="_blank" rel="noopener noreferrer">Live system</a>{% endif %}
+                    {% if project.articleUrl %}<a href="{{ project.articleUrl }}" target="_blank" rel="noopener noreferrer">Technical article</a>{% endif %}
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+
+    {% if relatedProjects and relatedProjects.length %}
+        <section class="related-projects">
+            <div class="container">
+                <p class="eyebrow">More work</p>
+                <h2>Other case studies</h2>
+                <div class="related-project-grid">
+                    {% for related in relatedProjects %}
+                        <a href="{{ related.url }}">
+                            <strong>{{ related.ptitle }}</strong>
+                            {% if related.subtitle %}<span>{{ related.subtitle }}</span>{% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="case-study-cta">
+        <div class="container">
+            <h2>Have a similar operational challenge?</h2>
+            <p>Share the workflow, system or data problem you need to solve.</p>
+            <a class="btn btn-primary btn-lg" href="/portfolio/#contact_section">Start a conversation</a>
+        </div>
+    </section>
+</main>
+{% endblock %}

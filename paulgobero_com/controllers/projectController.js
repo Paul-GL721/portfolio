@@ -2,6 +2,7 @@
 
 const Project = require("../models/project"); //project model
 const Author = require("../models/author"); //author model
+const createError = require("http-errors");
 const crypto = require("crypto"); //generate random names
 const { body, validationResult } = require("express-validator"); //form validator
 const { storage, fileFilter, uploadimg, uploadvideo, videofileFilter  } = require("../uploads/img_vid_upload"); //multer image upload
@@ -18,6 +19,71 @@ const generaterandomvidname = () => {
 }
 
 let brand
+
+const slugify = (value = "") => value.toLowerCase().trim()
+	.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const lines = (value = "") => value.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+const structuredLines = (value = "", keys = []) => lines(value).map(line => {
+	const values = line.split("|").map(item => item.trim());
+	return keys.reduce((entry, key, index) => {
+		if (values[index]) entry[key] = values[index];
+		return entry;
+	}, {});
+}).filter(entry => keys.slice(0, 2).every(key => entry[key]));
+const optionalNumber = value => {
+	if (value === undefined || value === null || value === "") return undefined;
+	const parsed = Number(value);
+	return Number.isFinite(parsed) ? parsed : undefined;
+};
+const buildCaseStudyFields = bodyData => ({
+	slug: bodyData.projslug ? slugify(bodyData.projslug) : undefined,
+	subtitle: bodyData.projsubtitle,
+	industry: bodyData.projindustry,
+	projectType: bodyData.projtype,
+	context: bodyData.projcontext,
+	constraints: lines(bodyData.projconstraints),
+	architectureSummary: bodyData.projarchitecture,
+	architectureDiagramUrl: bodyData.projarchitectureurl,
+	decisions: structuredLines(bodyData.projdecisions, ["title", "context", "choice", "tradeoff"]),
+	metrics: structuredLines(bodyData.projmetrics, ["value", "label", "evidenceNote"]),
+	results: lines(bodyData.projresults),
+	lessonsLearned: lines(bodyData.projlessons),
+	operationalProof: {
+		userCount: optionalNumber(bodyData.projusercount),
+		recordCount: optionalNumber(bodyData.projrecordcount),
+		operationalSince: bodyData.projoperationalsince || undefined,
+		availability: bodyData.projavailability,
+		deploymentScale: bodyData.projdeploymentscale
+	},
+	testimonial: {
+		quote: bodyData.projtestimonial,
+		person: bodyData.projtestimonialperson,
+		role: bodyData.projtestimonialrole,
+		organisation: bodyData.projtestimonialorg,
+		approvedForPublication: !!bodyData.projtestimonialapproved
+	},
+	status: bodyData.projstatus || "draft",
+	featuredRank: optionalNumber(bodyData.projfeaturedrank),
+	confidential: !!bodyData.projconfidential,
+	articleUrl: bodyData.projarticle
+});
+const caseStudyValidators = [
+	body("projslug").optional({ checkFalsy: true }).matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+		.withMessage("Slug must contain lowercase letters, numbers and hyphens only"),
+	body("projslug").custom((value, { req }) => {
+		if (req.body.projstatus === "published" && !value) {
+			throw new Error("A slug is required before publishing a case study");
+		}
+		return true;
+	}),
+	body("projstatus").optional({ checkFalsy: true }).isIn(["draft", "published", "archived"]),
+	body("projfeaturedrank").optional({ checkFalsy: true }).isInt({ min: 1 }),
+	body("projusercount").optional({ checkFalsy: true }).isInt({ min: 0 }),
+	body("projrecordcount").optional({ checkFalsy: true }).isInt({ min: 0 }),
+	body("projoperationalsince").optional({ checkFalsy: true }).isISO8601(),
+	body("projarchitectureurl").optional({ checkFalsy: true }).isURL(),
+	body("projarticle").optional({ checkFalsy: true }).isURL()
+];
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
@@ -63,6 +129,7 @@ exports.project_create_post = [
 	body("projspecialisation.*").escape(),
 	body("projauthor.*").escape(),
 	body("projcontibutor", "Any other authors").optional({ checkFalsy: true }),
+	...caseStudyValidators,
 
 	async (req, res, next) => {
 		// Get role from decoded cookie token
@@ -121,6 +188,7 @@ exports.project_create_post = [
 					specialisation: req.body.projspecialisation,
 					projectDates, 
 					checked: isChecked,
+					...buildCaseStudyFields(req.body),
 					mediaName: {
 						imageName:  projimagename,
 						videoName: projvideoname
@@ -143,7 +211,7 @@ exports.project_create_post = [
 
 				//redirect to individual project page
 				//res.redirect(Project.url);
-				res.redirect(`/portfolio/project/${projz._id}`);
+				res.redirect(projz.url);
 				
 			}
 		}
@@ -252,6 +320,7 @@ exports.project_update_post = [
 	body("projspecialisation.*").escape(),
 	body("projauthor.*").escape(),
 	body("projcontibutor", "Any other authors").optional({ checkFalsy: true }),
+	...caseStudyValidators,
 
 	async (req, res, next) => {
 		// Get role from decoded cookie token
@@ -262,10 +331,17 @@ exports.project_update_post = [
 		} else {
 			const update_project_id = req.body.projectUpdateid;
 			console.log ("The project update id is"+ update_project_id);
-			const updateprojvideoname = "projvid"+generaterandomvidname(); //video name
-			const updateprojimagename = "projimg"+generaterandomvidname(); //image name
-			const updatephoto = req.files['photo1'][0];
-			const updatevideo = req.files['video1'][0];
+			const existingProject = await Project.findById(update_project_id).select("mediaName");
+			if (!existingProject) return next(createError(404));
+
+			const updatephoto = req.files?.photo1?.[0];
+			const updatevideo = req.files?.video1?.[0];
+			const updateprojimagename = updatephoto
+				? "projimg"+generaterandomvidname()
+				: existingProject.mediaName.imageName;
+			const updateprojvideoname = updatevideo
+				? "projvid"+generaterandomvidname()
+				: existingProject.mediaName.videoName;
 
 			//console.log(req.files);
 			//console.log("The body is" );
@@ -273,20 +349,20 @@ exports.project_update_post = [
 			//console.log(JSON.stringify(req.body));
 
 			//s3 bucket video upload parameters
-			const s3projvideouploadparams = {
+			const s3projvideouploadparams = updatevideo ? {
 				Bucket: BUCKET_NAME,
 				Key: updateprojvideoname,
 				Body: updatevideo.buffer,
 				ContentType: updatevideo.mimetype		
-			}
+			} : null;
 
 			//s3 bucket image upload parameters
-			const s3projimageuploadparams = {
+			const s3projimageuploadparams = updatephoto ? {
 				Bucket: BUCKET_NAME,
 				Key: updateprojimagename,
 				Body: updatephoto.buffer,
 				ContentType: updatephoto.mimetype		
-			}
+			} : null;
 
 			//check for validation errors
 			const errors = validationResult(req);
@@ -297,24 +373,13 @@ exports.project_update_post = [
 
 
 			} else {
-				//delete video and image from s3 bucket
-				const delproject = await Project.findOne({_id: update_project_id}, 'mediaName').exec((err, updelresult) => {
-					if (err){
-						console.log(err);
-					}
-					else if (updelresult) {
-						const updelimgparams = {
-							Bucket: BUCKET_NAME,
-							Key: updelresult.mediaName.imageName
-						}
-						const updelvidparams = {
-							Bucket: BUCKET_NAME,
-							Key: updelresult.mediaName.videoName
-						}
-						controllerUtils.deletefroms3bucket(updelimgparams);
-						controllerUtils.deletefroms3bucket(updelvidparams);
-					}	
-				});
+				//Upload replacements before changing the database record.
+				if (s3projimageuploadparams) {
+					await controllerUtils.uploadtos3bucket(s3projimageuploadparams);
+				}
+				if (s3projvideouploadparams) {
+					await controllerUtils.uploadtos3bucket(s3projvideouploadparams);
+				}
 
 				//update object in database
 				const update_filter = {
@@ -341,6 +406,7 @@ exports.project_update_post = [
 						specialisation: req.body.projspecialisation,
 						projectDates,
 						checked: isChecked,
+						...buildCaseStudyFields(req.body),
 						mediaName: {
 							imageName:  updateprojimagename,
 							videoName: updateprojvideoname
@@ -354,9 +420,19 @@ exports.project_update_post = [
 					runValidators: true
 				});
 
-				//upload to s3 bucket
-				controllerUtils.uploadtos3bucket(s3projimageuploadparams);
-				controllerUtils.uploadtos3bucket(s3projvideouploadparams);
+				//Remove old media only after the replacement and database update succeed.
+				if (updatephoto && existingProject.mediaName.imageName) {
+					await controllerUtils.deletefroms3bucket({
+						Bucket: BUCKET_NAME,
+						Key: existingProject.mediaName.imageName
+					});
+				}
+				if (updatevideo && existingProject.mediaName.videoName) {
+					await controllerUtils.deletefroms3bucket({
+						Bucket: BUCKET_NAME,
+						Key: existingProject.mediaName.videoName
+					});
+				}
 				console.log("Media in S3 updated sucessfully");
 			}
 			res.redirect("/portfolio/project");
@@ -386,6 +462,57 @@ exports.project_detail = async(req, res, next) => {
 		console.log("Project Detail Error occurred: ", err);	
 	}
 	
+};
+
+// Display a published, shareable case study.
+exports.public_case_study = async (req, res, next) => {
+	try {
+		brand = await controllerUtils.getBrandName();
+		const project = await Project.findOne({
+			slug: req.params.slug,
+			status: "published"
+		})
+		.populate("author", "name")
+		.populate("skill", "name")
+		.populate("specialisation", "name")
+		.exec();
+
+		if (!project) return next(createError(404));
+
+		if (project.mediaName?.imageName) {
+			project.mediaUrl.imageUrl = await controllerUtils.signedurl(
+				BUCKET_NAME, project.mediaName.imageName, 3600
+			);
+		}
+		if (project.mediaName?.videoName) {
+			project.mediaUrl.videoUrl = await controllerUtils.signedurl(
+				BUCKET_NAME, project.mediaName.videoName, 3600
+			);
+		}
+
+		const relatedProjects = await Project.find({
+			_id: { $ne: project._id },
+			status: "published",
+			featuredRank: { $ne: null }
+		})
+		.sort({ featuredRank: 1 })
+		.limit(3)
+		.select("ptitle slug subtitle")
+		.exec();
+
+		return res.render("case_study", {
+			Title: `${project.ptitle} | Case Study`,
+			project,
+			relatedProjects,
+			brand1: brand,
+			meta_description: project.psummary,
+			og_url: `${req.protocol}://${req.get("host")}${project.url}`,
+			og_image: project.mediaUrl?.imageUrl,
+			current_year: new Date().getFullYear()
+		});
+	} catch (err) {
+		return next(err);
+	}
 };
 
 

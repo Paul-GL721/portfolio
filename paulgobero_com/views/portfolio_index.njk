@@ -34,12 +34,29 @@
         <section id="services-section" class="home-section services-section">
             <div class="container">
                 <div class="section-heading">
-                    <p class="eyebrow">Services</p>
-                    <h2>How I Can Help</h2>
-                    <p>I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations.</p>
+                    <p class="eyebrow">{{ index_data.service_section.eyebrow or "Services" }}</p>
+                    <h2>{{ index_data.service_section.heading or "How I Can Help" }}</h2>
+                    <p>{{ index_data.service_section.introduction or "I work across product delivery, systems integration, cloud deployment, and automation so teams can move from messy workflows to reliable digital operations." }}</p>
                 </div>
 
                 <div class="service-list">
+                    {% if index_data.services and index_data.services.length %}
+                        {% for service in index_data.services %}
+                            <article class="service-row">
+                                <span class="service-number">{% if loop.index < 10 %}0{% endif %}{{ loop.index }}</span>
+                                <div class="service-icon" aria-hidden="true"><i class="{{ service.icon or 'icon-layers' }}"></i></div>
+                                <div class="service-copy">
+                                    <h3>{{ service.title }}</h3>
+                                    <p>{{ service.description }}</p>
+                                    {% if service.tags and service.tags.length %}
+                                        <div class="service-tags">
+                                            {% for tag in service.tags %}<span>{{ tag }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
                     <article class="service-row">
                         <span class="service-number">01</span>
                         <div class="service-icon">
@@ -103,6 +120,7 @@
                             </div>
                         </div>
                     </article>
+                    {% endif %}
                 </div>
             </div>
         </section>
@@ -128,7 +146,9 @@
                                     <img src="{{ dindex.mediaUrl.imageUrl }}" alt="{{ dindex.ptitle }}">
                                     <div class="project-card-body">
                                         <h3>{{ dindex.ptitle }}</h3>
-                                        <p>{{ dindex.psummary | capitalize | urlize | safe | truncate(190, true, '...') }}</p>
+                                        <p>{{ dindex.psummary | truncate(190, true, '...') }}</p>
+                                        {% set project = dindex %}
+                                        {% include "reuse_project_metrics.njk" %}
                                         <div class="project-skill-list">
                                             {% for skll in dindex.skill %}
                                                 {% if loop.index <= 3 %}
@@ -136,7 +156,11 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </div>
-                                        <a href="#" class="project-modal-link project-card-link" data-project-id="{{ dindex._id }}">Read Case Study</a>
+                                        {% if dindex.slug and dindex.status == "published" %}
+                                            <a href="{{ dindex.url }}" class="project-card-link">Read Case Study</a>
+                                        {% else %}
+                                            <a href="#" class="project-modal-link project-card-link" data-project-id="{{ dindex._id }}">Read Case Study</a>
+                                        {% endif %}
                                     </div>
                                 </article>
 
@@ -155,12 +179,12 @@
                                                     <div class="container-fluid p-0">
                                                         <div class="mb-4">
                                                             <h5 class="fw-semibold text-secondary">Challenge</h5>
-                                                            <p class="fs-6 text-dark">{{ dindex.problemStatement | urlize | safe }}</p>
+                                                            <p class="fs-6 text-dark">{{ dindex.problemStatement }}</p>
                                                         </div>
 
                                                         <div class="mb-4">
                                                             <h5 class="fw-semibold text-secondary">Solution</h5>
-                                                            <p class="fs-6 text-dark">{{ dindex.solution | urlize | safe }}</p>
+                                                            <p class="fs-6 text-dark">{{ dindex.solution }}</p>
                                                         </div>
 
                                                         {% if dindex.mediaUrl.videoUrl %}
@@ -189,15 +213,15 @@
                                                             </p>
                                                         </div>
 
-                                                        {% if dindex.githubUrl or dindex.liveDemoUrl %}
+                                                        {% if dindex.githubUrl or dindex.livelinkUrl %}
                                                             <div class="mb-3">
                                                                 <h5 class="fw-semibold text-secondary">Project Links</h5>
                                                                 <p class="fs-6 text-dark project-modal-links">
                                                                     {% if dindex.githubUrl %}
-                                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank">View on GitHub</a>
+                                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank" rel="noopener noreferrer">View on GitHub</a>
                                                                     {% endif %}
-                                                                    {% if dindex.liveDemoUrl %}
-                                                                        <a href="{{ dindex.liveDemoUrl }}" class="text-primary fw-semibold" target="_blank">Live Demo</a>
+                                                                    {% if dindex.livelinkUrl %}
+                                                                        <a href="{{ dindex.livelinkUrl }}" class="text-primary fw-semibold" target="_blank" rel="noopener noreferrer">Live Demo</a>
                                                                     {% endif %}
                                                                 </p>
                                                             </div>
@@ -281,11 +305,17 @@
                         <p class="eyebrow">Contact</p>
                         <h2>Let us build something useful together.</h2>
                         <p class="contact-copy">
-                            Share the idea, workflow, integration, or product you are thinking about. I will get back to you and help shape the next practical step.
+                            Whether you are hiring or planning a system, share the opportunity, workflow, integration, or product you are thinking about.
                         </p>
-                        <div class="contact-note">
-                            <strong>Good fit for</strong>
-                            <span>New product builds, cloud moves, process automation, internal tools, and system integrations.</span>
+                        <div class="contact-paths">
+                            <article class="contact-note">
+                                <strong>Hiring for a technical role?</strong>
+                                <span>Share the role, team, location and the problems the person will help solve.</span>
+                            </article>
+                            <article class="contact-note">
+                                <strong>Need an operational system?</strong>
+                                <span>Describe the manual workflow, disconnected data or product challenge you want to improve.</span>
+                            </article>
                         </div>
                     </div>
                     <div class="col-lg-7">

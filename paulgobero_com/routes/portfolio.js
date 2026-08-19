@@ -10,6 +10,7 @@ const skill_controller = require("../controllers/skillController");
 const project_controller = require("../controllers/projectController");
 const login_controller = require("../controllers/loginController");
 const sitemap_controller = require("../controllers/sitemapController");
+const service_controller = require("../controllers/serviceController");
 
 				//........AUTHOR ROUTES.....//
 //Check if the application is healthy
@@ -20,6 +21,15 @@ router.get("/readiness", author_controller.readiness);
 router.get("/", author_controller.index);
 //Post contact page from portfolio home page
 router.post("/", author_controller.index_post);
+
+//........SERVICE ROUTES.....//
+router.get("/service/create", login_controller.verifyToken, service_controller.service_create_get);
+router.post("/service/create", login_controller.verifyToken, service_controller.service_create_post);
+router.get("/service/update", login_controller.verifyToken, service_controller.service_update_get);
+router.post("/service/update", login_controller.verifyToken, service_controller.service_update_post);
+router.post("/service/delete", login_controller.verifyToken, service_controller.service_delete_post);
+router.post("/service/section", login_controller.verifyToken, service_controller.service_section_update_post);
+router.get("/service", login_controller.verifyToken, service_controller.service_list);
 
 //Get request for creating author page
 router.get("/author/create", login_controller.verifyToken, author_controller.author_create_get);
@@ -102,6 +112,9 @@ router.post("/project/update", login_controller.verifyToken, project_controller.
 
 //Get request for one project
 router.get("/project/:id", project_controller.project_detail);
+
+//Public, shareable case study
+router.get("/projects/:slug", project_controller.public_case_study);
 
 //Get request for all projects
 router.get("/project", login_controller.verifyToken, project_controller.project_list);
