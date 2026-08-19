@@ -6,7 +6,6 @@ The platform allows portfolio owners to manage profiles, services, skills, speci
 
 It combines full-stack application development, cloud storage, automated testing, containerised environments, and CI/CD deployment into a single production-oriented system.
 
----
 
 ## The challenge
 
@@ -22,8 +21,6 @@ This works initially, but becomes difficult to maintain as the portfolio grows. 
 * Keeping content consistent across multiple pages
 
 The goal of this project was to design a reusable platform where portfolio content could evolve independently from the presentation layer while retaining proper administration, testing, deployment, and production controls.
-
----
 
 ## The solution
 
@@ -47,8 +44,6 @@ The platform also includes:
 
 Although the platform was initially created for my own professional portfolio, its architecture was deliberately designed to be reusable rather than tied to a single person's content.
 
----
-
 ## What the platform enables
 
 The system allows a portfolio owner to:
@@ -63,8 +58,6 @@ The system allows a portfolio owner to:
 * Manage SEO metadata and structured search-engine information
 * Validate application behaviour through automated tests
 * Move changes consistently from development to staging and production
-
----
 
 ## Engineering scope
 
@@ -97,7 +90,6 @@ This project demonstrates experience across the complete application lifecycle:
 * Deployment standardisation
 * Health and readiness checks
 
----
 
 ## Key capabilities
 
@@ -177,7 +169,6 @@ Testing includes:
 * Browser-based end-to-end tests
 * Docker-based testing environments
 
----
 
 # Architecture
 
@@ -252,7 +243,6 @@ MongoDB stores structured portfolio data, AWS S3 stores uploaded media, and an S
 
 Testing and containerisation support repeatable application environments, while Jenkins manages promotion through development, staging, and production workflows.
 
----
 
 # Key architecture decisions
 
@@ -262,7 +252,6 @@ Portfolio content is stored as structured MongoDB records instead of being embed
 
 This separates content from presentation and allows routine portfolio updates without modifying application code.
 
----
 
 ## Server-side rendering
 
@@ -276,7 +265,6 @@ For this project's requirements, server-side rendering provides:
 * Straightforward authentication
 * Direct integration between backend content and rendered pages
 
----
 
 ## External media storage
 
@@ -284,7 +272,6 @@ Uploaded media is stored in AWS S3 rather than relying solely on the local appli
 
 This makes deployments more portable and prevents uploaded content from depending on an individual application container.
 
----
 
 ## Draft and publishing workflow
 
@@ -292,7 +279,6 @@ Content can remain unpublished while it is being prepared.
 
 This prevents incomplete project case studies or service descriptions from appearing publicly before they are ready.
 
----
 
 ## Structured project case studies
 
@@ -310,13 +296,11 @@ The data model supports structured information such as:
 
 This makes the portfolio suitable for communicating both technical implementation and business impact.
 
----
 
 ## Environment separation
 
 Development, testing, staging, and production workflows are separated to reduce deployment risk and make application behaviour more predictable between environments.
 
----
 
 # Technology stack
 
@@ -354,7 +338,6 @@ Development, testing, staging, and production workflows are separated to reduce 
 * Git
 * Multi-environment deployment workflows
 
----
 
 # Project structure
 
@@ -372,7 +355,6 @@ jenkins-scripts/   CI/CD test and branch-promotion scripts
 configs/           Environment and database configuration
 ```
 
----
 
 # Requirements
 
@@ -389,7 +371,6 @@ For the container workflow:
 * Docker
 * Docker Compose
 
----
 
 # Local installation
 
@@ -415,7 +396,6 @@ npm run devstart
 
 The configured `NODE_PORT` determines the application port.
 
----
 
 # Environment configuration
 
@@ -498,7 +478,6 @@ The Docker development environment additionally uses:
 configs/.env.dev
 ```
 
----
 
 # Docker development environment
 
@@ -532,7 +511,6 @@ Stop the environment using:
 docker compose -f devdocker-compose.yml down
 ```
 
----
 
 # Testing
 
@@ -546,7 +524,6 @@ npm run test:portfolio-content
 
 This covers reusable service and project case-study models and templates without requiring the complete application database environment.
 
----
 
 ## Unit and integration tests
 
@@ -556,7 +533,6 @@ Run the main test suite with:
 npm run test:unit
 ```
 
----
 
 ## Docker test environment
 
@@ -573,8 +549,6 @@ Application:   3002
 MongoDB:       27018
 Mongo Express: 8082
 ```
-
----
 
 # Administration
 
@@ -599,8 +573,6 @@ A published project requires a unique slug and becomes available at:
 ```text
 /portfolio/projects/{slug}
 ```
-
----
 
 # Health and readiness checks
 
@@ -676,7 +648,6 @@ to promote approved application files while preserving staging-specific infrastr
 
 Direct local merges into `staging` should therefore be avoided unless intentionally bypassing the automated workflow.
 
----
 
 # Database compatibility
 
@@ -688,7 +659,6 @@ Existing project records do not need to be deleted when new case-study fields ar
 
 Database backups should be taken before substantial staging or production deployments.
 
----
 
 # Security considerations
 
@@ -705,7 +675,6 @@ The project includes several controls intended for normal application security a
 
 Secrets and environment files must never be committed to the repository.
 
----
 
 # Future improvements
 
@@ -721,7 +690,6 @@ Potential future enhancements include:
 * Additional deployment observability
 * Improved media processing and optimisation
 
----
 
 # What this project demonstrates
 
@@ -742,7 +710,6 @@ The work involved:
 
 It reflects the type of work I enjoy most: understanding an operational problem and delivering a practical solution across software engineering, infrastructure, deployment, and ongoing system operation.
 
----
 
 # License
 
