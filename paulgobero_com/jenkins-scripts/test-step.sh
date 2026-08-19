@@ -22,6 +22,10 @@ done
 
 echo "Running tests"
 
+echo "Running focused portfolio content tests"
+docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test:portfolio-content
+
+echo "Running full unit test suite"
 docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test:unit-inside-docker
 
 echo "Finished test-step.sh"
