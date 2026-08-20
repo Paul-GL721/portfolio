@@ -638,13 +638,29 @@ production
 
 for release.
 
-Jenkins uses:
+Jenkins uses `jenkins-scripts/promote-code-step.sh` to promote approved
+application files through `development -> staging -> production -> master`.
+The promotion helper preserves the Docker, Compose, Ansible, and image-build
+files owned by each target branch.
+
+Pull requests are verified on the isolated `public-ci` Jenkins agent without
+repository, deployment, Docker registry, or GitHub credentials. Trusted branch
+promotions use the Jenkins SSH credential
+`e833b0c8-199a-4d54-a272-a021d20c622b` only inside their promotion stages.
+
+Staging and production continue to publish separate images:
 
 ```text
-jenkins-scripts/merge-code-step.sh
+paulgl721/nodejs-portfolio:stagingV<VERSION>
+paulgl721/nodejs-portfolio:prodappV<VERSION>
 ```
 
-to promote approved application files while preserving staging-specific infrastructure and excluding development-only testing resources.
+Before enabling builds for a public repository, configure the GitHub Branch
+Source plugin so fork pull requests use the trusted target-branch Jenkinsfile.
+The `public-ci` worker must be isolated and must not have deployment network
+access, Docker registry credentials, SSH keys, or other Jenkins credentials.
+Keep `development`, `staging`, `production`, and `master` protected, and grant
+the Jenkins promotion identity only the branch access required by this flow.
 
 Direct local merges into `staging` should therefore be avoided unless intentionally bypassing the automated workflow.
 
