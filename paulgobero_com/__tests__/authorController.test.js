@@ -21,10 +21,10 @@ function imageToString(filepath) {
     return imageString;
 }
 var authenticatedSession;
-beforeAll(function (done) {
-  testutils.testconnection();
+beforeAll(async () => {
+  await testutils.resetTestDatabase();
   //create an owner author document
-  Author.create([
+  await Author.create([
     { name: {
         first: 'Tommy',
         middle: 'Long',
@@ -69,7 +69,7 @@ beforeAll(function (done) {
       },
       imageName: imageToString('../public/images/img/project1.jpg')
     }
-  ])
+  ]);
   //1. Create a sample specialisation and save it to the database
   sampleAuthor = new Author({ name: {
     first: 'testJohnny',
@@ -93,18 +93,16 @@ beforeAll(function (done) {
     },
     imageName: imageToString('../public/images/img/project1.jpg')
   });
-  sampleAuthor.save();
+  await sampleAuthor.save();
 
   testSession = session(myApp);
-  testSession.post('/portfolio/login')
+  await testSession.post('/portfolio/login')
     .send({ email: "test5@gmail.com", password: "test567" })
-    .expect(200)
-    .end(function (err) {
-        if (err) return done(err);
-        authenticatedSession = testSession;
-        return done();
-    })
+    .expect(200);
+  authenticatedSession = testSession;
 });
+
+afterAll(testutils.closeTestDatabase);
 
 
 describe('Acessing authenticated pages', function () {
@@ -1025,4 +1023,3 @@ describe('Tests projects per Individual (exports.index)', () => {
     },
   ]
 }*/
-

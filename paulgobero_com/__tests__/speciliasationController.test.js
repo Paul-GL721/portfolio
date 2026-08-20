@@ -23,10 +23,10 @@ function imageToString(filepath) {
     return imageString;
 }
 var authenticatedSession;
-beforeAll(function (done) {
-    testutils.testconnection()
+beforeAll(async () => {
+    await testutils.resetTestDatabase();
     //create an owner author document
-    Author.create([
+    await Author.create([
         { name: {
             first: 'Tommy',
             middle: 'Long',
@@ -69,21 +69,19 @@ beforeAll(function (done) {
             },
             imageName: imageToString('../public/images/img/project1.jpg')
         }
-    ])
+    ]);
     //1. Create a sample specialisation and save it to the database
     sampleSpecialisation = new Specialisation({ name: 'PostFrontend', description: 'Ability to perform frontend designs' });
-    sampleSpecialisation.save();
+    await sampleSpecialisation.save();
 
     testSession = session(myApp);
-    testSession.post('/portfolio/login')
+    await testSession.post('/portfolio/login')
         .send({ email: "test1@gmail.com", password: "test567" })
-        .expect(200)
-        .end(function (err) {
-            if (err) return done(err);
-            authenticatedSession = testSession;
-            return done();
-        })
+        .expect(200);
+    authenticatedSession = testSession;
 });
+
+afterAll(testutils.closeTestDatabase);
 
 describe('Acessing authenticated pages', function () {
     it('Get the specialisation form', function (done) {

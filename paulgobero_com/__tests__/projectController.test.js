@@ -30,11 +30,11 @@ function imageToString(filepath) {
     return imageString;
 }
 
-beforeAll(function (done) {
-  testutils.testconnection();
+beforeAll(async () => {
+  await testutils.resetTestDatabase();
 
   //create an owner author document
-  Author.create([
+  await Author.create([
     { name: {
         first: 'Tommy',
         middle: 'Long',
@@ -79,12 +79,12 @@ beforeAll(function (done) {
       },
       imageName: imageToString('../public/images/img/project1.jpg')
     }
-  ])
+  ]);
   sampleSkill = new Skill({ name: 'DevOps', description: 'Ability to deploy to apps', imageName: 'testcreateimgfilename.jpg' });
-  sampleSkill.save();
+  await sampleSkill.save();
 
   sampleSpecialisation = new Specialisation({ name: 'PostFrontend', description: 'Ability to perform frontend designs' });
-  sampleSpecialisation.save();
+  await sampleSpecialisation.save();
 
   //1. Create a sample project and save it to the database
   sampleProject = new Project({
@@ -109,18 +109,16 @@ beforeAll(function (done) {
       videoName: imageToString('../public/videos/video1.mp4')
     }
   });
-  sampleProject.save();
+  await sampleProject.save();
 
   testSession = session(myApp);
-  testSession.post('/portfolio/login')
+  await testSession.post('/portfolio/login')
     .send({ email: "test4@gmail.com", password: "test567" })
-    .expect(200)
-    .end(function (err) {
-        if (err) return done(err);
-        authenticatedSession = testSession;
-        return done();
-    })
+    .expect(200);
+  authenticatedSession = testSession;
 });
+
+afterAll(testutils.closeTestDatabase);
 
 
 describe('Acessing authenticated pages', function () {

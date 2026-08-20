@@ -23,11 +23,11 @@ function imageToString(filepath) {
     return imageString;
 }
 
-beforeAll(function (done) {
-  testutils.testconnection();
+beforeAll(async () => {
+  await testutils.resetTestDatabase();
 
   //create an owner author document
-  Author.create([
+  await Author.create([
     { name: {
         first: 'Tommy',
         middle: 'Long',
@@ -72,18 +72,16 @@ beforeAll(function (done) {
       },
       imageName: imageToString('../public/images/img/project1.jpg')
     }
-  ])
+  ]);
 
   testSession = session(myApp);
-  testSession.post('/portfolio/login')
+  await testSession.post('/portfolio/login')
     .send({ email: "test3@gmail.com", password: "test567" })
-    .expect(200)
-    .end(function (err) {
-        if (err) return done(err);
-        authenticatedSession = testSession;
-        return done();
-    })
+    .expect(200);
+  authenticatedSession = testSession;
 });
+
+afterAll(testutils.closeTestDatabase);
 
 
 describe('Login Post Route', function () {
