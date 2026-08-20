@@ -29,7 +29,7 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
 
    //connection to mongo container
    try {
-      if (!db) {
+      if (!db || mongoose.connection.readyState === 0) {
          db = await mongoose.connect(mongoDBurl, options); 
       }
       dbState.setReady();
@@ -39,11 +39,35 @@ const database_connection = async (db_name, db_user, db_passwd, db_host, db_port
    } catch (error) {
       dbState.setNotReady();
       console.error('FAILED TO CONNECT');
-      console.error('MongoDBurl is', mongoDBurl);
-      console.error('Error connecting to MongoDB', error);
+      console.error('MongoDB target is', {
+         host: db_host,
+         port: db_port,
+         database: db_name,
+         environment: env
+      });
+      console.error('Error connecting to MongoDB', {
+         name: error.name,
+         code: error.code,
+         message: error.message
+      });
       return false; // Connection failed
    }
 };
+
+database_connection.close = async () => {
+   if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+   }
+
+   if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+   }
+
+   db = null;
+   dbState.setNotReady();
+};
+
 let disconnectTimer = null;
 
 mongoose.connection.on('disconnected', () => {
