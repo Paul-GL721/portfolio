@@ -23,9 +23,16 @@ const result = dotenv.config({ path: __dirname + '/' + envFilePath });
 //load env variables from docker-compose
 //const result = dotenv.config();
 
-if (result.error) {
+if (result.error && result.error.code !== 'ENOENT') {
     throw result.error;
 }
-const { parsed:envs } = result;
-module.exports = envs;
 
+// Docker Compose and Jenkins inject configuration through process.env. The
+// local dotenv file is optional in those environments, and injected values
+// take precedence when both sources are available.
+const envs = {
+    ...(result.parsed || {}),
+    ...process.env
+};
+
+module.exports = envs;
