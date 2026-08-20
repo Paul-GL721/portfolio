@@ -1,31 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-echo "Starting test-step.sh"
+COMPOSE_FILE="./paulgobero_com/testdocker-compose.yml"
 
+cleanup() {
+    docker-compose -f "${COMPOSE_FILE}" down --volumes --remove-orphans
+}
+
+trap cleanup EXIT
+
+echo "Checking Docker and Docker Compose"
 docker-compose --version
 docker version
-echo Using docker-compose to build and test
 
-echo "Starting docker-compose"
+echo "Building the test images"
+docker-compose -f "${COMPOSE_FILE}" build
 
-docker-compose -f ./paulgobero_com/testdocker-compose.yml up --build -d
-#npm install 
-#npm run test
-
-echo "Waiting for docker-compose to finish"
-
-until docker-compose -f ./paulgobero_com/testdocker-compose.yml ps | grep testapp; do
-sleep 1
-done
-
-echo "Running tests"
+echo "Starting the test database"
+docker-compose -f "${COMPOSE_FILE}" up -d testmongodb
 
 echo "Running focused portfolio content tests"
-docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test:portfolio-content
+docker-compose -f "${COMPOSE_FILE}" run --rm testapp npm run test:portfolio-content
 
-echo "Running full unit test suite"
-docker-compose -f ./paulgobero_com/testdocker-compose.yml run testapp npm run test:unit-inside-docker
+echo "Running the full unit test suite"
+docker-compose -f "${COMPOSE_FILE}" run --rm testapp \
+    bash -c './wait-for testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker'
 
-echo "Finished test-step.sh"
+echo "All tests passed"
