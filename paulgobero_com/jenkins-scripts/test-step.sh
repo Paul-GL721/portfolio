@@ -25,6 +25,6 @@ docker-compose -f "${COMPOSE_FILE}" run --rm testapp npm run test:portfolio-cont
 
 echo "Running the full unit test suite"
 docker-compose -f "${COMPOSE_FILE}" run --rm testapp \
-    bash -c './wait-for testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker'
+    bash -c './wait-for testmongodb:27017 --timeout=60 -- npm run test:unit-inside-docker'
 
 echo "All tests passed"

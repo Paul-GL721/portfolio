@@ -14,7 +14,7 @@ services:
         depends_on:
         
             - testmongodb 
-        command: bash -c "./wait-for testmongodb:27017 --timeout=600 -- npm run test:unit-inside-docker"
+        command: bash -c "./wait-for testmongodb:27017 --timeout=60 -- npm run test:unit-inside-docker"
         networks:
             - testnetwork
 
