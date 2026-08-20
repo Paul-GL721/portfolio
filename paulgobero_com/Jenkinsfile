@@ -1,336 +1,382 @@
-
-//define variables
-def staged_files
-def prod_staged_files
+def stagedFiles = 0
+def productionFiles = 0
+def masterFiles = 0
 
 pipeline {
-	//run script on different agents
-	agent none
+    // Configure fork pull requests to use the trusted target-branch Jenkinsfile.
+    // The public-ci label must point to an isolated worker with no deployment access.
+    agent none
 
-	//reusable env variables
-	environment {
-		VERSION="3.0.${BUILD_NUMBER}"
-		BASE_DIRECTORY='paulgobero_com'
-		REMOTE_USER='deployuser1'
-		REMOTE_DIR='STAGE_PORTFOLIO'
-		REMOTE_FOLDER='paulgobero_com'
-		STACKNAME='stagingportfolio'
-		GIT_REPO='git@github.com:Paul-GL721/portfolio.git'
-		GH_TOKENCRED=credentials('jenkins-post-pr-portfolio')
-		EMAIL_TO='portfolioteam@paulgobero.com'
-	}
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+        skipStagesAfterUnstable()
+    }
 
-	stages {
-		stage('1. Run unit Tests') {
-			//Execute tests if its development branch
-			when {
-				branch 'development'
-			}
-			//use jenkins testing node
-			agent {
-				label 'buildnode'
-			}
-			environment {
-                // Set the ENV_FILE_PATH environment variable based on Jenkins workspace
-                ENV_FILE_PATH = "/glustervol/portfolio/paulgobero/configs/.env.test" 
+    environment {
+        VERSION = "3.0.${BUILD_NUMBER}"
+        BASE_DIRECTORY = 'paulgobero_com'
+        REMOTE_USER = 'deployuser1'
+        REMOTE_DIR = 'STAGE_PORTFOLIO'
+        REMOTE_FOLDER = 'paulgobero_com'
+        STACKNAME = 'stagingportfolio'
+        GIT_REPO = 'git@github.com:Paul-GL721/portfolio.git'
+        EMAIL_TO = 'portfolioteam@paulgobero.com'
+    }
+
+    stages {
+        stage('1. Verify public pull request') {
+            when {
+                changeRequest()
             }
-			
-			steps {
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					// Fetch the latest state of the remote branches
-					sh "git config --global user.email 'lwangapaul23@gmail.com'"
-					sh "git config --global user.name 'jenkinsagent2'"
-					sh 'git fetch origin'
-					// Perform a dry run merge
-					sh 'git merge --no-commit origin/development'
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                dir(env.BASE_DIRECTORY) {
+                    sh 'npm ci'
+                    sh '''
+                        set -eu
+                        if [ "${CHANGE_TARGET:-}" = "development" ]; then
+                            test -f __tests__/service.test.js
+                            test -f __tests__/caseStudy.test.js
+                            npm run test:portfolio-content
+                        elif [ -f __tests__/service.test.js ] && [ -f __tests__/caseStudy.test.js ]; then
+                            npm run test:portfolio-content
+                        else
+                            echo "Focused content tests are not packaged on the ${CHANGE_TARGET:-release} branch."
+                        fi
+                    '''
+                    sh 'node --check app.js'
+                    sh 'find controllers models routes utils -type f -name "*.js" -print0 | xargs -0 -n1 node --check'
+                }
+                sh 'git diff --check'
+            }
+            post {
+                always {
+                    deleteDir()
+                }
+            }
+        }
 
-					// Check if the merge was successful
-					script {
-						def mergeExitCode = sh script: 'git ls-files --unmerged | wc -l', returnStatus: true
-						if (mergeExitCode == 0) {
-							// Start the required services defined in the Docker Compose file
-							sh "docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml build"
-							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml up -d'
+        stage('2. Test development') {
+            when {
+                allOf {
+                    branch 'development'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            environment {
+                ENV_FILE_PATH = '/glustervol/portfolio/paulgobero/configs/.env.test'
+            }
+            steps {
+                sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/test-step.sh'
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: "${env.BASE_DIRECTORY}/coverage/**/*", allowEmptyArchive: true
+                }
+            }
+        }
 
-							// Capture the exit code of the tests
-							def testExitCode = sh(script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true)
+        stage('3. Promote development to staging') {
+            when {
+                allOf {
+                    branch 'development'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+                    script {
+                        sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/promote-code-step.sh development staging ci/promote-development-${VERSION}'
+                        stagedFiles = sh(
+                            script: 'git diff --cached --numstat | wc -l',
+                            returnStdout: true
+                        ).trim().toInteger()
 
-							//def testExitCode = sh script: 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml exec -T testapp bash -c "echo $?"', returnStatus: true
-							if (testExitCode != 0) {
-								echo "Tests failed. Reverted the changes."
-								// Reverse the merge if tests failed
-								sh 'git reset --hard HEAD@{1}'
-								// Push the changes back to the development branch to revert the merge
-								sh 'git push --force origin development'
-								currentBuild.result = 'FAILURE' // Mark the build as failed
-							}
+                        if (stagedFiles > 0) {
+                            sh 'git commit -m "chore(staging): promote development ${VERSION}"'
+                            sh 'git push ${GIT_REPO} HEAD:staging'
+                        } else {
+                            echo 'Staging already contains the current development application code.'
+                        }
+                    }
+                }
+            }
+        }
 
-							// Stop and remove the containers after the tests
-							sh 'docker-compose -f ./${BASE_DIRECTORY}/testdocker-compose.yml down'
-						} else {
-							echo "Merge failed. Please resolve conflicts and try again."
-							currentBuild.result = 'FAILURE' // Mark the build as failed
-						}
-					}
-				}
-			}
-		}
+        stage('4. Build staging image') {
+            when {
+                allOf {
+                    branch 'staging'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                echo "Building staging image paulgl721/nodejs-portfolio:stagingV${env.VERSION}"
+                sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh ${VERSION}'
+            }
+        }
 
-		stage('2. Merge development and staging branches') {
-			//Execute if its the develpment branch
-			when {
-				branch 'development'
-			}
-			//where to execute
-			agent {
-				label 'buildnode'
-			}
-			steps {
-				echo '..................Merging if anyfiles have changed................'
-				//with github credentials stored in jenkins server
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						//make the build script executable
-						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
-						//build the image
-						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
+        stage('5. Deploy staging') {
+            when {
+                allOf {
+                    branch 'staging'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'deploynode'
+            }
+            steps {
+                sh """ansible-playbook ./${env.BASE_DIRECTORY}/ansible/portfolio-playbook.yml \\
+                    -i ./${env.BASE_DIRECTORY}/ansible/inventory.ini \\
+                    --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" \\
+                    -v"""
+            }
+        }
 
-						/*//Uncomment if they are changes made and commited to the staging branch directly
-						sh('git stash')
-						sh('git pull')
-						sh('git push ${GIT_REPO}')*/
+        stage('6. Verify staging deployment') {
+            when {
+                allOf {
+                    branch 'staging'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'deploynode'
+            }
+            steps {
+                retry(6) {
+                    sleep time: 10, unit: 'SECONDS'
+                    sh 'curl --fail --silent --show-error --max-time 15 https://stagingwww.paulgobero.com/portfolio/readiness > /dev/null'
+                }
+            }
+        }
 
-						//Find the number of staged files 
-						staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
+        stage('7. Approve production promotion') {
+            when {
+                allOf {
+                    branch 'staging'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            input {
+                message 'Staging is healthy. Promote this release to production?'
+                ok 'Promote'
+            }
+            steps {
+                echo "Production promotion approved for ${env.VERSION}."
+            }
+        }
 
-						//if staged_files are more than zero, commit the files and push to remote repo
-						if(staged_files > 0) {
-							echo "They are ${staged_files} staged files"
-							sh('git commit -m "Merged from development branch: Build version ${VERSION} " ')
-							sh('git push ${GIT_REPO}')
-						}
-						else {
-							echo "There no commits to make to staging"
-						}
-					}
-				}
-			}
-		}
+        stage('8. Promote staging to production') {
+            when {
+                allOf {
+                    branch 'staging'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+                    script {
+                        sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/promote-code-step.sh staging production ci/promote-staging-${VERSION}'
+                        productionFiles = sh(
+                            script: 'git diff --cached --numstat | wc -l',
+                            returnStdout: true
+                        ).trim().toInteger()
 
-		stage('3. Build and tag staging image') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//build the docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				echo '..............Building and Publishing Docker Images................'
-				echo 'Creating a taged image'
+                        if (productionFiles > 0) {
+                            sh 'git commit -m "chore(production): promote staging ${VERSION}"'
+                            sh 'git push ${GIT_REPO} HEAD:production'
+                        } else {
+                            echo 'Production already contains the current staging application code.'
+                        }
+                    }
+                }
+            }
+        }
 
-				//make the build script executable
-				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
+        stage('9. Prepare master pull request') {
+            when {
+                allOf {
+                    branch 'production'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                sshagent(credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
+                    script {
+                        sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/promote-code-step.sh production master tmpproductionV${VERSION}'
+                        masterFiles = sh(
+                            script: 'git diff --cached --numstat | wc -l',
+                            returnStdout: true
+                        ).trim().toInteger()
 
-				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
-			}
-		}
+                        if (masterFiles > 0) {
+                            sh 'git commit -m "chore(release): prepare production ${VERSION}"'
+                            sh 'git push --force-with-lease ${GIT_REPO} HEAD:tmpproductionV${VERSION}'
+                            env.CREATE_MASTER_PR = 'true'
+                        } else {
+                            echo 'Master already contains the current production application code.'
+                            env.CREATE_MASTER_PR = 'false'
+                        }
+                    }
+                }
+            }
+        }
 
-		stage('4. Deploy to staging EC2 instances') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//Using ansible to deploy on an EC2 instance
-			agent {
-				label 'deploynode'
-			}
-			steps {
-				echo '..................Deploying with ansible................'
-				script{
-					//run ansible-playbook
-					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}
-			}
-		}
+        stage('10. Create master pull request') {
+            when {
+                allOf {
+                    branch 'production'
+                    expression {
+                        env.CREATE_MASTER_PR == 'true'
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'jenkins-post-pr-portfolio',
+                    usernameVariable: 'GH_USERNAME',
+                    passwordVariable: 'GH_TOKEN'
+                )]) {
+                    sh '''
+                        set -eu
+                        gh --version
+                        if gh pr list --base master --head "tmpproductionV${VERSION}" --state open --json number --jq 'length' | grep -q '^0$'; then
+                            gh pr create \\
+                                --title "Production release ${VERSION}" \\
+                                --body "Staging release ${VERSION} passed deployment verification and is ready to merge into master." \\
+                                --base master \\
+                                --head "tmpproductionV${VERSION}"
+                        else
+                            echo "An open pull request already exists for tmpproductionV${VERSION}."
+                        fi
+                    '''
+                }
+            }
+        }
 
-		stage('5. Create a pull request or Not') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//build the docker image and push to dockerhub
-			agent any
-			steps {
-				echo '..........Would you like to create a Pull Request to Production?........'
-				input 'would you like to create a pull request?'
-				
-			}
-		}
+        stage('11. Build production image') {
+            when {
+                allOf {
+                    branch 'master'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'buildnode'
+            }
+            environment {
+                REMOTE_DIR = 'PORTFOLIO'
+                STACKNAME = 'portfolio'
+            }
+            steps {
+                echo "Building production image paulgl721/nodejs-portfolio:prodappV${env.VERSION}"
+                sh 'bash ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh ${VERSION}'
+            }
+        }
 
-		stage('6. Merge staging code into production branch') {
-			//Execute if its the staging branch
-			when {
-				branch 'staging'
-			}
-			//build staging docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				//Use github credentials stored in jenkins server
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						echo '..............Creating temporary pull request branch................'
-						//make the script executable
-						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh'
+        stage('12. Deploy production') {
+            when {
+                allOf {
+                    branch 'master'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'deploynode'
+            }
+            environment {
+                REMOTE_DIR = 'PORTFOLIO'
+                STACKNAME = 'portfolio'
+            }
+            steps {
+                sh """ansible-playbook ./${env.BASE_DIRECTORY}/ansible/portfolio-playbook.yml \\
+                    -i ./${env.BASE_DIRECTORY}/ansible/inventory.ini \\
+                    --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" \\
+                    -v"""
+            }
+        }
 
-						//build the image
-						sh '''./${BASE_DIRECTORY}/jenkins-scripts/merge-code-step.sh '''
+        stage('13. Verify production deployment') {
+            when {
+                allOf {
+                    branch 'master'
+                    not {
+                        changeRequest()
+                    }
+                }
+            }
+            agent {
+                label 'deploynode'
+            }
+            steps {
+                retry(6) {
+                    sleep time: 10, unit: 'SECONDS'
+                    sh 'curl --fail --silent --show-error --max-time 15 https://www.paulgobero.com/portfolio/readiness > /dev/null'
+                }
+            }
+        }
+    }
 
-						/*//Uncomment if they are changes made and commited to the production branch directly
-						sh('git stash')
-						sh('git pull')
-						sh('git push ${GIT_REPO}')*/
-
-						//Find the number of staged filess
-						prod_staged_files = sh(script: 'git diff --cached --numstat | wc -l', returnStdout: true) as Integer
-
-						//if they are (prod_staged_files) more than zero, commit the files and push to remote repo
-						if(prod_staged_files > 0) {
-							echo "They are ${prod_staged_files} staged files from staging branch"
-							sh('git commit -m "Merged from staging branch: Build version ${VERSION} " ')
-							sh('git push ${GIT_REPO}')
-						}
-						else {
-							echo "There no commits to make"
-						}
-					}
-				}
-			}
-		}
-
-		stage('7. Create production temporary branch') {
-			//Execute if its the production branch
-			when {
-				branch 'production'
-			}
-			//build the docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				//with github credentials stored in jenkins server
-				sshagent (credentials: ['e833b0c8-199a-4d54-a272-a021d20c622b']) {
-					script {
-						echo '..............Creating temporary pull request branch................'
-						echo 'Creating temp branch'
-
-						//make the pr-branch executable
-						sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh'
-
-						//build the image
-						sh '''./${BASE_DIRECTORY}/jenkins-scripts/pr-branches.sh '''+VERSION+''' '''
-					}
-				}
-			}
-		}
-
-		stage('8. Create pull request from production to master branch') {
-			//Execute if its the production branch
-			when {
-				branch 'production'
-			}
-			//Use a docker image with gitcli installed
-			agent {
-				label 'buildnode'
-			}
-			steps {
-				script {
-					echo '.............Creating pull request on production branch..........'
-					//login, check githubcli pr status, create message and logout
-					sh 'gh --version'					
-					sh 'echo \$GH_TOKENCRED_PSW|gh auth login --hostname github.com --with-token'
-					//sh 'echo $GH_TOKENCRED_PSW | gh auth login --hostname github.com --with-token'
-					sh 'gh auth status'					
-					echo '.............Creating pull request on master branch..........'
-					sh 'gh pr create --title "Production branch v$VERSION was successful" --body "Production branch version$VERSION was successfully tested and deployed; needs to be merged into master" --base master --head tmpproductionV$VERSION'					
-					sh 'gh auth logout --hostname github.com'
-				}				
-			}
-		}
-
-		stage('9. Build, tag, and push to remote storage') {
-			//define env variables
-			environment {
-				REMOTE_DIR='PORTFOLIO'
-				STACKNAME='portfolio'
-			}
-			///Execute if its the production branch
-			when {
-				branch 'master'
-			}
-			//build the docker image and push to dockerhub
-			agent {
-				//build on build agent
-				label 'buildnode'
-			}
-			steps {
-				echo '..............Building and Publishing Docker Images................'
-				echo 'Creating a production taged image'
-
-				//make the build script executable
-				sh 'chmod +x ./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh'
-
-				//build the image
-				sh '''./${BASE_DIRECTORY}/jenkins-scripts/build-step.sh '''+VERSION+''' '''
-			}
-		}
-
-
-		stage('10. Deploy to production EC2 instance') {
-			//define env variables
-			environment {
-				REMOTE_DIR='PORTFOLIO'
-				STACKNAME='portfolio'
-			}
-			//Execute if its the staging branch
-			when {
-				branch 'master'
-			}
-			//Using ansible to deploy on an EC2 instance
-			agent {
-				label 'deploynode'
-			}
-			steps {
-				echo '..................Deploying with ansible................'
-				script{
-					//run production ansible-playbook
-					sh "ansible-playbook ./${BASE_DIRECTORY}/ansible/portfolio-playbook.yml -i ./${BASE_DIRECTORY}/ansible/inventory.ini --extra-vars=\"{'REMOTE_USER': '${env.REMOTE_USER}', 'GIT_REPO': '${env.GIT_REPO}', 'REMOTE_DIR': '${env.REMOTE_DIR}', 'REMOTE_FOLDER': '${env.REMOTE_FOLDER}', 'STACKNAME': '${env.STACKNAME}', 'VERSION': '${env.VERSION}'}\" -vvv"
-				}
-			}
-		}
-	}
-
-
-	post {
-		success {
-			echo '...........JOB EXECUTED SUCCESSFULLY...........'
-			emailext body: 'Your code successfully executed. Check console output at $BUILD_URL to view the results. ',
-			subject: 'Stable staging build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER', 
-            to: "${EMAIL_TO}" 
-		}
-
-		failure {
-			echo '...........JOB WAS UNSUCCESSFULL................'
-			emailext body: 'The commit you made failed. Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}',
-			subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER', 
-            to: "${EMAIL_TO}" 
-		}
-	} 
+    post {
+        success {
+            echo 'Job executed successfully.'
+            emailext(
+                body: 'The pipeline completed successfully. Check $BUILD_URL for details.',
+                subject: 'Successful portfolio pipeline: $PROJECT_NAME - #$BUILD_NUMBER',
+                to: env.EMAIL_TO
+            )
+        }
+        failure {
+            echo 'Job failed.'
+            emailext(
+                body: 'The pipeline failed. Check $BUILD_URL for details.\n\n${CHANGES}\n\n${BUILD_LOG, maxLines=100, escapeHtml=false}',
+                subject: 'Failed portfolio pipeline: $PROJECT_NAME - #$BUILD_NUMBER',
+                to: env.EMAIL_TO
+            )
+        }
+    }
 }

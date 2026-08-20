@@ -10,14 +10,45 @@ const path = require('path');
 const mongoose = require('mongoose');
 const async = require("async"); //run async functions
 
+function assertSafeTestDatabase() {
+    const databaseName = String(TEST_DB_NAME || '').toLowerCase();
+
+    if (!databaseName.startsWith('test')) {
+        throw new Error(`Refusing to reset non-test database: ${TEST_DB_NAME || '<undefined>'}`);
+    }
+}
+
 async function testconnection() {  
-    try {
-        await database_connection(TEST_DB_NAME, TEST_DB_USER, TEST_DB_PASSWORD, TEST_DB_HOST, TEST_DB_PORT );
-        console.log('Is Test database connected?');
-        console.log('Is connected to port', TEST_DB_PORT )
-    } catch {
-        console.log('Cannot connect to test database');
-    }   
+    assertSafeTestDatabase();
+
+    const connected = await database_connection(
+        TEST_DB_NAME,
+        TEST_DB_USER,
+        TEST_DB_PASSWORD,
+        TEST_DB_HOST,
+        TEST_DB_PORT
+    );
+
+    if (!connected) {
+        throw new Error('Cannot connect to test database');
+    }
+
+    return true;
+}
+
+async function resetTestDatabase() {
+    await testconnection();
+    await mongoose.connection.dropDatabase();
+}
+
+async function closeTestDatabase() {
+    assertSafeTestDatabase();
+
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.dropDatabase();
+    }
+
+    await database_connection.close();
 }
 
 async function beforeAllTests() {
@@ -29,7 +60,7 @@ async function beforeAllTests() {
         const imageString = imageData.toString('base64');
         return imageString;
     }
-    isConnected = await testconnection();
+    await resetTestDatabase();
 
     //create two specilisation documents
     await Spec.create([
@@ -96,10 +127,7 @@ async function afterAllTests() {
     //await Author.collection.drop(); 
     //await mongoose.connection.dropCollection(Project);
 
-    // Drop the database
-    await mongoose.connection.dropDatabase();
-    // Close the Mongoose connection
-    await mongoose.connection.close();
+    await closeTestDatabase();
    
 };
 
@@ -121,4 +149,11 @@ const loginAndNavigate = async (email, password) => {
     }
 }
 
-module.exports = { beforeAllTests, afterAllTests, loginAndNavigate, testconnection };
+module.exports = {
+    beforeAllTests,
+    afterAllTests,
+    loginAndNavigate,
+    testconnection,
+    resetTestDatabase,
+    closeTestDatabase
+};
