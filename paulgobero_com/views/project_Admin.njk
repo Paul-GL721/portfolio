@@ -1,6 +1,6 @@
 
 {% extends "portfolio_base.njk" %}
-{% set navbarurl = {id: "createProjpage", about: "#about_section", projects: "#project_section", skills: "#skill_section", contact: "#contact_section" } %}
+{% set navbarurl = {id: "createProjpage", about: "/portfolio/#about_section", services: "/portfolio/#services-section", projects: "/portfolio/#project_section", skills: "/portfolio/#skill_section", contact: "/portfolio/#contact_section", blog: "https://blog.paulgobero.com" } %}
 {% set posturl = {submiturl: "project/update", skillurl: "project/api/skills", specurl: "project/api/specialisations", authorurl: "project/api/authors", deletemodalid: "projdeleteConfirmationModal", confirmdelete: "projconfirmDeleteButton"  } %}
 {% set objarray = data.authorzproj %}
 
@@ -72,7 +72,10 @@
                                             {% endfor %}
                                         </ul>
                                     </td>
-                                    <td class="w-10p"><a title="Edit Row"><i class="icon-pencil tableicons projectedit" style="padding-left: 25px;padding-right: 0px;"></i></a></td>
+                                    <td class="w-10p">
+                                        <a href="{{ project.url }}" title="Preview project"><i class="icon-eye tableicons"></i></a>
+                                        <a title="Edit project"><i class="icon-pencil tableicons projectedit" style="padding-left: 12px;padding-right: 0px;"></i></a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

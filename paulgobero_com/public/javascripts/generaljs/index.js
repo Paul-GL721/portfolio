@@ -5,12 +5,6 @@ $(document).ready(function() {
   //submitForm('#contactForm', '#contactmodal', '/portfolio');
   //submitForm('#authorcreateid', '#createAuthormodal', 'create' );
 
-  $('.project-modal-link').on('click', function(event) {
-    event.preventDefault();
-    var projectId = $(this).data('project-id');
-    $('#projectmodal-' + projectId).modal()
-  });
-
   function submitForm(formId, modalId, posturl) {
     $(formId).ajaxForm({
       url: posturl,

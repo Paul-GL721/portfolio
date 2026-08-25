@@ -10,6 +10,8 @@ const async = require("async"); //run async functions
 //s3 file upload
 const { BUCKET_NAME } = require('../configs/config');
 const controllerUtils = require("../utils/controllerUtils");
+const authSession = require("../utils/authSession");
+const projectAccess = require("../utils/projectAccess");
 
 //generate random videofile name
 const generaterandomvidname = () => {
@@ -84,6 +86,87 @@ const caseStudyValidators = [
 	body("projarchitectureurl").optional({ checkFalsy: true }).isURL(),
 	body("projarticle").optional({ checkFalsy: true }).isURL()
 ];
+
+const addSignedMediaUrls = async project => {
+	if (project.mediaName?.imageName) {
+		project.mediaUrl.imageUrl = await controllerUtils.signedurl(
+			BUCKET_NAME, project.mediaName.imageName, 3600
+		);
+	}
+	if (project.mediaName?.videoName) {
+		project.mediaUrl.videoUrl = await controllerUtils.signedurl(
+			BUCKET_NAME, project.mediaName.videoName, 3600
+		);
+	}
+};
+
+const formatMonthYear = value => value
+	? new Intl.DateTimeFormat("en", { month: "short", year: "numeric", timeZone: "UTC" }).format(value)
+	: null;
+
+const formatProjectPeriod = projectDates => {
+	const start = formatMonthYear(projectDates?.startDate);
+	const end = formatMonthYear(projectDates?.endDate);
+
+	if (!start) return null;
+	return `${start} – ${end || "Present"}`;
+};
+
+const serializeStructuredData = value => JSON.stringify(value).replace(/</g, "\\u003c");
+
+const renderCaseStudy = async (req, res, project, { preview = false } = {}) => {
+	const brandName = await controllerUtils.getBrandName();
+	await addSignedMediaUrls(project);
+
+	const relatedProjects = preview ? [] : await Project.find({
+		_id: { $ne: project._id },
+		status: "published",
+		featuredRank: { $ne: null }
+	})
+	.sort({ featuredRank: 1 })
+	.limit(3)
+	.select("ptitle slug subtitle status")
+	.exec();
+
+	const canonicalPath = projectAccess.canonicalProjectPath(project);
+	const canonicalUrl = `${req.protocol}://${req.get("host")}${canonicalPath}`;
+	const structuredData = {
+		"@context": "https://schema.org",
+		"@type": "CreativeWork",
+		name: project.ptitle,
+		description: project.psummary,
+		url: canonicalUrl,
+		creator: {
+			"@type": "Person",
+			name: brandName?.brandName || "Portfolio owner"
+		}
+	};
+	if (project.mediaUrl?.imageUrl) structuredData.image = project.mediaUrl.imageUrl;
+	if (project.projectType) structuredData.genre = project.projectType;
+	if (project.skill?.length) structuredData.keywords = project.skill.map(skill => skill.name).filter(Boolean);
+	if (preview) {
+		res.set("X-Robots-Tag", "noindex, nofollow");
+	}
+
+	return res.render("case_study", {
+		Title: `${project.ptitle} | ${preview ? "Draft Preview" : "Case Study"}`,
+		project,
+		relatedProjects,
+		brand1: brandName,
+		meta_title: `${project.ptitle} | ${preview ? "Draft Preview" : "Case Study"}`,
+		meta_description: project.psummary,
+		full_description: project.psummary,
+		meta_robots: preview ? "noindex, nofollow" : "index, follow",
+		og_type: "article",
+		og_url: canonicalUrl,
+		og_image: project.mediaUrl?.imageUrl,
+		structured_data_json: serializeStructuredData(structuredData),
+		current_year: new Date().getFullYear(),
+		isPreview: preview,
+		projectPeriod: formatProjectPeriod(project.projectDates),
+		operationalSince: formatMonthYear(project.operationalProof?.operationalSince)
+	});
+};
 
 //On GET, display project form
 exports.project_create_get = async(req, res, next) => {
@@ -440,34 +523,42 @@ exports.project_update_post = [
 	},
 ];
 
-//On GET, show individual project
-exports.project_detail = async(req, res, next) => {
+// Show the canonical case study or an authenticated preview for unpublished work.
+exports.project_detail = async (req, res, next) => {
 	try {
-		brand = await controllerUtils.getBrandName();
-		const detailproject = await Project.findById(req.params.id, {})
-		.populate('author', 'name')
-		.populate('skill', 'name')
-		.populate('specialisation', 'name')
-		.exec( async function (err, details_projects) {
-			if (err) {
-				return next(err);
+		const project = await Project.findById(req.params.id)
+			.populate("author", "name")
+			.populate("skill", "name")
+			.populate("specialisation", "name")
+			.exec();
+
+		if (!project) return next(createError(404));
+
+		if (!projectAccess.canViewProject(project, req.userinfo)) {
+			if (!req.userinfo) {
+				return res.redirect(authSession.buildLoginUrl(req, {
+					expired: Boolean(res.locals.sessionExpired)
+				}));
 			}
-			details_projects.mediaUrl.videoUrl = await controllerUtils.signedurl( BUCKET_NAME, details_projects.mediaName.videoName, 3600 );
-			details_projects.mediaUrl.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, details_projects.mediaName.imageName, 3600 );
-			
-			//res.json(details_projects);
-			res.render( "project_detail", { Title: "Project details", detailprojects: details_projects, brand1: brand });
+
+			return res.status(403).send({ message: "Only administrators can preview unpublished projects" });
+		}
+
+		if (projectAccess.isPublished(project) && project.slug) {
+			return res.redirect(301, projectAccess.canonicalProjectPath(project));
+		}
+
+		return renderCaseStudy(req, res, project, {
+			preview: !projectAccess.isPublished(project)
 		});
-	} catch {
-		console.log("Project Detail Error occurred: ", err);	
+	} catch (err) {
+		return next(err);
 	}
-	
 };
 
 // Display a published, shareable case study.
 exports.public_case_study = async (req, res, next) => {
 	try {
-		brand = await controllerUtils.getBrandName();
 		const project = await Project.findOne({
 			slug: req.params.slug,
 			status: "published"
@@ -479,37 +570,7 @@ exports.public_case_study = async (req, res, next) => {
 
 		if (!project) return next(createError(404));
 
-		if (project.mediaName?.imageName) {
-			project.mediaUrl.imageUrl = await controllerUtils.signedurl(
-				BUCKET_NAME, project.mediaName.imageName, 3600
-			);
-		}
-		if (project.mediaName?.videoName) {
-			project.mediaUrl.videoUrl = await controllerUtils.signedurl(
-				BUCKET_NAME, project.mediaName.videoName, 3600
-			);
-		}
-
-		const relatedProjects = await Project.find({
-			_id: { $ne: project._id },
-			status: "published",
-			featuredRank: { $ne: null }
-		})
-		.sort({ featuredRank: 1 })
-		.limit(3)
-		.select("ptitle slug subtitle")
-		.exec();
-
-		return res.render("case_study", {
-			Title: `${project.ptitle} | Case Study`,
-			project,
-			relatedProjects,
-			brand1: brand,
-			meta_description: project.psummary,
-			og_url: `${req.protocol}://${req.get("host")}${project.url}`,
-			og_image: project.mediaUrl?.imageUrl,
-			current_year: new Date().getFullYear()
-		});
+		return renderCaseStudy(req, res, project);
 	} catch (err) {
 		return next(err);
 	}

@@ -2,7 +2,7 @@
 <html>
 <head>
     {% block title %}
-        <title>{{ meta_author or 'Portfolio' }} | {{ meta_description or 'Full Stack Developer & DevOps Engineer' }}</title>
+        <title>{{ meta_title or ((meta_author or 'Portfolio') + ' | ' + (meta_description or 'Full Stack Developer & DevOps Engineer')) }}</title>
     {% endblock %}
 
     {% block mobileview %}
@@ -17,16 +17,16 @@
         <meta name="keywords"
         content="{{ meta_keywords or 'full stack developer, devops, nodejs, react, kubernetes, ci/cd, aws' }}">
         <meta name="author" content="{{ meta_author or 'Portfolio Owner' }}">
-        <meta name="robots" content="index, follow">
+        <meta name="robots" content="{{ meta_robots or 'index, follow' }}">
     {% endblock %}
 
     {% block opengraph %}
         <!-- Open Graph -->
         <meta property="og:title"
-        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}-{{ meta_description }}">
+        content="{{ meta_title or ((meta_author or 'Full Stack Developer & DevOps Engineer') + ' - ' + (meta_description or 'Portfolio')) }}">
         <meta property="og:description"
         content="{{ full_description or meta_description or 'Building scalable web applications and DevOps pipelines.' }}">
-        <meta property="og:type" content="website">
+        <meta property="og:type" content="{{ og_type or 'website' }}">
         <meta property="og:url" content="{{ (og_url or hostname or 'https://example.com') | safe }}">
         <meta property="og:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
     {% endblock %}
@@ -35,7 +35,7 @@
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title"
-        content="{{ meta_author or 'Full Stack Developer & DevOps Engineer' }}">
+        content="{{ meta_title or meta_author or 'Full Stack Developer & DevOps Engineer' }}">
         <meta name="twitter:description"
         content="{{ full_description or meta_description or 'Experienced in Node.js, React, and cloud infrastructure.' }}">
         <meta name="twitter:image" content="{{ og_image or '/images/img/default-og.jpg' }}">
@@ -101,15 +101,15 @@
             <div class="row" id="{{ navbarurl.id | default("navid", true) }}">
                 <div class="col">
                     <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean">
-                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.contact }}">{{ brand1.brandName | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                        <div class="container-fluid"><a class="navbar-brand" href="{{ navbarurl.home | default('/portfolio/', true) }}">{{ brand1.brandName | default("brandName", true) }}</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                             <div class="collapse navbar-collapse" id="navcol-1">
                                 <ul class="navbar-nav ml-auto">
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.about }}">About</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.services }}">Services</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.projects }}">Projects</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.skills }}">Skills</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.contact }}">Contact</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.blog }}">Blog</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.about | default('/portfolio/#about_section', true) }}">About</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.services | default('/portfolio/#services-section', true) }}">Services</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.projects | default('/portfolio/#project_section', true) }}">Projects</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.skills | default('/portfolio/#skill_section', true) }}">Skills</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.contact | default('/portfolio/#contact_section', true) }}">Contact</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ navbarurl.blog | default('https://blog.paulgobero.com', true) }}">Blog</a></li>
                                 </ul>
                                 {% block createOwnerbutton %}      {% endblock %}
                                 {% block loginbutton %}
@@ -136,9 +136,9 @@
                     <div class="row">
                         <div class="col-lg-6 text-center text-lg-left my-auto h-100">
                             <ul class="list-inline mb-2">
-                                <li class="list-inline-item"><a href="{{ navbarurl.about }}">About</a></li>
+                                <li class="list-inline-item"><a href="{{ navbarurl.about | default('/portfolio/#about_section', true) }}">About</a></li>
                                 <li class="list-inline-item"><span>⋅</span></li>
-                                <li class="list-inline-item"><a href="{{ navbarurl.contact }}">Contact</a></li>
+                                <li class="list-inline-item"><a href="{{ navbarurl.contact | default('/portfolio/#contact_section', true) }}">Contact</a></li>
                                 <li class="list-inline-item"><span>⋅</span></li>
                             </ul>
                             <p class="text-muted small mb-4 mb-lg-0">© {{ brand1.brandName | default("brandName", true) }} {{ current_year or 2026 }}. All Rights Reserved.</p>
