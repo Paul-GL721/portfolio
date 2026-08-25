@@ -17,7 +17,14 @@
                                 <div class="card">
                                     <div class="card-body text-center d-flex flex-column align-items-center">
                                         <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"><img class="rounded-circle" width="80" height="80" src="assets/img/testimonials-2.jpg"></div>
+                                        {% if sessionExpired %}
+                                            <div class="alert alert-warning" role="alert">Your session expired after 20 minutes of inactivity. Sign in to continue.</div>
+                                        {% endif %}
+                                        {% if loginError %}
+                                            <div class="alert alert-danger" role="alert">{{ loginError }}</div>
+                                        {% endif %}
                                         {% include "reuse_login.njk" %}
+                                            {% if nextPath %}<input type="hidden" name="next" value="{{ nextPath }}">{% endif %}
                                             <p class="text-muted"><a href="#">Forgot your password?</a></p>
                                             <div class="font-weight-bold text-danger loginerrors" id="loginErrors"></div>
                                             <div class="mb-3"><button class="btn btn-success" id="loginbtn" type="submit">Login</button>
