@@ -77,7 +77,13 @@ exports.index = async (req, res, next) => {
 							.exec(callback);
 						},
 						author_all_projects(callback) {
-							Project.find({ author: author_id}).sort({ createdAt: -1 })
+							Project.find({
+								author: author_id,
+								$or: [
+									{ status: "published" },
+									{ checked: true, status: { $exists: false } }
+								]
+							}).sort({ createdAt: -1 })
 							.populate('author', 'name')
 							.populate({
 								path: 'skill',

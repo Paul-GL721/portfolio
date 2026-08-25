@@ -1,6 +1,6 @@
 
 {% extends "portfolio_base.njk" %}
-{% set navbarurl = {id: "createProjpage", about: "/#about_section", projects: "/#project_section", skills: "/#skill_section", contact: "/#contact_section" } %}
+{% set navbarurl = {id: "createProjpage", about: "/portfolio/#about_section", services: "/portfolio/#services-section", projects: "/portfolio/#project_section", skills: "/portfolio/#skill_section", contact: "/portfolio/#contact_section", blog: "https://blog.paulgobero.com" } %}
 {% set posturl = { submiturl: "create", skillurl: "api/skills", specurl: "api/specialisations", authorurl: "api/authors" } %}
 {% set objarray = projectauthors %}
 
@@ -27,5 +27,4 @@
         </div>
     </section>
 {% endblock %}
-
 

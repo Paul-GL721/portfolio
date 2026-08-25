@@ -502,6 +502,103 @@
   color: var(--ink);
 }
 
+.case-study-preview {
+  background: #fff4d6;
+  border-bottom: 1px solid #e4a33a;
+  color: #5c430d;
+  margin-top: 4.5rem;
+  padding: 0.85rem 0;
+  position: relative;
+  z-index: 2;
+}
+
+.case-study-preview .container {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.case-study-preview strong {
+  text-transform: uppercase;
+}
+
+.case-study-preview a {
+  color: #5c430d;
+  font-weight: 800;
+  margin-left: auto;
+}
+
+.case-study-preview + .case-study-hero {
+  padding-top: 5rem;
+}
+
+.case-study-modal-titlebar {
+  align-items: flex-start;
+  border-bottom: 1px solid #dde6eb;
+  padding: 1.25rem 1.5rem;
+}
+
+.case-study-modal-titlebar .modal-title {
+  color: #17202a;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  padding-right: 1rem;
+}
+
+.case-study-modal-hero {
+  background: linear-gradient(120deg, #f4f8f9 0%, #fff 70%, #edf6f5 100%);
+  padding: 2rem 2.5rem;
+}
+
+.case-study-modal-hero .case-study-subtitle,
+.case-study-modal-hero .case-study-summary {
+  max-width: 850px;
+}
+
+.case-study-modal-cover {
+  margin: 0;
+  padding: 0 2.5rem;
+}
+
+.case-study-modal-cover img {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  box-shadow: 0 14px 36px rgba(23, 32, 42, 0.14);
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.case-study-modal-layout {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  padding: 3rem 2.5rem 1rem;
+}
+
+.case-study-modal .case-study-content section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+}
+
+.case-study-modal .case-study-sidebar {
+  top: 1rem;
+}
+
+.case-study-modal-footer {
+  border-top: 1px solid #dde6eb;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+}
+
+@media (min-width: 1200px) {
+  .modal-dialog.modal-xl {
+    max-width: 1140px;
+  }
+}
+
 .case-study-hero {
   background: linear-gradient(120deg, #f4f8f9 0%, #fff 70%, #edf6f5 100%);
   padding: 9rem 0 4rem;
@@ -707,12 +804,26 @@
     grid-template-columns: 1fr;
   }
 
+  .case-study-modal-layout {
+    grid-template-columns: 1fr;
+  }
+
   .case-study-sidebar {
     position: static;
   }
 }
 
 @media (max-width: 767.98px) {
+  .case-study-modal-hero,
+  .case-study-modal-layout {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .case-study-modal-cover {
+    padding: 0 1.25rem;
+  }
+
   .related-project-grid {
     grid-template-columns: 1fr;
   }

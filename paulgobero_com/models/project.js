@@ -97,7 +97,7 @@ const ProjectSchema = new Schema({
 
 //Add virtual property
 ProjectSchema.virtual("url").get(function() {
-    return this.slug
+    return this.slug && this.status === "published"
         ? `/portfolio/projects/${this.slug}`
         : `/portfolio/project/${this._id}`;
 });
