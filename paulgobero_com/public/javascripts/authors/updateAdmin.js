@@ -18,7 +18,7 @@ $(document).ready(function(){
 		$("#linkeninurl").val(linkedinUrl.replace(/&#x2F;/g, '/'));
 		$("#div1").attr("src", data.imageUrl);
 		$("#authorUpdateid").val(data._id);
-		$("#authorpassword").val(data.password);
+		$("#authorpassword").val("");
 		$("#authorstatus").val(data.authorStatus);
 		$("#authorRole").val(data.authorRole);
 	}
