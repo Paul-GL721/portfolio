@@ -1,54 +1,76 @@
 
 const Author = require("../models/author"); //author model
-const Project = require("../models/project"); //project model
-const jwt = require("jsonwebtoken"); 
-const {  S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { BUCKET_NAME, BUCKET_REGION, ACCESS_KEY, SECRET_ACCESS_KEY, AUTH_SECRET_KEY } = require('../configs/config');
+const { BUCKET_NAME } = require('../configs/config');
 const controllerUtils = require("../utils/controllerUtils");
-
-let brand
+const authSession = require('../utils/authSession');
 
 //Display login page
 exports.login = async (req, res, next) => {
-	res.render("login", { Title: "Login" });	
+	const nextPath = authSession.safeNextPath(req.query.next);
+
+	if (req.userinfo && nextPath) {
+		return res.redirect(nextPath);
+	}
+
+	res.render("login", {
+		Title: "Login",
+		nextPath,
+		sessionExpired: req.query.expired === '1'
+	});
 };
 
-let refresh_jwt_token;
 //Post login page (authentication)
 exports.login_post = async (req, res, next) => {
 	try {
-		brand = await controllerUtils.getBrandName();
+		const brand = await controllerUtils.getBrandName();
 		//get the email and password from the login form
 		const username = req.body.email;
 		const passwd = req.body.password;
+		const nextPath = authSession.safeNextPath(req.body.next || req.query.next);
 
 		//find the user in the database
-		const availuser = await Author.findOne({email: username, password:passwd })
-		.exec(async (err, availresult) => {
-			if (err){
-				console.log(err);
+		const availuser = await Author.findOne({ email: username }).select('+password');
+		const passwordMatches = availuser && await availuser.verifyPassword(passwd);
+
+		if (!passwordMatches) {
+			if (req.is('application/json')) {
+				return res.status(401).json({ status: false });
 			}
-			//if the user is available, generate a JWT, load the admin dashboard
-			else if (availresult) {
-				const accessexpiry = new Date(Date.now() + 15 * 60 * 1000); //  10m from now
-				//create an access token for the user
-				const jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '10m' } );
-				//create a refresh token for the user
-				refresh_jwt_token = jwt.sign({ user:availresult.brandName, role:availresult.authorRole }, AUTH_SECRET_KEY, { expiresIn: '1h' } );
-				//create image signed Urls
-				availresult.imageUrl = await controllerUtils.signedurl( BUCKET_NAME, availresult.imageName, 3600 );  
-				res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token}, { expires: accessexpiry, path: '/' });
-				//res.json({ availresult});
-				res.render("admin_dashboard", { Title: "Adminstrator Dashboard", admin_data: availresult, brand1: brand });
-			}
-			//else the user is not available: send an error response
-			else {
-				res.json({ status: false});
-			}
+
+			return res.status(401).render("login", {
+				Title: "Login",
+				nextPath,
+				loginError: 'Wrong email address or password.'
+			});
+		}
+
+		if (availuser.passwordNeedsUpgrade()) {
+			const legacyPassword = availuser.password;
+			const upgradedPassword = await Author.hashPassword(passwd);
+			await Author.updateOne(
+				{ _id: availuser._id, password: legacyPassword },
+				{ $set: { password: upgradedPassword } }
+			);
+			availuser.password = upgradedPassword;
+		}
+
+		authSession.issueSessionCookie(res, availuser);
+		availuser.password = undefined;
+		res.locals.isAuthenticated = true;
+		res.locals.currentUser = availuser.brandName;
+
+		if (nextPath) {
+			return res.redirect(nextPath);
+		}
+
+		availuser.imageUrl = await controllerUtils.signedurl(BUCKET_NAME, availuser.imageName, 3600);
+		res.render("admin_dashboard", {
+			Title: "Administrator Dashboard",
+			admin_data: availuser,
+			brand1: brand
 		});
-	} catch {
-		console.log("An Error occurred: ", err);
+	} catch (error) {
+		next(error);
 	}	
 };
 
@@ -88,8 +110,7 @@ exports.demouseravailablity = async (req, res, next) => {
 
 //logout user
 exports.logout = (req, res, next) => {
-	//'expires' attribute is set to a date in the past (January 1, 1970) which causes the cookie to expire immediately
-	res.cookie('jwtTokens', '', { expires: new Date(0) });
+	authSession.clearSessionCookie(res);
 	res.redirect("/portfolio"); //redirect to home page
 }
 
@@ -98,54 +119,31 @@ exports.demouserinfo = async (req, res, next) => {
 	res.send("NOT IMPLEMENTED: GET demouserlogin page");	
 };
 
-//Middleware for authentication
-exports.verifyToken = (req, res, next) => {
-	const cookietoken = req.cookies.jwtTokens;
-	const accessToken = cookietoken.jwt
-	
-	//console.log("The accessToken token is");
-	//console.log(accessToken);
-	if (!accessToken) {
-		return res.status(401).json({ message: 'Unauthorised' });
-	} else {
-		try {
-			//verifiy token using secret key
-			const decodedToken = jwt.verify(accessToken, AUTH_SECRET_KEY);
-			//attach decoded token to userinfo object
-			req.userinfo = decodedToken;
-			//call the next middleware
-			next();
-		} catch (err) {
-			//return error if token is inalid
-			res.status(403).send({ message: 'Invalid Access Token' })
-		}
-	}
+exports.sessionContext = (req, res, next) => {
+	authSession.restoreAuthentication(req, res);
+	next();
 }
 
-//refresh user access token
-exports.refreshToken = (req, res, next) => {
-	//get the refreshtoken from the request body
-	const accessToken = req.body.accessToken;
-	const refreshToken = req.body.refreshToken;
-	
-	//verify the original refresh token sent
-	//if valid, generate a new token with the same parameters.
-	if (!refreshToken) {
-		return res.status(401).json({ message: 'Unauthorised Refresh Token' });
-	} else {
-		try {
-			//verifiy token using secret key
-			const decodedToken = jwt.verify(refreshToken, AUTH_SECRET_KEY);
-			//req.userinfo = decodedToken;
-			//create an access token for the user
-			const jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '15m' } );
-			//create a refresh token for the user
-			refresh_jwt_token = jwt.sign({ user:decodedToken.user, role:decodedToken.role }, AUTH_SECRET_KEY, { expiresIn: '2h' } );
-			//res.cookie('jwtTokens',{ jwt:jwt_token, reftok:refresh_jwt_token }, { path: '/' });
-			res.json({jwt:jwt_token, reftok:refresh_jwt_token });
-		} catch (err) {
-			//return error if token is inalid
-			res.status(403).send({ message: 'Invalid Refresh Token' })
-		}
+//Middleware for authentication
+exports.verifyToken = (req, res, next) => {
+	if (!req.authenticationChecked) {
+		authSession.restoreAuthentication(req, res);
 	}
-} 
+
+	if (req.userinfo) {
+		return next();
+	}
+
+	const loginUrl = authSession.buildLoginUrl(req, {
+		expired: Boolean(res.locals.sessionExpired)
+	});
+
+	if ((req.method === 'GET' || req.method === 'HEAD') && !req.xhr) {
+		return res.redirect(loginUrl);
+	}
+
+	return res.status(401).json({
+		message: res.locals.sessionExpired ? 'Session expired' : 'Authentication required',
+		loginUrl
+	});
+}

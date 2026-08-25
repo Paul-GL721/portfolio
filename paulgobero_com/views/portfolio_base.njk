@@ -113,8 +113,11 @@
                                 </ul>
                                 {% block createOwnerbutton %}      {% endblock %}
                                 {% block loginbutton %}
-                                    <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/portfolio/login"> Admin login</a>
-                                    <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/portfolio/logout">Sign out</a>
+                                    {% if isAuthenticated %}
+                                        <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/portfolio/logout">Sign out</a>
+                                    {% else %}
+                                        <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/portfolio/login">Admin login</a>
+                                    {% endif %}
                                 {% endblock %}
                                 {% block createDemoUserbutton %}      {% endblock %}                     
                             </div>
@@ -125,7 +128,7 @@
         {% endblock %}
 
         {% block content %} <!--Will contain the main block content -->  {% endblock %}
-        {% block loginoutModal %} {% include "reuse_loginout_modal.njk" %}  {% endblock %}
+        {% block loginoutModal %}{% endblock %}
 
         {% block footer %}
             <footer class="bg-light footer">
