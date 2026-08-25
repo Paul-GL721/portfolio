@@ -50,12 +50,30 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+  const status = err.status || 500;
+
+  if (status === 404) {
+    return res.status(404).render('404', {
+      Title: 'Page not found | Portfolio',
+      requestedPath: req.path,
+      meta_title: 'Page not found | Portfolio',
+      meta_description: 'The requested portfolio page could not be found.',
+      full_description: 'The requested portfolio page could not be found.',
+      meta_robots: 'noindex, nofollow',
+      brand1: {
+        brandName: res.locals.meta_author || 'Portfolio',
+        socialmedia: res.locals.social || {}
+      },
+      current_year: new Date().getFullYear()
+    });
+  }
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+  res.status(status);
   res.render('error');
 });
 
