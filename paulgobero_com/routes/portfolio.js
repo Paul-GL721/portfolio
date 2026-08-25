@@ -12,6 +12,10 @@ const login_controller = require("../controllers/loginController");
 const sitemap_controller = require("../controllers/sitemapController");
 const service_controller = require("../controllers/serviceController");
 
+// Restore a valid session, renew its 20-minute idle timeout, and expose the
+// authentication state to templates before handling portfolio routes.
+router.use(login_controller.sessionContext);
+
 				//........AUTHOR ROUTES.....//
 //Check if the application is healthy
 router.get("/health", author_controller.health);
@@ -65,9 +69,6 @@ router.get("/login", login_controller.login);
 
 //Post login page
 router.post("/login", login_controller.login_post);
-
-//Get request to refresh JWToken
-router.post("/refreshlogin", login_controller.refreshToken);
 
 //Logout user
 router.get("/logout", login_controller.logout);

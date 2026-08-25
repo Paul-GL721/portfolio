@@ -605,14 +605,11 @@ exports.author_update_post = [
 				const update_author_id = req.body.authorUpdateid;
 				console.log ("The author update id is"+ update_author_id);
 
-				const existingAuthor = await Author.findById(update_author_id, "imageName");
+				const existingAuthor = await Author.findById(update_author_id);
 				if (!existingAuthor) {
 					return res.status(404).send({ message: "Author not found" });
 				}
 
-				const update_filter = {
-					_id: update_author_id 
-				};
 				const update_authorz = {
 					name: {
 						first: req.body.authorfirstname,
@@ -627,7 +624,6 @@ exports.author_update_post = [
 					hostName: req.body.authorhostname,
 					yourKeyword: req.body.authorkeywords,
 					email: req.body.authoremail,
-					password: req.body.authorpassword,
 					authorStatus: req.body.authorstatus,
 					authorRole: req.body.authorRole,
 					socialmedia: {
@@ -649,12 +645,11 @@ exports.author_update_post = [
 					update_authorz.imageName = upprofilepic;
 				}
 
-				await Author.findOneAndUpdate(update_filter, { $set: update_authorz }, {
-					new: true,
-					upsert: true,
-					rawResult: true,
-					runValidators: true
-				});
+				existingAuthor.set(update_authorz);
+				if (req.body.authorpassword) {
+					existingAuthor.password = req.body.authorpassword;
+				}
+				await existingAuthor.save();
 
 				if (updates3uploadparams) {
 					if (existingAuthor.imageName) {
