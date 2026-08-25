@@ -156,81 +156,29 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </div>
-                                        {% if dindex.slug and dindex.status == "published" %}
-                                            <a href="{{ dindex.url }}" class="project-card-link">Read Case Study</a>
-                                        {% else %}
-                                            <a href="#" class="project-modal-link project-card-link" data-project-id="{{ dindex._id }}">Read Case Study</a>
-                                        {% endif %}
+                                        <a href="#projectmodal-{{ dindex._id }}" class="project-modal-link project-card-link" data-toggle="modal" data-target="#projectmodal-{{ dindex._id }}" aria-controls="projectmodal-{{ dindex._id }}" aria-haspopup="dialog">Read Case Study</a>
                                     </div>
                                 </article>
 
                                 <div class="modal fade" id="projectmodal-{{ dindex._id }}" tabindex="-1" aria-labelledby="projectModalLabel-{{ dindex._id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                                         <div class="modal-content shadow-lg border-0 rounded-3">
-                                            <div class="modal-header border-0 pb-0">
-                                                <h3 class="modal-title fw-bold text-primary" id="projectModalLabel-{{ dindex._id }}">
+                                            <div class="modal-header case-study-modal-titlebar">
+                                                <h2 class="modal-title" id="projectModalLabel-{{ dindex._id }}">
                                                     {{ dindex.ptitle }}
-                                                </h3>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+                                                </h2>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                             </div>
 
-                                            <div class="modal-body">
-                                                <section class="showcase">
-                                                    <div class="container-fluid p-0">
-                                                        <div class="mb-4">
-                                                            <h5 class="fw-semibold text-secondary">Challenge</h5>
-                                                            <p class="fs-6 text-dark">{{ dindex.problemStatement }}</p>
-                                                        </div>
-
-                                                        <div class="mb-4">
-                                                            <h5 class="fw-semibold text-secondary">Solution</h5>
-                                                            <p class="fs-6 text-dark">{{ dindex.solution }}</p>
-                                                        </div>
-
-                                                        {% if dindex.mediaUrl.videoUrl %}
-                                                            <div class="text-center my-4">
-                                                                <video class="border rounded shadow-sm w-100" controls src="{{ dindex.mediaUrl.videoUrl }}"></video>
-                                                            </div>
-                                                        {% endif %}
-
-                                                        <div class="mb-4">
-                                                            <h5 class="fw-semibold text-secondary">My Role</h5>
-                                                            <ul class="fs-6 text-left text-dark">
-                                                                {% for item in dindex.role.split('\n') %}
-                                                                    {% if item.trim() %}
-                                                                        <li>{{ item.trim() }}</li>
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            </ul>
-                                                        </div>
-
-                                                        <div class="mb-4">
-                                                            <h5 class="fw-semibold text-secondary">Skills Applied</h5>
-                                                            <p class="fs-6 text-dark">
-                                                                {% for skll in dindex.skill %}
-                                                                    <span class="skill-pill">{{ skll.name }}</span>
-                                                                {% endfor %}
-                                                            </p>
-                                                        </div>
-
-                                                        {% if dindex.githubUrl or dindex.livelinkUrl %}
-                                                            <div class="mb-3">
-                                                                <h5 class="fw-semibold text-secondary">Project Links</h5>
-                                                                <p class="fs-6 text-dark project-modal-links">
-                                                                    {% if dindex.githubUrl %}
-                                                                        <a href="{{ dindex.githubUrl }}" class="text-primary fw-semibold" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-                                                                    {% endif %}
-                                                                    {% if dindex.livelinkUrl %}
-                                                                        <a href="{{ dindex.livelinkUrl }}" class="text-primary fw-semibold" target="_blank" rel="noopener noreferrer">Live Demo</a>
-                                                                    {% endif %}
-                                                                </p>
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                </section>
+                                            <div class="modal-body p-0">
+                                                {% set project = dindex %}
+                                                {% include "reuse_case_study_modal.njk" %}
                                             </div>
 
-                                            <div class="modal-footer border-0 pt-0">
+                                            <div class="modal-footer case-study-modal-footer">
+                                                {% if dindex.slug and dindex.status == "published" %}
+                                                    <a href="{{ dindex.url }}" class="btn btn-primary">Open full case study</a>
+                                                {% endif %}
                                                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                                             </div>
                                         </div>

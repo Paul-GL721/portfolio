@@ -1,7 +1,7 @@
 
 {% extends "portfolio_base.njk" %}
 {% set posturl = {submiturl: "/portfolio/author/create" } %}
-{% set navbarurl = {about: "/#about_section", projects: "/#project_section", contact: "/#contact_section" } %}
+{% set navbarurl = {about: "/portfolio/#about_section", services: "/portfolio/#services-section", projects: "/portfolio/#project_section", skills: "/portfolio/#skill_section", contact: "/portfolio/#contact_section", blog: "https://blog.paulgobero.com" } %}
 
 {% block title %}<title>{{ Title }}</title> {% endblock %}
 
@@ -47,5 +47,4 @@
         </div>
     </section>
 {% endblock %}
-
 
