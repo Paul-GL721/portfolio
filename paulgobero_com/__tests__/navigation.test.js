@@ -30,6 +30,26 @@ describe("Portfolio navigation", () => {
     expect(html).not.toContain('href="/portfolio/project#project_section"');
   });
 
+  test("renders confidential projects when optional table values are absent", () => {
+    expect(() => env.render("project_Admin.njk", {
+      Title: "Admin Project",
+      brand1: { brandName: "Portfolio", socialmedia: {} },
+      data: { authorzproj: [] },
+      abtprojects: [{
+        _id: "project-id",
+        ptitle: "Confidential platform",
+        psummary: "A project without public links.",
+        problemStatement: "The workflow was manual.",
+        role: "Designed and delivered the platform.",
+        mediaUrl: { imageUrl: "", videoUrl: "" },
+        skill: [],
+        author: [],
+        specialisation: [],
+        url: "/portfolio/project/project-id"
+      }]
+    })).not.toThrow();
+  });
+
   test("shows the admin login action to signed-out visitors", () => {
     const html = env.render("portfolio_base.njk", {
       brand1: { brandName: "Portfolio", socialmedia: {} },
