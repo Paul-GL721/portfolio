@@ -26,4 +26,31 @@ describe("Reusable author positioning", () => {
     expect(html).toContain('name="authorherosnapshot"');
     expect(html).toContain('maxlength="160"');
   });
+
+  test("renders the author-specific eyebrow and snapshot on the portfolio hero", () => {
+    const html = env.render("portfolio_index.njk", {
+      Title: "Portfolio",
+      brand1: { brandName: "Paul Gobero Lwanga", socialmedia: {} },
+      index_data: {
+        author: {
+          about: {
+            short_description: "Solutions Engineer",
+            full_description: "I build useful operational systems.",
+            eyebrow: "Solutions engineering · cloud · geospatial",
+            snapshot: "From operational discovery to reliable production systems"
+          },
+          imageUrl: "/profile.jpg"
+        },
+        author_projects: [],
+        author_all_projects: [],
+        services: [],
+        service_section: {}
+      }
+    });
+
+    expect(html).toContain("Solutions engineering · cloud · geospatial");
+    expect(html).toContain("From operational discovery to reliable production systems");
+    expect(html).not.toContain("Full-stack engineering and DevOps");
+    expect(html).not.toContain("From idea to stable release");
+  });
 });
