@@ -1,0 +1,54 @@
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {
+    id: "notFoundPage",
+    home: "/portfolio/",
+    about: "/portfolio/#about_section",
+    services: "/portfolio/#services-section",
+    projects: "/portfolio/#project_section",
+    skills: "/portfolio/#skill_section",
+    contact: "/portfolio/#contact_section",
+    blog: "https://blog.paulgobero.com"
+} %}
+
+{% block title %}<title>{{ Title }}</title>{% endblock %}
+{% block schema %}{% endblock %}
+{% block loginoutModal %}{% endblock %}
+
+{% block content %}
+<main class="not-found-page">
+    <div class="not-found-orbit not-found-orbit-one" aria-hidden="true"></div>
+    <div class="not-found-orbit not-found-orbit-two" aria-hidden="true"></div>
+
+    <section class="not-found-shell" aria-labelledby="not-found-heading">
+        <div class="not-found-visual" aria-hidden="true">
+            <span>404</span>
+            <div class="not-found-route">
+                <i></i><i></i><i></i>
+            </div>
+        </div>
+
+        <div class="not-found-copy">
+            <p class="eyebrow">Page not found</p>
+            <h1 id="not-found-heading">This page is outside the current route.</h1>
+            <p>
+                The address may be incorrect, or the page may have moved.
+                Return to the portfolio or continue with one of the main sections.
+            </p>
+            {% if requestedPath %}
+                <p class="not-found-path"><span>Requested path</span><code>{{ requestedPath }}</code></p>
+            {% endif %}
+
+            <div class="not-found-actions">
+                <a class="btn btn-primary btn-lg" href="/portfolio/">Return home</a>
+                <a class="btn btn-outline-dark btn-lg" href="/portfolio/#project_section">View projects</a>
+            </div>
+
+            <nav class="not-found-shortcuts" aria-label="Helpful destinations">
+                <a href="/portfolio/#services-section">Services</a>
+                <a href="/portfolio/#skill_section">Skills</a>
+                <a href="/portfolio/#contact_section">Contact</a>
+            </nav>
+        </div>
+    </section>
+</main>
+{% endblock %}
