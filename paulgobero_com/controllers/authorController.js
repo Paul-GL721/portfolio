@@ -316,6 +316,8 @@ exports.author_create_post = [
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
+	body("authorheroeyebrow", "Hero eyebrow must be 80 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
+	body("authorherosnapshot", "Hero snapshot must be 160 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 160 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -366,7 +368,9 @@ exports.author_create_post = [
 						},
 						about: {
 							short_description: req.body.authorshortdesc,
-							full_description: req.body.authorfulldesc
+							full_description: req.body.authorfulldesc,
+							eyebrow: req.body.authorheroeyebrow,
+							snapshot: req.body.authorherosnapshot
 						},
 						brandName: req.body.authorbrandname,
 						hostName: req.body.authorhostname,
@@ -418,6 +422,8 @@ exports.author_ownercreate_post = [
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
+	body("authorheroeyebrow", "Hero eyebrow must be 80 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
+	body("authorherosnapshot", "Hero snapshot must be 160 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 160 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -462,7 +468,9 @@ exports.author_ownercreate_post = [
 							},
 							about: {
 								short_description: req.body.authorshortdesc,
-								full_description: req.body.authorfulldesc
+								full_description: req.body.authorfulldesc,
+								eyebrow: req.body.authorheroeyebrow,
+								snapshot: req.body.authorherosnapshot
 							},
 							brandName: req.body.authorbrandname,
 							hostName: req.body.authorhostname,
@@ -582,6 +590,8 @@ exports.author_update_post = [
 	body("authorlastname", "Last name is required").trim().isLength({ min:2 }).escape(),
 	body("authorshortdesc", "Write a short description about you").trim().isLength({ min:2 }),
 	body("authorfulldesc", "Write more about yourself").trim().isLength({ min:2 }),
+	body("authorheroeyebrow", "Hero eyebrow must be 80 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
+	body("authorherosnapshot", "Hero snapshot must be 160 characters or fewer").optional({ checkFalsy: true }).trim().isLength({ max: 160 }),
 	body("authorbrandname", "Enter your brand name").trim().escape(),
 	body("authorhostname", "Url where your website is hosted").isURL().trim(),
 	body("authorkeywords", "Keywords that describe you").trim().escape().customSanitizer(value => {return value .split(/[\r\n,]+/).map(k => k.trim()).filter(k => k.length > 0);}),
@@ -624,7 +634,9 @@ exports.author_update_post = [
 					},
 					about: {
 						short_description: req.body.authorshortdesc,
-						full_description: req.body.authorfulldesc
+						full_description: req.body.authorfulldesc,
+						eyebrow: req.body.authorheroeyebrow,
+						snapshot: req.body.authorherosnapshot
 					},
 					brandName: req.body.authorbrandname,
 					hostName: req.body.authorhostname,

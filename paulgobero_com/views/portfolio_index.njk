@@ -10,7 +10,7 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-7 hero-copy">
-                        <p class="eyebrow">Full-stack engineering and DevOps</p>
+                        <p class="eyebrow">{{ index_data.author.about.eyebrow or "Professional portfolio" }}</p>
                         <h1>{{ index_data.author.about.short_description | title }}</h1>
                         <p class="hero-lead">{{ index_data.author.about.full_description }}</p>
                         <div class="hero-actions">
@@ -22,8 +22,7 @@
                         <div class="hero-portrait-wrap">
                             <img class="hero-portrait" src="{{ index_data.author.imageUrl }}" alt="{{ meta_author or brand1.brandName or 'Portfolio owner' }}">
                             <div class="hero-snapshot">
-                                <span>Building useful software</span>
-                                <strong>From idea to stable release</strong>
+                                <strong>{{ index_data.author.about.snapshot or "From problem discovery to reliable delivery" }}</strong>
                             </div>
                         </div>
                     </div>

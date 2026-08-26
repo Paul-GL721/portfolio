@@ -70,6 +70,9 @@ router.get("/login", login_controller.login);
 //Post login page
 router.post("/login", login_controller.login_post);
 
+//Return to the administrator dashboard with an existing session
+router.get("/admin", login_controller.verifyToken, login_controller.dashboard);
+
 //Logout user
 router.get("/logout", login_controller.logout);
 
