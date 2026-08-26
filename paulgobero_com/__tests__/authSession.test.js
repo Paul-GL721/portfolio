@@ -182,6 +182,28 @@ describe('Authentication sessions', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
+    test('clears authentication and renders a signed-out confirmation page', async () => {
+        jest.spyOn(controllerUtils, 'getBrandName').mockResolvedValue({ brandName: 'Portfolio' });
+        const request = {};
+        const response = createResponse();
+        const next = jest.fn();
+
+        await loginController.logout(request, response, next);
+
+        expect(response.clearCookie).toHaveBeenCalledWith(
+            'jwtTokens',
+            expect.objectContaining({ httpOnly: true, sameSite: 'lax', path: '/' })
+        );
+        expect(response.locals.isAuthenticated).toBe(false);
+        expect(response.status).toHaveBeenCalledWith(200);
+        expect(response.render).toHaveBeenCalledWith('logged_out', {
+            Title: 'Signed out',
+            brand1: { brandName: 'Portfolio' }
+        });
+        expect(response.json).not.toHaveBeenCalled();
+        expect(next).not.toHaveBeenCalled();
+    });
+
     test('verifies hashed passwords and recognises legacy plaintext passwords', async () => {
         const hashedPassword = await Author.hashPassword('correct horse battery staple');
         const hashedAuthor = new Author({ password: hashedPassword });

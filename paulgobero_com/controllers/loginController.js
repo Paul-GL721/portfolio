@@ -137,9 +137,20 @@ exports.demouseravailablity = async (req, res, next) => {
 };
 
 //logout user
-exports.logout = (req, res, next) => {
-	authSession.clearSessionCookie(res);
-	res.redirect("/portfolio"); //redirect to home page
+exports.logout = async (req, res, next) => {
+	try {
+		authSession.clearSessionCookie(res);
+		res.locals.isAuthenticated = false;
+		res.locals.currentUser = null;
+		const brand = await controllerUtils.getBrandName();
+
+		return res.status(200).render("logged_out", {
+			Title: "Signed out",
+			brand1: brand
+		});
+	} catch (error) {
+		next(error);
+	}
 }
 
 //Get login information for an existing demo user

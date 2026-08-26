@@ -52,4 +52,18 @@ describe("Portfolio navigation", () => {
     expect(html).toContain('href="/portfolio/logout">Sign out</a>');
     expect(html).not.toContain('href="/portfolio/login">Admin login</a>');
   });
+
+  test("renders a useful signed-out page without authentication data", () => {
+    const html = env.render("logged_out.njk", {
+      Title: "Signed out",
+      brand1: { brandName: "Portfolio", socialmedia: {} },
+      isAuthenticated: false
+    });
+
+    expect(html).toContain("You have been signed out.");
+    expect(html).toContain('href="/portfolio/login">Sign in again</a>');
+    expect(html).toContain('href="/portfolio/">Return to portfolio</a>');
+    expect(html).not.toContain("jwtTokens");
+    expect(html).not.toContain("jwt_properties");
+  });
 });
