@@ -8,8 +8,8 @@ const authSession = require('../utils/authSession');
 exports.login = async (req, res, next) => {
 	const nextPath = authSession.safeNextPath(req.query.next);
 
-	if (req.userinfo && nextPath) {
-		return res.redirect(nextPath);
+	if (req.userinfo) {
+		return res.redirect(nextPath || "/portfolio/admin");
 	}
 
 	res.render("login", {
@@ -17,6 +17,34 @@ exports.login = async (req, res, next) => {
 		nextPath,
 		sessionExpired: req.query.expired === '1'
 	});
+};
+
+//Display the administrator dashboard for an existing authenticated session.
+exports.dashboard = async (req, res, next) => {
+	try {
+		if (req.userinfo.role !== 'admin') {
+			return res.status(403).send({ message: 'Administrator access is required' });
+		}
+
+		const admin = req.userinfo.sub
+			? await Author.findById(req.userinfo.sub)
+			: await Author.findOne({ brandName: req.userinfo.user });
+
+		if (!admin) {
+			authSession.clearSessionCookie(res);
+			return res.redirect(authSession.buildLoginUrl(req));
+		}
+
+		const brand = await controllerUtils.getBrandName();
+		admin.imageUrl = await controllerUtils.signedurl(BUCKET_NAME, admin.imageName, 3600);
+		return res.render("admin_dashboard", {
+			Title: "Administrator Dashboard",
+			admin_data: admin,
+			brand1: brand
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 //Post login page (authentication)
@@ -109,9 +137,20 @@ exports.demouseravailablity = async (req, res, next) => {
 };
 
 //logout user
-exports.logout = (req, res, next) => {
-	authSession.clearSessionCookie(res);
-	res.redirect("/portfolio"); //redirect to home page
+exports.logout = async (req, res, next) => {
+	try {
+		authSession.clearSessionCookie(res);
+		res.locals.isAuthenticated = false;
+		res.locals.currentUser = null;
+		const brand = await controllerUtils.getBrandName();
+
+		return res.status(200).render("logged_out", {
+			Title: "Signed out",
+			brand1: brand
+		});
+	} catch (error) {
+		next(error);
+	}
 }
 
 //Get login information for an existing demo user
