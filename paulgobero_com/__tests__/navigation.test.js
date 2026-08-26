@@ -29,4 +29,27 @@ describe("Portfolio navigation", () => {
     expect(html).not.toContain('href="#project_section"');
     expect(html).not.toContain('href="/portfolio/project#project_section"');
   });
+
+  test("shows the admin login action to signed-out visitors", () => {
+    const html = env.render("portfolio_base.njk", {
+      brand1: { brandName: "Portfolio", socialmedia: {} },
+      isAuthenticated: false
+    });
+
+    expect(html).toContain('id="projectlogin"');
+    expect(html).toContain('href="/portfolio/login">Admin login</a>');
+    expect(html).not.toContain('href="/portfolio/admin">Admin dashboard</a>');
+  });
+
+  test("turns the login action into a dashboard return for signed-in administrators", () => {
+    const html = env.render("portfolio_base.njk", {
+      brand1: { brandName: "Portfolio", socialmedia: {} },
+      isAuthenticated: true
+    });
+
+    expect(html).toContain('id="projectlogin"');
+    expect(html).toContain('href="/portfolio/admin">Admin dashboard</a>');
+    expect(html).toContain('href="/portfolio/logout">Sign out</a>');
+    expect(html).not.toContain('href="/portfolio/login">Admin login</a>');
+  });
 });

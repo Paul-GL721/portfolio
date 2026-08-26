@@ -144,6 +144,44 @@ describe('Authentication sessions', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
+    test('redirects an authenticated login-page request to the admin dashboard', async () => {
+        const request = {
+            query: {},
+            userinfo: { role: 'admin' }
+        };
+        const response = createResponse();
+
+        await loginController.login(request, response, jest.fn());
+
+        expect(response.redirect).toHaveBeenCalledWith('/portfolio/admin');
+        expect(response.render).not.toHaveBeenCalled();
+    });
+
+    test('renders the dashboard from an existing administrator session', async () => {
+        const admin = {
+            _id: '64c000000000000000000001',
+            imageName: 'profile-image',
+            authorRole: 'admin'
+        };
+        jest.spyOn(Author, 'findById').mockResolvedValue(admin);
+        jest.spyOn(controllerUtils, 'getBrandName').mockResolvedValue({ brandName: 'Portfolio' });
+        jest.spyOn(controllerUtils, 'signedurl').mockResolvedValue('https://example.com/profile-image');
+        const request = {
+            originalUrl: '/portfolio/admin',
+            userinfo: { sub: admin._id, role: 'admin' }
+        };
+        const response = createResponse();
+        const next = jest.fn();
+
+        await loginController.dashboard(request, response, next);
+
+        expect(response.render).toHaveBeenCalledWith('admin_dashboard', expect.objectContaining({
+            Title: 'Administrator Dashboard',
+            admin_data: expect.objectContaining({ imageUrl: 'https://example.com/profile-image' })
+        }));
+        expect(next).not.toHaveBeenCalled();
+    });
+
     test('verifies hashed passwords and recognises legacy plaintext passwords', async () => {
         const hashedPassword = await Author.hashPassword('correct horse battery staple');
         const hashedAuthor = new Author({ password: hashedPassword });

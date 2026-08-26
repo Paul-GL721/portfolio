@@ -114,7 +114,8 @@
                                 {% block createOwnerbutton %}      {% endblock %}
                                 {% block loginbutton %}
                                     {% if isAuthenticated %}
-                                        <a class="btn btn-outline-primary" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign Out" href="/portfolio/logout">Sign out</a>
+                                        <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="Return to administrator dashboard" href="/portfolio/admin">Admin dashboard</a>
+                                        <a class="btn btn-outline-primary ml-2" role="button" id="projectlogout" data-toggle="tooltip" data-placement="top" title="Sign out of administration" href="/portfolio/logout">Sign out</a>
                                     {% else %}
                                         <a class="btn btn-outline-success" role="button" id="projectlogin" data-toggle="tooltip" data-placement="top" title="To Create, Update and Delete; Login as Admin" href="/portfolio/login">Admin login</a>
                                     {% endif %}
