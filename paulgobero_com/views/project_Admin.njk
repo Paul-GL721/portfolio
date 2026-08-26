@@ -43,14 +43,14 @@
                                         <div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{{ project.mediaUrl.videoUrl }}" ></iframe></div>
                                     </td>
                                     <td class="w-20p text-wrap text-break"><img class="rounded-circle img-fluid" src="{{ project.mediaUrl.imageUrl }}" width="200" height="200"></td>
-                                    <td class="w-20p text-wrap text-break">{{ project.ptitle | replace('&amp;#x2F;', '/') | urlize | safe}}</td>
-                                    <td class="w-30p">{{ project.psummary | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
-                                    <td class="w-60p">{{ project.problemStatement | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
-                                    <td class="w-60p">{{ project.solution | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
-                                    <td class="w-30p">{{ project.role | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
-                                    <td class="w-20p text-wrap text-break">{{ project.githubUrl | urlize | safe }}</td>
-                                    <td class="w-20p text-wrap text-break">{{ project.livelinkUrl | urlize | safe }}</td>
-                                    <td class="w-20p">{{ project.contributor | urlize | safe }}</td>
+									<td class="w-20p text-wrap text-break">{{ project.ptitle | default('', true) | replace('&amp;#x2F;', '/') | urlize | safe}}</td>
+									<td class="w-30p">{{ project.psummary | default('', true) | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+									<td class="w-60p">{{ project.problemStatement | default('', true) | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+									<td class="w-60p">{{ project.solution | default('', true) | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+									<td class="w-30p">{{ project.role | default('', true) | replace('&amp;#x2F;', '/') | urlize | safe }}</td>
+									<td class="w-20p text-wrap text-break">{{ project.githubUrl | default('', true) | urlize | safe }}</td>
+									<td class="w-20p text-wrap text-break">{{ project.livelinkUrl | default('', true) | urlize | safe }}</td>
+									<td class="w-20p">{{ project.contributor | default('', true) | urlize | safe }}</td>
                                     <td class="w-30p">
                                         <ul class="list-group">
                                             {% for skll in project.skill %} 

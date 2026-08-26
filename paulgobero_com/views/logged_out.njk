@@ -1,0 +1,40 @@
+{% extends "portfolio_base.njk" %}
+{% set navbarurl = {
+    id: "loggedOutPage",
+    home: "/portfolio/",
+    about: "/portfolio/#about_section",
+    services: "/portfolio/#services-section",
+    projects: "/portfolio/#project_section",
+    skills: "/portfolio/#skill_section",
+    contact: "/portfolio/#contact_section",
+    blog: "https://blog.paulgobero.com"
+} %}
+
+{% block title %}<title>{{ Title }}</title>{% endblock %}
+{% block schema %}{% endblock %}
+{% block loginoutModal %}{% endblock %}
+
+{% block content %}
+<main class="not-found-page logged-out-page">
+    <section class="not-found-shell" aria-labelledby="logged-out-heading">
+        <div class="not-found-visual" aria-hidden="true">
+            <span>✓</span>
+        </div>
+
+        <div class="not-found-copy">
+            <p class="eyebrow">Administrator session</p>
+            <h1 id="logged-out-heading">You have been signed out.</h1>
+            <p>
+                Your administrator session has ended securely. The public portfolio
+                remains available, and you can sign in again whenever you need to
+                manage its content.
+            </p>
+
+            <div class="not-found-actions">
+                <a class="btn btn-primary btn-lg" href="/portfolio/login">Sign in again</a>
+                <a class="btn btn-outline-dark btn-lg" href="/portfolio/">Return to portfolio</a>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
