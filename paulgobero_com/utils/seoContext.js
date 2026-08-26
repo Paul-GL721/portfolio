@@ -37,7 +37,7 @@ module.exports = async function seoContext(req, res, next) {
 
       res.locals.meta_author = `${owner.name.first} ${owner.name.middle} ${owner.name.last}`;
       res.locals.meta_keywords = owner.yourKeyword?.join(", ");
-      res.locals.knows_about_json = JSON.stringify(knowsAbout);
+      res.locals.knows_about_json = JSON.stringify(knowsAbout).replace(/</g, "\\u003c");
       res.locals.meta_description =
         owner.about.short_description || "Portfolio of a full stack developer.";
       res.locals.og_url = owner.hostName;

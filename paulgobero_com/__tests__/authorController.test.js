@@ -184,7 +184,7 @@ describe('Acessing authenticated pages', function () {
         .field("authorfulldesc", "up Technically Ability to deploy to apps")
         .field("authorbrandname", "test brand name")
         .field("authorhostname", "https://jestjs.io/docs/mongodb4")
-        .field("authorkeywords", "testKeyworder,testKeyword2")
+        .field("authorkeywords", "CI/CD,testKeyword2")
         .field("authorstatus", "testAuthorStatus")
         .field("authorRole", "testAuthorRole")
         .field("authorpassword", "testAuthorRole")
@@ -204,6 +204,7 @@ describe('Acessing authenticated pages', function () {
       expect(redirectPath).toBe('/portfolio/author');
       expect(updatedAuthor.name.first).toBe('up Technical DevOps');
       expect(updatedAuthor.about.full_description).toBe('up Technically Ability to deploy to apps');
+      expect(updatedAuthor.yourKeyword).toEqual(['CI/CD', 'testKeyword2']);
     });
 
     const geturls = [

@@ -34,7 +34,7 @@ describe("Reusable author positioning", () => {
       index_data: {
         author: {
           about: {
-            short_description: "Solutions Engineer",
+            short_description: "Solutions Engineer | Software, Cloud and Geospatial Systems",
             full_description: "I build useful operational systems.",
             eyebrow: "Solutions engineering · cloud · geospatial",
             snapshot: "From operational discovery to reliable production systems"
@@ -49,6 +49,8 @@ describe("Reusable author positioning", () => {
     });
 
     expect(html).toContain("Solutions engineering · cloud · geospatial");
+    expect(html).toContain("Solutions Engineer | Software, Cloud and Geospatial Systems");
+    expect(html).not.toContain("Software, Cloud And Geospatial Systems");
     expect(html).toContain("From operational discovery to reliable production systems");
     expect(html).not.toContain("Full-stack engineering and DevOps");
     expect(html).not.toContain("From idea to stable release");
