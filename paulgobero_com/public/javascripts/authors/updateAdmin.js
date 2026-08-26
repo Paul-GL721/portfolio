@@ -9,6 +9,8 @@ $(document).ready(function(){
 		$("#authormiddlename").val(data.name.middle);
 		$("#authorlastname").val(data.name.last);
 		$("#authorshortdesc").val(data.about.short_description);
+		$("#authorheroeyebrow").val(data.about.eyebrow || "");
+		$("#authorherosnapshot").val(data.about.snapshot || "");
 		$("#authorfulldesc").val(data.about.full_description);
 		$("#authorbrandname").val(data.brandName);
 		$("#authorhostname").val(data.hostName);
