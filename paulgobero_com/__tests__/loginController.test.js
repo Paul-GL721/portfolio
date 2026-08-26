@@ -85,9 +85,15 @@ afterAll(testutils.closeTestDatabase);
 
 
 describe('Login Post Route', function () {
-    it('Get the login form', function (done) {
-        authenticatedSession.get('/portfolio/login')
+    it('shows the login form to a signed-out user', function (done) {
+        supertest(myApp).get('/portfolio/login')
           .expect(200)
+          .end(done)
+    });
+    it('returns a signed-in user to the administrator dashboard', function (done) {
+        authenticatedSession.get('/portfolio/login')
+          .expect('Location', '/portfolio/admin')
+          .expect(302)
           .end(done)
     });
     it('should log in a user and return a JWT token', async () => {
